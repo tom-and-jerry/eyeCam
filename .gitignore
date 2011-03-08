@@ -1,7 +1,5 @@
 .project
 .classpath
 .settings/
-bin/*
-bin/**/*
-test/bin/*
-test/bin/**/*
+/bin
+/gen
