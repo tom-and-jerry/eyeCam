@@ -11,7 +11,7 @@ import android.view.SurfaceView;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 
-public class eyeCamActivity extends Activity {
+public class EyeCamActivity extends Activity {
 	private Camera mCamera;
 	private SurfaceHolder mHolder;
 	private SurfaceView mSurfaceView;
