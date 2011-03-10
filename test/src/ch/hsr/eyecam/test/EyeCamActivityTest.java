@@ -1,6 +1,5 @@
 package ch.hsr.eyecam.test;
 
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.test.ActivityInstrumentationTestCase2;
 import ch.hsr.eyecam.EyeCamActivity;
@@ -24,11 +23,6 @@ public class EyeCamActivityTest extends
 	
 	public void testRotation(){
 		assertEquals("false startup rotation config", 
-				mConfiguration.orientation, 
-				Configuration.ORIENTATION_LANDSCAPE);
-		
-		mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		assertEquals("false rotation config after screen rotation", 
 				mConfiguration.orientation, 
 				Configuration.ORIENTATION_LANDSCAPE);
 	}
