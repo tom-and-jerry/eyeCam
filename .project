@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>eyeCamTest</name>
+	<name>eyeCam</name>
 	<comment></comment>
 	<projects>
-		<project>eyeCam</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

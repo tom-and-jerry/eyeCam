@@ -1,8 +1,10 @@
-.project
 .classpath
 .settings/
 bin/
 <<<<<<< HEAD
 =======
 gen/
+>>>>>>> development
+=======
+local.properties
 >>>>>>> development
