@@ -33,6 +33,13 @@ public class EyeCamSurfaceView extends SurfaceView implements SurfaceHolder.Call
 		initHolder();
 	}
 
+	private boolean isNotNull(Object anyObject) {
+		return anyObject != null;
+	}
+	
+	private boolean isNull(Object anyObject){
+		return !isNotNull(anyObject);
+	}
 	private void initHolder() {
 		mHolder = getHolder();
 		mHolder.addCallback(this);
@@ -46,8 +53,12 @@ public class EyeCamSurfaceView extends SurfaceView implements SurfaceHolder.Call
 		mCamera.setParameters(parameters);
 	}
 	
+	private double getAbsolutDiff(double aimRatio, double tmpDiffRatio) {
+		return Math.abs(aimRatio-tmpDiffRatio);
+	}
+	
 	private void initCamera() {
-		if(mCamera != null) return;
+		if(isNotNull(mCamera)) return;
 		mCamera = Camera.open();
 		try{
 			mCamera.setPreviewDisplay(mHolder);
@@ -59,17 +70,40 @@ public class EyeCamSurfaceView extends SurfaceView implements SurfaceHolder.Call
 	}
 	
 	private Size getOptimalSize(List<Size> sizeList){
+		if(isNull(sizeList))return null;
 		Size optSize= null;
-		for(Size size:sizeList){
-			if(mMetrics.heightPixels == size.height
-					&& mMetrics.widthPixels == size.width)
-				optSize = size;
-		}
+		
+		optSize = findeExactSize(sizeList);
+		if(isNotNull(optSize))return optSize;
+		
+		optSize = findBestFitSizeByRatio(sizeList);
 		return optSize;
 	}
 	
+	private Size findBestFitSizeByRatio(List<Size> sizeList) {
+		double aimRatio = mMetrics.widthPixels / mMetrics.heightPixels;
+		double diffRatio = Double.MAX_VALUE;
+		Size optSize = null;
+		for(Size size : sizeList){
+			double tmpDiffRatio = (double) size.width / size.height;
+			if(getAbsolutDiff(aimRatio, tmpDiffRatio)< diffRatio){
+				optSize = size;
+				diffRatio = getAbsolutDiff(aimRatio, tmpDiffRatio);
+			}
+		}
+		return optSize;
+	}
+	private Size findeExactSize(List<Size> sizeList) {
+		for(Size size:sizeList){
+			if(mMetrics.heightPixels == size.height
+					&& mMetrics.widthPixels == size.width)
+				return size;
+		}
+		return null;
+	}
+	
 	private void releaseCamera(){
-		if(mCamera == null) return;
+		if(isNull(mCamera)) return;
 		mCamera.release();
 		mCamera = null;
 	}
