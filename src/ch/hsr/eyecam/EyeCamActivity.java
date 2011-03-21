@@ -1,11 +1,11 @@
 package ch.hsr.eyecam;
 
-import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
+import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -21,7 +21,7 @@ public class EyeCamActivity extends Activity {
 	private SurfaceHolder mHolder;
 	private SurfaceView mSurfaceView;
 	private final DisplayMetrics mMetrics = new DisplayMetrics();
-	private final static String mTAG = "ch.hsr.EyeCamActivity";
+	private final static String LOG_TAG = "ch.hsr.EyeCamActivity";
 	
 	private PowerManager.WakeLock mWakeLock;
 	
@@ -31,7 +31,7 @@ public class EyeCamActivity extends Activity {
 		public void surfaceChanged(SurfaceHolder holder, int format, int width,
 				int height) {
 			//TODO: examine effects of surface change
-			Log.e(mTAG, "surfaceChanged from SurfaceHolder.Callback was called");
+			Log.d(LOG_TAG, "surfaceChanged from SurfaceHolder.Callback was called");
 		}
 		
 		@Override
@@ -71,7 +71,7 @@ public class EyeCamActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		
-		mWakeLock.release(); 
+		mWakeLock.release();
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class EyeCamActivity extends Activity {
 	private void initHolder(SurfaceHolder holder) {
 		mHolder = holder;
 		mHolder.addCallback(mCallback);
-		mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		//mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
 	
 	private void initCamera() {
@@ -123,21 +123,14 @@ public class EyeCamActivity extends Activity {
 		
 		Size optSize = getOptimalSize(parameters.getSupportedPreviewSizes());
 		for (Size s : parameters.getSupportedPreviewSizes()){
-			Log.i(mTAG, "Supported - H:" + s.height + "W:" + s.width);
+			Log.i(LOG_TAG, "Supported - H:" + s.height + "W:" + s.width);
 		}
 		parameters.setPreviewSize(optSize.width, optSize.height);
-		Log.i(mTAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
-		Log.i(mTAG, "Screen - H:" +mMetrics.heightPixels + "W:" +mMetrics.widthPixels);
+		Log.i(LOG_TAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
+		Log.i(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" +mMetrics.widthPixels);
 		
 		mCamera.setParameters(parameters);
-		try{
-			mCamera.setPreviewDisplay(mHolder);
-		} catch (IOException e) {
-			//TODO: how to react on exception
-			releaseCamera();
-			Log.v(mTAG,e.getCause()+e.getMessage());
-		}
-		
+		mCamera.setPreviewCallback((PreviewCallback) mSurfaceView);
 		mCamera.startPreview();
 	}
 	
