@@ -96,6 +96,7 @@ public class EyeCamActivity extends Activity {
 	
 	private Size findBestPreviewSize(List<Size> sizeList) {
 		double targetRatio = (double) mMetrics.widthPixels / mMetrics.heightPixels;
+		int targetHeight = mMetrics.heightPixels;
 		double diffRatio = Double.MAX_VALUE;
 		Size optSize = null;
 		
@@ -103,7 +104,8 @@ public class EyeCamActivity extends Activity {
 			double tmpDiffRatio = (double) size.width / size.height;
 			if(Math.abs(targetRatio-tmpDiffRatio)< diffRatio){
 				optSize = size;
-				diffRatio = Math.abs(targetRatio-tmpDiffRatio);
+				diffRatio = Math.abs(targetRatio-tmpDiffRatio) +
+							Math.abs(size.height-targetHeight);
 				if (diffRatio == 0) return optSize;
 			}
 		}
@@ -123,14 +125,16 @@ public class EyeCamActivity extends Activity {
 		
 		Size optSize = getOptimalSize(parameters.getSupportedPreviewSizes());
 		for (Size s : parameters.getSupportedPreviewSizes()){
-			Log.i(LOG_TAG, "Supported - H:" + s.height + "W:" + s.width);
+			Log.d(LOG_TAG, "Supported - H:" + s.height + "W:" + s.width);
 		}
 		parameters.setPreviewSize(optSize.width, optSize.height);
-		Log.i(LOG_TAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
-		Log.i(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" +mMetrics.widthPixels);
+		Log.d(LOG_TAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
+		Log.d(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" +mMetrics.widthPixels);
+		
+		mCamera.addCallbackBuffer(new byte[optSize.width*optSize.height*2]);
 		
 		mCamera.setParameters(parameters);
-		mCamera.setPreviewCallback((PreviewCallback) mSurfaceView);
+		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mSurfaceView);
 		mCamera.startPreview();
 	}
 	
