@@ -1,4 +1,4 @@
-package ch.hsr.eyecam.transform;
+package ch.hsr.eyecam.colormodel;
 
 import android.graphics.Bitmap;
 

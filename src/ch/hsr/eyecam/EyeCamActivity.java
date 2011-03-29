@@ -2,48 +2,41 @@ package ch.hsr.eyecam;
 
 import java.util.List;
 
+import ch.hsr.eyecam.view.ColorView;
+
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.PowerManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-
 
 
 public class EyeCamActivity extends Activity {
 	private Camera mCamera;
-	private SurfaceHolder mHolder;
-	private SurfaceView mSurfaceView;
+	private ColorView mColorView;
 	private final DisplayMetrics mMetrics = new DisplayMetrics();
-	private final static String LOG_TAG = "ch.hsr.EyeCamActivity";
+	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
+	public static final int CAMERA_START_PREVIEW = 0;
+	public static final int CAMERA_STOP_PREVIEW = 1;
 	
 	private PowerManager.WakeLock mWakeLock;
-	
-	private SurfaceHolder.Callback mCallback = new SurfaceHolder.Callback() {
-		
+	private Handler mHandler = new Handler(){
 		@Override
-		public void surfaceChanged(SurfaceHolder holder, int format, int width,
-				int height) {
-			//TODO: examine effects of surface change
-			Log.d(LOG_TAG, "surfaceChanged from SurfaceHolder.Callback was called");
+		public void handleMessage(Message msg) {
+			switch (msg.what){
+			case CAMERA_START_PREVIEW:
+				mCamera.startPreview();
+				break;
+			case CAMERA_STOP_PREVIEW:
+				mCamera.stopPreview();
+			}
 		}
-		
-		@Override
-		public void surfaceCreated(SurfaceHolder holder) {
-			initCamera();
-		}
-		
-		@Override
-		public void surfaceDestroyed(SurfaceHolder holder) {
-			releaseCamera();
-		}
-
 	};
 	
 	/** Called when the activity is first created. */
@@ -52,8 +45,8 @@ public class EyeCamActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		mSurfaceView = (SurfaceView) findViewById(R.id.cameraSurface);
-		initHolder(mSurfaceView.getHolder());
+		mColorView = (ColorView) findViewById(R.id.cameraSurface);
+		mColorView.setHandler(mHandler);
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -64,6 +57,7 @@ public class EyeCamActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		
+		initCamera();
 		mWakeLock.acquire();
 	}
 
@@ -71,6 +65,7 @@ public class EyeCamActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		
+		releaseCamera();
 		mWakeLock.release();
 	}
 
@@ -87,14 +82,27 @@ public class EyeCamActivity extends Activity {
 		return !isNotNull(anyObject);
 	}
 	
+	private void initCamera() {
+		mCamera= Camera.open();
+		Camera.Parameters parameters = mCamera.getParameters();	
+		
+		Size optSize = getOptimalSize(parameters.getSupportedPreviewSizes());
+		for (Size s : parameters.getSupportedPreviewSizes()){
+			Log.d(LOG_TAG, "Supported - H:" + s.height + "W:" + s.width);
+		}
+		parameters.setPreviewSize(optSize.width, optSize.height);
+		Log.d(LOG_TAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
+		Log.d(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" +mMetrics.widthPixels);
+		
+		mCamera.addCallbackBuffer(new byte[optSize.width*optSize.height*2]);
+		
+		mCamera.setParameters(parameters);
+		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
+	}
+
 	private Size getOptimalSize(List<Size> sizeList){
 		if(isNull(sizeList)) return null;
 		
-		Size optSize = findBestPreviewSize(sizeList);
-		return optSize;
-	}
-	
-	private Size findBestPreviewSize(List<Size> sizeList) {
 		double targetRatio = (double) mMetrics.widthPixels / mMetrics.heightPixels;
 		int targetHeight = mMetrics.heightPixels;
 		double diffRatio = Double.MAX_VALUE;
@@ -111,36 +119,11 @@ public class EyeCamActivity extends Activity {
 		}
 		return optSize;
 	}
-
-	private void initHolder(SurfaceHolder holder) {
-		mHolder = holder;
-		mHolder.addCallback(mCallback);
-		//mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-	}
-	
-	private void initCamera() {
-		//TODO: do not set preview size larger than screen size
-		mCamera= Camera.open();
-		Camera.Parameters parameters = mCamera.getParameters();	
-		
-		Size optSize = getOptimalSize(parameters.getSupportedPreviewSizes());
-		for (Size s : parameters.getSupportedPreviewSizes()){
-			Log.d(LOG_TAG, "Supported - H:" + s.height + "W:" + s.width);
-		}
-		parameters.setPreviewSize(optSize.width, optSize.height);
-		Log.d(LOG_TAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
-		Log.d(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" +mMetrics.widthPixels);
-		
-		mCamera.addCallbackBuffer(new byte[optSize.width*optSize.height*2]);
-		
-		mCamera.setParameters(parameters);
-		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mSurfaceView);
-		mCamera.startPreview();
-	}
 	
 	private void releaseCamera(){
 		if(isNull(mCamera)) return;
 		
+		mCamera.setPreviewCallbackWithBuffer(null);
 		mCamera.stopPreview();
 		mCamera.release();
 		mCamera = null;
