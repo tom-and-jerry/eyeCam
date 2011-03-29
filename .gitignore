@@ -1,10 +1,8 @@
 .classpath
 .settings/
 bin/
-<<<<<<< HEAD
-=======
 gen/
->>>>>>> development
-=======
+obj/
+libs/
+jni/Debug/
 local.properties
->>>>>>> development
