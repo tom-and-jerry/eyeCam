@@ -11,6 +11,14 @@ extern "C" {
 #define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NONE 0L
 #undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SIMULATE
 #define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SIMULATE 1L
+#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOY
+#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOY 2L
+#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOU
+#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOU 3L
+#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOV
+#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOV 4L
+#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SWITCH_UV
+#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SWITCH_UV 5L
 /*
  * Class:     ch_hsr_eyecam_colormodel_ColorTransform
  * Method:    setEffect

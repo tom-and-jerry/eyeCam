@@ -2,6 +2,7 @@ package ch.hsr.eyecam;
 
 import java.util.List;
 
+import ch.hsr.eyecam.colormodel.ColorTransform;
 import ch.hsr.eyecam.view.ColorView;
 
 import android.app.Activity;
@@ -15,6 +16,8 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 
 public class EyeCamActivity extends Activity {
@@ -46,7 +49,7 @@ public class EyeCamActivity extends Activity {
 		setContentView(R.layout.main);
 		
 		mColorView = (ColorView) findViewById(R.id.cameraSurface);
-		mColorView.setHandler(mHandler);
+		mColorView.setActivityHandler(mHandler);
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -73,7 +76,41 @@ public class EyeCamActivity extends Activity {
 	public boolean onSearchRequested(){
 		return false;
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		menu.add(0,1,0,"None");
+		menu.add(0,2,0,"No Y");
+		menu.add(0,3,0,"No U");
+		menu.add(0,4,0,"No V");
+		menu.add(0,5,0,"Switch UV");
+		return true;
+	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		switch (item.getItemId()){
+		case 1:
+			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_NONE);
+			break;
+		case 2:
+			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_NOY);
+			break;
+		case 3:
+			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_NOU);
+			break;
+		case 4:
+			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_NOV);
+			break;
+		case 5:
+			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_SWITCH_UV);
+			break;
+		}
+		return true;
+	}
+	
 	private boolean isNotNull(Object anyObject) {
 		return anyObject != null;
 	}

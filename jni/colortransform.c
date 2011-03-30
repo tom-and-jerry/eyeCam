@@ -10,7 +10,7 @@
 #include <android/log.h>
 #include <stdint.h>
 
-void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *buffer);
+void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint32_t *buffer);
 
 #undef LOG_TAG
 #define LOG_TAG "libcolortransform"
@@ -23,11 +23,53 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *bu
 typedef enum colortransform_Effects {
 	COLOR_EFFECT_NONE = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NONE,
 	COLOR_EFFECT_SIMULATE = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SIMULATE,
+	COLOR_EFFECT_NOY = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOY,
+	COLOR_EFFECT_NOU = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOU,
+	COLOR_EFFECT_NOV = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOV,
+	COLOR_EFFECT_SWITCH_UV = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SWITCH_UV,
 } colortransform_Effects;
+
+void transNone(int *x, int *y, int *z){}
+
+void transNoX(int *x, int *y, int *z){
+	*x = 0;
+}
+
+void transNoY(int *x, int *y, int *z){
+	*y = 0;
+}
+
+void transNoZ(int *x, int *y, int *z){
+	*z = 0;
+}
+
+void transSwitchYZ(int *x, int *y, int*z){
+	int tmp = *y;
+	*y = *z;
+	*z = tmp;
+}
+
+void (*yuvTransPtr)(int*,int*,int*) = &transNone;
 
 JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect
   (JNIEnv * env, jclass cl, jint effect){
-
+	switch (effect){
+	case COLOR_EFFECT_NONE:
+		yuvTransPtr = &transNone;
+		break;
+	case COLOR_EFFECT_NOY:
+		yuvTransPtr = &transNoX;
+		break;
+	case COLOR_EFFECT_NOU:
+		yuvTransPtr = &transNoY;
+		break;
+	case COLOR_EFFECT_NOV:
+		yuvTransPtr = &transNoZ;
+		break;
+	case COLOR_EFFECT_SWITCH_UV:
+		yuvTransPtr = &transSwitchYZ;
+		break;
+	}
 }
 
 
@@ -46,16 +88,11 @@ void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformImageToBitmap
 		return;
 	}
 
-	if (info.format != ANDROID_BITMAP_FORMAT_RGB_565) {
-		LOGE("Bitmap format is not RGB_565 !");
-		return;
-	}
-
 	if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
 		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
 	}
 
-	uint16_t* buffer = (uint16_t*) pixels;
+	uint32_t* buffer = (uint32_t*) pixels;
     transformYuv2Rgb(data, (int32_t) width, (int32_t) height, buffer);
 
     AndroidBitmap_unlockPixels(env, bitmap);
@@ -67,7 +104,7 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformIma
 
 }
 
-void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *buffer)
+void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint32_t *buffer)
 {
 	static int bytes_per_pixel = 2;
     int frameSize = width * height;
@@ -80,14 +117,16 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *bu
       for (j = 0; j < width; j++)
       {
         nY = *(pY + i * width + j);
-        nV = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2));
-        nU = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2) + 1);
+        nU = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2));
+        nV = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2) + 1);
 
         nY -= 16;
         nU -= 128;
         nV -= 128;
 
         if (nY < 0) nY = 0;
+
+        yuvTransPtr(&nY, &nU, &nV);
 
         int y1192 = 1192 * nY;
         int nR = (y1192 + 1634 * nV);
@@ -98,9 +137,10 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *bu
         if (nG < 0) nG = 0; else if (nG > 262143) nG = 262143;
         if (nB < 0) nB = 0; else if (nB > 262143) nB = 262143;
 
-        buffer[offset++] = 	((nR << 1) & 0xf800) |
-							((nG >> 5) & 0x7e00) |
-							((nB >> 10) & 0x1f);
+        buffer[offset++] = 	0xff000000 |
+        		((nR << 6) & 0xff0000) |
+        		((nG >> 2) & 0xff00) |
+        		((nB >> 10) & 0xff);
       }
    }
 }
