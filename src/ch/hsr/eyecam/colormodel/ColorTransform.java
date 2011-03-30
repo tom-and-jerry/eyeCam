@@ -10,6 +10,10 @@ public class ColorTransform {
 	
 	public static final int COLOR_EFFECT_NONE = 0;
 	public static final int COLOR_EFFECT_SIMULATE = 1;
+	public static final int COLOR_EFFECT_NOY = 2;
+	public static final int COLOR_EFFECT_NOU = 3;
+	public static final int COLOR_EFFECT_NOV = 4;
+	public static final int COLOR_EFFECT_SWITCH_UV = 5;
 		
 	/**
 	 * Sets the effect to be used for the transformation. The default 
