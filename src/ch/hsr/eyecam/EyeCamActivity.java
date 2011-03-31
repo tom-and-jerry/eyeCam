@@ -18,15 +18,28 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 
-
+/**
+ * This class represents the core of the eyeCam application. It is responsible for
+ * the initialization of the Camera and the View and managing all aspects of the
+ * life cycle of the application itself.
+ * 
+ * @author Dominik Spengler
+ * @see <a href="http://developer.android.com/reference/
+ * 			android/app/Activity.html">
+ * 			android.app.Activity</a>
+ */
 public class EyeCamActivity extends Activity {
 	private Camera mCamera;
 	private ColorView mColorView;
+	private boolean mCamIsPreviewing;
+	private byte[] mCallBackBuffer;
 	private final DisplayMetrics mMetrics = new DisplayMetrics();
 	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
-	public static final int CAMERA_START_PREVIEW = 0;
-	public static final int CAMERA_STOP_PREVIEW = 1;
+	public final static int CAMERA_START_PREVIEW = 0;
+	public final static int CAMERA_STOP_PREVIEW = 1;
 	
 	private PowerManager.WakeLock mWakeLock;
 	private Handler mHandler = new Handler(){
@@ -34,15 +47,27 @@ public class EyeCamActivity extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what){
 			case CAMERA_START_PREVIEW:
-				mCamera.startPreview();
+				startCameraPreview();
 				break;
 			case CAMERA_STOP_PREVIEW:
-				mCamera.stopPreview();
+				stopCameraPreview();
+				break;
 			}
+		}
+
+	};
+	
+	private OnClickListener mOnClick = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			if (mCamIsPreviewing) stopCameraPreview();
+			else startCameraPreview();
 		}
 	};
 	
-	/** Called when the activity is first created. */
+	/** Called when the activity is first created.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,6 +75,7 @@ public class EyeCamActivity extends Activity {
 		
 		mColorView = (ColorView) findViewById(R.id.cameraSurface);
 		mColorView.setActivityHandler(mHandler);
+		mColorView.setOnClickListener(mOnClick);
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -72,6 +98,13 @@ public class EyeCamActivity extends Activity {
 		mWakeLock.release();
 	}
 
+	/**
+	 * By overwriting this hook, the activity blocks search requests.
+	 * 
+	 * @see <a href="http://developer.android.com/reference/
+	 * 			android/app/Activity.html#onSearchRequested()">
+     * 			android.app.Activity#onSearchRequested()</a>
+	 */
 	@Override
 	public boolean onSearchRequested(){
 		return false;
@@ -111,6 +144,19 @@ public class EyeCamActivity extends Activity {
 		return true;
 	}
 	
+	private void startCameraPreview() {
+		mCamera.addCallbackBuffer(mCallBackBuffer);
+		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
+		mCamera.startPreview();
+		mCamIsPreviewing = true;
+	}
+	
+	private void stopCameraPreview() {
+		mCamera.setPreviewCallbackWithBuffer(null);
+		mCamera.stopPreview();
+		mCamIsPreviewing = false;
+	}
+	
 	private boolean isNotNull(Object anyObject) {
 		return anyObject != null;
 	}
@@ -131,10 +177,8 @@ public class EyeCamActivity extends Activity {
 		Log.d(LOG_TAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
 		Log.d(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" +mMetrics.widthPixels);
 		
-		mCamera.addCallbackBuffer(new byte[optSize.width*optSize.height*2]);
-		
+		mCallBackBuffer = new byte[optSize.width*optSize.height*2];
 		mCamera.setParameters(parameters);
-		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
 	}
 
 	private Size getOptimalSize(List<Size> sizeList){
@@ -160,8 +204,7 @@ public class EyeCamActivity extends Activity {
 	private void releaseCamera(){
 		if(isNull(mCamera)) return;
 		
-		mCamera.setPreviewCallbackWithBuffer(null);
-		mCamera.stopPreview();
+		stopCameraPreview();
 		mCamera.release();
 		mCamera = null;
 	}

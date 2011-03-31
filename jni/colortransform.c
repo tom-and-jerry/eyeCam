@@ -1,8 +1,11 @@
 /*
  * colortransform.c
  *
+ *
+ *
+ *
  *  Created on: Mar 26, 2011
- *      Author: buddelwilly
+ *      Author: Dominik Spengler
  */
 
 #include "ch_hsr_eyecam_colormodel_ColorTransform.h"
@@ -10,7 +13,7 @@
 #include <android/log.h>
 #include <stdint.h>
 
-void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint32_t *buffer);
+void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *buffer);
 
 #undef LOG_TAG
 #define LOG_TAG "libcolortransform"
@@ -28,6 +31,15 @@ typedef enum colortransform_Effects {
 	COLOR_EFFECT_NOV = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOV,
 	COLOR_EFFECT_SWITCH_UV = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SWITCH_UV,
 } colortransform_Effects;
+
+/**
+ * start definitions of the transformation functions. These get called for each
+ * pixel through the global yuvTransPtr function pointer.
+ *
+ * The transformation functions need to confirm to the following contract:
+ * @pre:	all three integer values > 0
+ * @post:	in-place integer value transformation
+ */
 
 void transNone(int *x, int *y, int *z){}
 
@@ -50,6 +62,10 @@ void transSwitchYZ(int *x, int *y, int*z){
 }
 
 void (*yuvTransPtr)(int*,int*,int*) = &transNone;
+
+/**
+ * start definitions of the JNI binding functions
+ */
 
 JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect
   (JNIEnv * env, jclass cl, jint effect){
@@ -92,7 +108,7 @@ void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformImageToBitmap
 		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
 	}
 
-	uint32_t* buffer = (uint32_t*) pixels;
+	uint16_t* buffer = (uint16_t*) pixels;
     transformYuv2Rgb(data, (int32_t) width, (int32_t) height, buffer);
 
     AndroidBitmap_unlockPixels(env, bitmap);
@@ -104,7 +120,32 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformIma
 
 }
 
-void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint32_t *buffer)
+/**
+ * start of the transformation methods.
+ *
+ * We get the data in yuv420sp aka NV21 format from the camera.
+ * The data representation looks something like this:
+ *
+ * <-----------width------------>
+ * | y0 | y1 | y2 |........|yW-2|  ^
+ * |yW-1| yW |..................|  |
+ * |............................|  | height
+ * |............................|  |
+ * |____________________________|  v
+ * |u0,1|v0,1|u2,3|v2,3|........|  ^
+ * |............................|  | height/2
+ * |____________________________|  v
+ *
+ * The transformYuv2Rgb function takes the data frames, applies
+ * the function yuvTransPtr points to on the elements of YUV
+ * colorspace and converts them to the RGB565 format.
+ *
+ * @pre:	data in yuv420sp (NV21) format
+ * 			width, height > 0
+ * @post:	buffer filled with RGB565 values
+ */
+
+void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *buffer)
 {
 	static int bytes_per_pixel = 2;
     int frameSize = width * height;
@@ -137,10 +178,9 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint32_t *bu
         if (nG < 0) nG = 0; else if (nG > 262143) nG = 262143;
         if (nB < 0) nB = 0; else if (nB > 262143) nB = 262143;
 
-        buffer[offset++] = 	0xff000000 |
-        		((nR << 6) & 0xff0000) |
-        		((nG >> 2) & 0xff00) |
-        		((nB >> 10) & 0xff);
+        buffer[offset++] = 	((nB >> 2) & 0xf800) |
+							((nG >> 7) & 0x07e0) |
+							((nR >> 13) & 0x001f);
       }
    }
 }
