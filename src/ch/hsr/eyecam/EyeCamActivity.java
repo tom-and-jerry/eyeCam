@@ -118,6 +118,7 @@ public class EyeCamActivity extends Activity {
 		menu.add(0,3,0,"No U");
 		menu.add(0,4,0,"No V");
 		menu.add(0,5,0,"Switch UV");
+		menu.add(0,6,0,"Simulate");
 		return true;
 	}
 
@@ -139,6 +140,9 @@ public class EyeCamActivity extends Activity {
 			break;
 		case 5:
 			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_SWITCH_UV);
+			break;
+		case 6:
+			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_SIMULATE);
 			break;
 		}
 		return true;

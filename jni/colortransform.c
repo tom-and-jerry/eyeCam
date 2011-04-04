@@ -61,7 +61,12 @@ void transSwitchYZ(int *x, int *y, int*z){
 	*z = tmp;
 }
 
+void reduceGreen(int *r, int *g, int *b){
+	*g = *g - *g/8;
+}
+
 void (*yuvTransPtr)(int*,int*,int*) = &transNone;
+void (*rgbTransPtr)(int*,int*,int*) = &transNone;
 
 /**
  * start definitions of the JNI binding functions
@@ -72,18 +77,27 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect
 	switch (effect){
 	case COLOR_EFFECT_NONE:
 		yuvTransPtr = &transNone;
+		rgbTransPtr = &transNone;
 		break;
 	case COLOR_EFFECT_NOY:
 		yuvTransPtr = &transNoX;
+		rgbTransPtr = &transNone;
 		break;
 	case COLOR_EFFECT_NOU:
 		yuvTransPtr = &transNoY;
+		rgbTransPtr = &transNone;
 		break;
 	case COLOR_EFFECT_NOV:
 		yuvTransPtr = &transNoZ;
+		rgbTransPtr = &transNone;
 		break;
 	case COLOR_EFFECT_SWITCH_UV:
 		yuvTransPtr = &transSwitchYZ;
+		rgbTransPtr = &transNone;
+		break;
+	case COLOR_EFFECT_SIMULATE:
+		yuvTransPtr = &transNoY;
+		rgbTransPtr = &reduceGreen;
 		break;
 	}
 }
@@ -100,7 +114,6 @@ void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformImageToBitmap
 
 	if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
 		LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
-		LOGD("Bitmap: %x", bitmap);
 		return;
 	}
 
@@ -138,7 +151,13 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformIma
  *
  * The transformYuv2Rgb function takes the data frames, applies
  * the function yuvTransPtr points to on the elements of YUV
- * colorspace and converts them to the RGB565 format.
+ * colorspace, the function rgbTransPtr points to no the elements
+ * of the RGB colorspace  and converts them to the RGB565 format.
+ * Each pixel in the RGB565 format looks like the following:
+ *  _______________________________________________
+ * |B4,B3,B2,B1,B0|G5,G4,G3,G2,G1,G0|R4,R3,R2,R1,R0|
+ *  -----------------------------------------------
+ *  15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0  Bitnumber
  *
  * @pre:	data in yuv420sp (NV21) format
  * 			width, height > 0
@@ -178,9 +197,15 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *bu
         if (nG < 0) nG = 0; else if (nG > 262143) nG = 262143;
         if (nB < 0) nB = 0; else if (nB > 262143) nB = 262143;
 
-        buffer[offset++] = 	((nB >> 2) & 0xf800) |
-							((nG >> 7) & 0x07e0) |
-							((nR >> 13) & 0x001f);
+        nR >>= 10; nR &= 0xff;
+        nG >>= 10; nG &= 0xff;
+        nB >>= 10; nB &= 0xff;
+
+        rgbTransPtr(&nR, &nG, &nB);
+
+        buffer[offset++] = 	((nB << 8) & 0xf800) |
+							((nG << 3) & 0x07e0) |
+							((nR >> 3) & 0x001f);
       }
    }
 }
