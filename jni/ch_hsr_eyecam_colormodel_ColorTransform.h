@@ -11,20 +11,26 @@ extern "C" {
 #define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NONE 0L
 #undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SIMULATE
 #define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SIMULATE 1L
-#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOY
-#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOY 2L
-#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOU
-#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOU 3L
-#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOV
-#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOV 4L
-#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SWITCH_UV
-#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SWITCH_UV 5L
+#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_FALSE_COLORS
+#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_FALSE_COLORS 2L
+#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_INTENSIFY_DIFFERENCE
+#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_INTENSIFY_DIFFERENCE 3L
+#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_BLACK
+#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_BLACK 4L
 /*
  * Class:     ch_hsr_eyecam_colormodel_ColorTransform
  * Method:    setEffect
  * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     ch_hsr_eyecam_colormodel_ColorTransform
+ * Method:    setPartialEffect
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setPartialEffect
   (JNIEnv *, jclass, jint);
 
 /*
