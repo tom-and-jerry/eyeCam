@@ -114,11 +114,11 @@ public class EyeCamActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		menu.add(0,1,0,"None");
-		menu.add(0,2,0,"No Y");
-		menu.add(0,3,0,"No U");
-		menu.add(0,4,0,"No V");
-		menu.add(0,5,0,"Switch UV");
-		menu.add(0,6,0,"Simulate");
+		menu.add(0,2,0,"Simulate");
+		menu.add(0,3,0,"Intensify");
+		menu.add(0,4,0,"Partial False Colors");
+		menu.add(0,5,0,"Partial Black");
+		menu.add(0,6,0,"Partial Intensify");
 		return true;
 	}
 
@@ -130,19 +130,19 @@ public class EyeCamActivity extends Activity {
 			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_NONE);
 			break;
 		case 2:
-			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_NOY);
+			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_SIMULATE);
 			break;
 		case 3:
-			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_NOU);
+			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_INTENSIFY_DIFFERENCE);
 			break;
 		case 4:
-			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_NOV);
+			ColorTransform.setPartialEffect(ColorTransform.COLOR_EFFECT_FALSE_COLORS);
 			break;
 		case 5:
-			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_SWITCH_UV);
+			ColorTransform.setPartialEffect(ColorTransform.COLOR_EFFECT_BLACK);
 			break;
 		case 6:
-			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_SIMULATE);
+			ColorTransform.setPartialEffect(ColorTransform.COLOR_EFFECT_INTENSIFY_DIFFERENCE);
 			break;
 		}
 		return true;
