@@ -12,4 +12,6 @@
     <string name="color_yellow">yellow</string>
     <string name="color_green">green</string>
     <string name="color_blue">blue</string>
+    <string name="color_turquoise">turquoise</string>
+    <string name="color_unknown">unknown</string>
 </resources>

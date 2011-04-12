@@ -1,7 +1,6 @@
 package ch.hsr.eyecam.view;
 
 import ch.hsr.eyecam.EyeCamActivity;
-import ch.hsr.eyecam.colormodel.Color;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
 
@@ -13,6 +12,7 @@ import android.hardware.Camera.PreviewCallback;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.PopupWindow;
@@ -40,10 +40,15 @@ public class ColorView extends View implements PreviewCallback {
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			mColorRecognizer.getColorAt(20, 20);
-			showColorAt(Color.BLACK, 20, 20);
-			Log.d(LOG_TAG, "showColor called");
-			return true;
+			//TODO: handle devices with sub-pixel accuracy
+			if (event.getAction() == MotionEvent.ACTION_DOWN){
+				int x = (int)event.getX();
+				int y = (int)event.getY();
+				
+				showColorAt(mColorRecognizer.getColorAt(x, y), x, y);
+				return true;
+			}
+			return false;
 		}
 	};
 	
@@ -82,13 +87,15 @@ public class ColorView extends View implements PreviewCallback {
 
 	private void initPopup() {
 		mTextView = new TextView(getContext());
-		mPopup = new PopupWindow(mTextView, 100, 100);
+		mTextView.setBackgroundColor(android.graphics.Color.BLACK);
+		mTextView.setTextColor(android.graphics.Color.WHITE);
+		mPopup = new PopupWindow(mTextView, 100, 20);
 	}
 
 	private void showColorAt(int color, int x, int y){
 		mPopup.dismiss();
 		mTextView.setText(color);
-		mPopup.showAtLocation(this, android.view.Gravity.CENTER_HORIZONTAL, x, y);
+		mPopup.showAtLocation(this, Gravity.CLIP_HORIZONTAL, 0, 0);
 	}
 
 	@Override
