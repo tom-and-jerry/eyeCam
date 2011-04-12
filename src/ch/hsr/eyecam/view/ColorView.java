@@ -1,6 +1,7 @@
 package ch.hsr.eyecam.view;
 
 import ch.hsr.eyecam.EyeCamActivity;
+import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
 
 import android.content.Context;
@@ -11,7 +12,11 @@ import android.hardware.Camera.PreviewCallback;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 /**
  * A class extending android.view.View and providing a frame for 
@@ -26,15 +31,35 @@ import android.view.View;
 public class ColorView extends View implements PreviewCallback {
 	private Bitmap mBitmap;
 	private Handler mActivityHandler;
+	private byte[] mDataBuffer;
+	private ColorRecognizer mColorRecognizer;
+	private PopupWindow mPopup;
+	private TextView mTextView;
 	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 
+	private OnTouchListener mOnTouchListener = new OnTouchListener() {
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			//TODO: handle devices with sub-pixel accuracy
+			if (event.getAction() == MotionEvent.ACTION_DOWN){
+				int x = (int)event.getX();
+				int y = (int)event.getY();
+				
+				showColorAt(mColorRecognizer.getColorAt(x, y), x, y);
+				return true;
+			}
+			return false;
+		}
+	};
+	
 	public ColorView(Context context) {
-		super(context);
-		setClickable(true);
+		this(context,null);
 	}
 
 	public ColorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
+		setOnTouchListener(mOnTouchListener);
 	}
 
 	/**
@@ -55,27 +80,28 @@ public class ColorView extends View implements PreviewCallback {
 			Log.d(LOG_TAG, "Bitmap size: W: " + getWidth() + " H: "
 					+ getHeight());
 			mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_START_PREVIEW);
+			
+			initPopup();
 		}
+	}
+
+	private void initPopup() {
+		mTextView = new TextView(getContext());
+		mTextView.setBackgroundColor(android.graphics.Color.BLACK);
+		mTextView.setTextColor(android.graphics.Color.WHITE);
+		mPopup = new PopupWindow(mTextView, 100, 20);
+	}
+
+	private void showColorAt(int color, int x, int y){
+		mPopup.dismiss();
+		mTextView.setText(color);
+		mPopup.showAtLocation(this, Gravity.CLIP_HORIZONTAL, 0, 0);
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		canvas.drawBitmap(mBitmap, 0, 0, null);
-	}
-
-	/**
-	 * This method sets the activity handler used to send messages
-	 * for starting and stopping the Camera preview since ColorView
-	 * doesn't and shouldn't know about the Camera instance itself.
-	 * 
-	 * @param handler the activity handler used for message passing.
-	 * @see <a href="http://developer.android.com/reference/
-     *		android/os/Handler.html">
-     * 		android.os.Handler</a>
-	 */
-	public void setActivityHandler(Handler handler) {
-		mActivityHandler = handler;
 	}
 
 	/**
@@ -96,4 +122,30 @@ public class ColorView extends View implements PreviewCallback {
 		invalidate();
 	}
 
+	/**
+	 * This method sets the activity handler used to send messages
+	 * for starting and stopping the Camera preview since ColorView
+	 * doesn't and shouldn't know about the Camera instance itself.
+	 * 
+	 * @param handler the activity handler used for message passing.
+	 * @see <a href="http://developer.android.com/reference/
+	 *		android/os/Handler.html">
+	 * 		android.os.Handler</a>
+	 */
+	public void setActivityHandler(Handler handler) {
+		mActivityHandler = handler;
+	}
+
+	/**
+	 * This method is used to set the data buffer used for the camera
+	 * preview.
+	 * 
+	 * @param callBackBuffer
+	 * @param width of the preview size
+	 * @param height of the preview size
+	 */
+	public void setDataBuffer(byte[] callBackBuffer, int width, int height) {
+		mDataBuffer = callBackBuffer;
+		mColorRecognizer = new ColorRecognizer(mDataBuffer, width, height);
+	}
 }
