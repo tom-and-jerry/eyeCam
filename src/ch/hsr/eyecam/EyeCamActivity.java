@@ -75,7 +75,7 @@ public class EyeCamActivity extends Activity {
 		
 		mColorView = (ColorView) findViewById(R.id.cameraSurface);
 		mColorView.setActivityHandler(mHandler);
-		mColorView.setOnClickListener(mOnClick);
+//		mColorView.setOnClickListener(mOnClick);
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -118,7 +118,7 @@ public class EyeCamActivity extends Activity {
 		menu.add(0,3,0,"Intensify");
 		menu.add(0,4,0,"Partial False Colors");
 		menu.add(0,5,0,"Partial Black");
-		menu.add(0,6,0,"Partial Intensify");
+		menu.add(0,6,0,"Pause");
 		return true;
 	}
 
@@ -142,7 +142,7 @@ public class EyeCamActivity extends Activity {
 			ColorTransform.setPartialEffect(ColorTransform.COLOR_EFFECT_BLACK);
 			break;
 		case 6:
-			ColorTransform.setPartialEffect(ColorTransform.COLOR_EFFECT_INTENSIFY_DIFFERENCE);
+			mOnClick.onClick(mColorView);
 			break;
 		}
 		return true;
@@ -182,6 +182,7 @@ public class EyeCamActivity extends Activity {
 		Log.d(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" +mMetrics.widthPixels);
 		
 		mCallBackBuffer = new byte[optSize.width*optSize.height*2];
+		mColorView.setDataBuffer(mCallBackBuffer, optSize.width, optSize.height);
 		mCamera.setParameters(parameters);
 	}
 
