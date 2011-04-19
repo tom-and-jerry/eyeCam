@@ -89,8 +89,6 @@ public class EyeCamActivity extends Activity {
 		
 		mColorView = (ColorView) findViewById(R.id.cameraSurface);
 		mColorView.setActivityHandler(mHandler);
-<<<<<<< HEAD
-		//mColorView.setOnClickListener(mOnClick);
 		
 		mControlBar = (ControlBar) findViewById(R.id.conrolBar);
 		mControlBar.rotate(Orientation.UNKNOW);
@@ -101,9 +99,7 @@ public class EyeCamActivity extends Activity {
 		mImageButtonPlay.setOnClickListener(mOnClick);
 		mImageButtonPause.setOnClickListener(mOnClick);
 		setPlayPausButton();
-=======
-//		mColorView.setOnClickListener(mOnClick);
->>>>>>> 594fff8995614701b1d692035fe9c2f7179070c9
+
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
