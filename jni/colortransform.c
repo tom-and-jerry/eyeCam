@@ -22,46 +22,74 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *bu
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARNING, LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define SQR(x) ((x)*(x))
 
 typedef enum colortransform_Effects {
 	COLOR_EFFECT_NONE = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NONE,
 	COLOR_EFFECT_SIMULATE = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SIMULATE,
-	COLOR_EFFECT_NOY = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOY,
-	COLOR_EFFECT_NOU = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOU,
-	COLOR_EFFECT_NOV = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_NOV,
-	COLOR_EFFECT_SWITCH_UV = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SWITCH_UV,
+	COLOR_EFFECT_FALSE_COLORS = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_FALSE_COLORS,
+	COLOR_EFFECT_INTENSIFY_DIFFERENCE = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_INTENSIFY_DIFFERENCE,
+	COLOR_EFFECT_BLACK = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_BLACK,
 } colortransform_Effects;
 
 /**
  * start definitions of the transformation functions. These get called for each
  * pixel through the global yuvTransPtr function pointer.
  *
+ * Due to performance and polymorphic reasons each of the effect functions need
+ * to perform the yuv to rgb transformation. Refer to effectNone to see an example
+ * algorithm for the transformation. The rgb values transformed are in the range
+ * [2^16, 2^24].
+ *
  * The transformation functions need to confirm to the following contract:
- * @pre:	all three integer values > 0
- * @post:	in-place integer value transformation
+ * @pre:	y, u, v, integers with yuv values
+ * 			r, g, b, integers with rgb values
+ * @post:	in-place integer value transformation form yuv to rgb
  */
-
-void transNone(int *x, int *y, int *z){}
-
-void transNoX(int *x, int *y, int *z){
-	*x = 0;
+void effectNone(int* y, int* u, int* v, int* r, int* g, int* b){
+	int yMax = 65536 * *y;
+	*r = (yMax + 92250 * *v);
+	*g = (yMax - 22644 * *u - 46990 * *v);
+	*b = (yMax + 116596 * *u);
 }
 
-void transNoY(int *x, int *y, int *z){
-	*y = 0;
+void effectSimulate(int* y, int* u, int* v, int* r, int* g, int* b){
+	int yMax = 65536 * *y;
+	*r = (yMax + 92250 * *v);
+	*g = (4*(yMax - 46990 * *v))/5;
+	*b = (yMax);
 }
 
-void transNoZ(int *x, int *y, int *z){
-	*z = 0;
+void effectIntesify(int* y, int* u, int* v, int* r, int* g, int* b){
+	*r = (60000 * *y + 92250 * *v);
+	*g = (70000 * *y - 22644 * *u - 46990 * *v);
+	*b = (65536 * *y + 116596 * *u);
 }
 
-void transSwitchYZ(int *x, int *y, int*z){
-	int tmp = *y;
-	*y = *z;
-	*z = tmp;
+void effectFalseColors(int* y, int* u, int* v, int* r, int* g, int* b){
+	int yMax = 65536 * *y;
+	*r = (yMax + 92250 * *u);
+	*g = (yMax - 22644 * *v - 46990 * *u);
+	*b = (yMax + 116596 * *v);
 }
 
-void (*yuvTransPtr)(int*,int*,int*) = &transNone;
+void effectBlack(int* y, int* u, int* v, int* r, int* g, int* b){
+	*r = 0;
+	*g = 0;
+	*b = 0;
+}
+
+void (*effectPtr)(int*,int*,int*,int*,int*,int*) = &effectNone;
+void (*partialEffectPtr)(int*,int*,int*,int*,int*,int*) = &effectNone;
+
+void partialEffect(int* y, int* u, int* v, int* r, int* g, int* b){
+	effectNone(y,u,v,r,g,b);
+
+	int deltaE = 3*SQR(*u)+SQR(*v);
+	if (deltaE > 3200){
+		partialEffectPtr(y,u,v,r,g,b);
+	}
+}
 
 /**
  * start definitions of the JNI binding functions
@@ -71,41 +99,41 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect
   (JNIEnv * env, jclass cl, jint effect){
 	switch (effect){
 	case COLOR_EFFECT_NONE:
-		yuvTransPtr = &transNone;
+		effectPtr = &effectNone;
 		break;
-	case COLOR_EFFECT_NOY:
-		yuvTransPtr = &transNoX;
+	case COLOR_EFFECT_SIMULATE:
+		effectPtr = &effectSimulate;
 		break;
-	case COLOR_EFFECT_NOU:
-		yuvTransPtr = &transNoY;
+	case COLOR_EFFECT_INTENSIFY_DIFFERENCE:
+		effectPtr = &effectIntesify;
 		break;
-	case COLOR_EFFECT_NOV:
-		yuvTransPtr = &transNoZ;
+	case COLOR_EFFECT_FALSE_COLORS:
+		effectPtr = &effectFalseColors;
 		break;
-	case COLOR_EFFECT_SWITCH_UV:
-		yuvTransPtr = &transSwitchYZ;
+	case COLOR_EFFECT_BLACK:
+		effectPtr = &effectBlack;
 		break;
 	}
 }
 
+JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setPartialEffect
+  (JNIEnv * env, jclass cl, jint effect){
+	Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect(env,cl,effect);
+	partialEffectPtr = effectPtr;
+	effectPtr = &partialEffect;
+}
 
 void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformImageToBitmap
   (JNIEnv * env, jclass cl, jbyteArray jarray, jint width, jint height, jobject bitmap){
-    AndroidBitmapInfo 	info;
 	int 				ret;
 	void* 				pixels;
 	jboolean 			isCopy;
 	jbyte* 				jdata = (*env)->GetByteArrayElements(env, jarray, &isCopy);
 	uint8_t* 			data = (uint8_t*) jdata;
 
-	if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
-		LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
-		LOGD("Bitmap: %x", bitmap);
-		return;
-	}
-
 	if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
 		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+		//TODO: throw exception
 	}
 
 	uint16_t* buffer = (uint16_t*) pixels;
@@ -116,8 +144,17 @@ void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformImageToBitmap
 }
 
 JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformImageToBuffer
-  (JNIEnv * env, jclass cl, jbyteArray jdata, jint width, jint height, jbyteArray buffer){
+  (JNIEnv * env, jclass cl, jbyteArray jarray, jint width, jint height, jbyteArray buffer){
+	jboolean 			isCopy;
+	jbyte* 				jdata = (*env)->GetByteArrayElements(env, jarray, &isCopy);
+	uint8_t* 			data = (uint8_t*) jdata;
+	jbyte* 				jbuffer = (*env)->GetByteArrayElements(env, buffer, &isCopy);
+	uint16_t* 			pixels = (uint16_t*) jbuffer;
 
+    transformYuv2Rgb(data, (int32_t) width, (int32_t) height, buffer);
+
+	(*env)->ReleaseByteArrayElements(env, jarray, jdata, JNI_ABORT);
+	(*env)->ReleaseByteArrayElements(env, buffer, jbuffer, JNI_ABORT);
 }
 
 /**
@@ -138,7 +175,13 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformIma
  *
  * The transformYuv2Rgb function takes the data frames, applies
  * the function yuvTransPtr points to on the elements of YUV
- * colorspace and converts them to the RGB565 format.
+ * colorspace, the function rgbTransPtr points to no the elements
+ * of the RGB colorspace  and converts them to the RGB565 format.
+ * Each pixel in the RGB565 format looks like the following:
+ *  _______________________________________________
+ * |B4,B3,B2,B1,B0|G5,G4,G3,G2,G1,G0|R4,R3,R2,R1,R0|
+ *  -----------------------------------------------
+ *  15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0  Bitnumber
  *
  * @pre:	data in yuv420sp (NV21) format
  * 			width, height > 0
@@ -148,8 +191,9 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformIma
 void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *buffer)
 {
 	static int bytes_per_pixel = 2;
+	int nY,nU,nV,nR,nG,nB;
     int frameSize = width * height;
-	int i, j, nY, nV, nU;
+	int i, j;
 	uint8_t *pY = data, *pUV = data + frameSize;
 	int offset = 0;
 
@@ -161,26 +205,20 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *bu
         nU = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2));
         nV = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2) + 1);
 
-        nY -= 16;
         nU -= 128;
         nV -= 128;
 
         if (nY < 0) nY = 0;
 
-        yuvTransPtr(&nY, &nU, &nV);
+        effectPtr(&nY,&nU,&nV,&nR,&nG,&nB);
 
-        int y1192 = 1192 * nY;
-        int nR = (y1192 + 1634 * nV);
-        int nG = (y1192 - 833 * nV - 400 * nU);
-        int nB = (y1192 + 2066 * nU);
+        if (nR < 0) nR = 0; else if (nR > 16777215) nR = 16777215;
+        if (nG < 0) nG = 0; else if (nG > 16777215) nG = 16777215;
+        if (nB < 0) nB = 0; else if (nB > 16777215) nB = 16777215;
 
-        if (nR < 0) nR = 0; else if (nR > 262143) nR = 262143;
-        if (nG < 0) nG = 0; else if (nG > 262143) nG = 262143;
-        if (nB < 0) nB = 0; else if (nB > 262143) nB = 262143;
-
-        buffer[offset++] = 	((nB >> 2) & 0xf800) |
-							((nG >> 7) & 0x07e0) |
-							((nR >> 13) & 0x001f);
+        buffer[offset++] = 	((nB >> 8) & 0xf800) |
+							((nG >> 13) & 0x07e0) |
+							((nR >> 19) & 0x001f);
       }
    }
 }

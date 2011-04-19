@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+    <LinearLayout 
+    	android:id="@+id/linearLayout1" 
+    	android:layout_width="wrap_content" 
+    	android:layout_height="match_parent" 
+    	android:layout_weight="5" />
+    	
+    <ch.hsr.eyecam.view.ControlBar 
+    	android:id="@+id/conrolBar" 
+    	android:layout_width="wrap_content" 
+    	android:layout_height="match_parent" 
+    	android:orientation="vertical">
+    	
+        <ImageButton 
+        	android:id="@+id/imageButton_Settings" 
+        	android:layout_width="wrap_content" 
+        	android:layout_height="wrap_content"
+        	android:background="@null" 
+        	android:layout_weight="1" 
+        	android:src="@drawable/ic_menu_settings" />
+        
+        <ImageButton 
+        	android:id="@+id/imageButton_HeadCam" 
+        	android:layout_width="wrap_content" 
+        	android:layout_height="wrap_content"
+        	android:background="@null" 
+        	android:layout_weight="1" 
+        	android:src="@drawable/ic_menu_head_cam" />
+        	
+        
+        <ImageButton 
+        	android:id="@+id/imageButton_FrontCam" 
+        	android:layout_width="wrap_content" 
+        	android:layout_height="wrap_content"
+        	android:background="@null" 
+        	android:layout_weight="1" 
+        	android:src="@drawable/ic_menu_front_cam" />
+        	
+        
+        <ImageButton 
+        	android:id="@+id/imageButton_Play" 
+        	android:layout_width="wrap_content" 
+        	android:layout_height="wrap_content"
+        	android:background="@null" 
+        	android:layout_weight="1" 
+        	android:src="@drawable/ic_menu_play" />
+        
+        
+        <ImageButton 
+        	android:id="@+id/imageButton_Pause" 
+        	android:layout_width="wrap_content" 
+        	android:layout_height="wrap_content"
+        	android:background="@null" 
+        	android:layout_weight="1" 
+        	android:src="@drawable/ic_menu_pause" />
+        	
+        
+        <ImageButton 
+        	android:id="@+id/imageButton_Light" 
+        	android:layout_width="wrap_content" 
+        	android:layout_height="wrap_content"
+        	android:background="@null" 
+        	android:layout_weight="1" 
+        	android:src="@drawable/ic_menu_light" />
+        	
+        
+        <ImageButton 
+        	android:id="@+id/imageButton_Filter" 
+        	android:layout_width="wrap_content" 
+        	android:layout_height="wrap_content"
+        	android:background="@null" 
+        	android:layout_weight="1" 
+        	android:src="@drawable/ic_menu_filter" />
+        	
+    </ch.hsr.eyecam.view.ControlBar>
+</LinearLayout>
