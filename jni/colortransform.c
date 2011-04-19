@@ -38,38 +38,39 @@ typedef enum colortransform_Effects {
  *
  * Due to performance and polymorphic reasons each of the effect functions need
  * to perform the yuv to rgb transformation. Refer to effectNone to see an example
- * algorithm for the transformation.
+ * algorithm for the transformation. The rgb values transformed are in the range
+ * [2^16, 2^24].
  *
  * The transformation functions need to confirm to the following contract:
- * @pre:	yuv, three dimensional int array with yuv values
- * 			rgb, three dimensional int array with rgb values
- * @post:	in-place integer value transformation
+ * @pre:	y, u, v, integers with yuv values
+ * 			r, g, b, integers with rgb values
+ * @post:	in-place integer value transformation form yuv to rgb
  */
 void effectNone(int* y, int* u, int* v, int* r, int* g, int* b){
-	int y1192 = 1192 * *y;
-	*r = (y1192 + 1634 * *v);
-	*g = (y1192 - 833 * *v - 400 * *u);
-	*b = (y1192 + 2066 * *u);
+	int yMax = 65536 * *y;
+	*r = (yMax + 92250 * *v);
+	*g = (yMax - 22644 * *u - 46990 * *v);
+	*b = (yMax + 116596 * *u);
 }
 
 void effectSimulate(int* y, int* u, int* v, int* r, int* g, int* b){
-	int y1192 = 1192 * *y;
-	*r = (y1192 + 1634 * *v);
-	*g = ((y1192 - 833 * *v)*4)/5;
-	*b = (y1192);
+	int yMax = 65536 * *y;
+	*r = (yMax + 92250 * *v);
+	*g = (4*(yMax - 46990 * *v))/5;
+	*b = (yMax);
 }
 
 void effectIntesify(int* y, int* u, int* v, int* r, int* g, int* b){
-	*r = (1400 * *y + 1634 * *v);
-	*g = (1000 * *y - 833 * *v - 400 * *u);
-	*b = (1192 * *y + 2066 * *u);
+	*r = (60000 * *y + 92250 * *v);
+	*g = (70000 * *y - 22644 * *u - 46990 * *v);
+	*b = (65536 * *y + 116596 * *u);
 }
 
 void effectFalseColors(int* y, int* u, int* v, int* r, int* g, int* b){
-	int y1192 = 1192 * *y;
-	*r = (y1192 + 1634 * *u);
-	*g = (y1192 - 833 * *u - 400 * *v);
-	*b = (y1192 + 2066 * *v);
+	int yMax = 65536 * *y;
+	*r = (yMax + 92250 * *u);
+	*g = (yMax - 22644 * *v - 46990 * *u);
+	*b = (yMax + 116596 * *v);
 }
 
 void effectBlack(int* y, int* u, int* v, int* r, int* g, int* b){
@@ -204,7 +205,6 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *bu
         nU = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2));
         nV = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2) + 1);
 
-        nY -= 16;
         nU -= 128;
         nV -= 128;
 
@@ -212,13 +212,13 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *bu
 
         effectPtr(&nY,&nU,&nV,&nR,&nG,&nB);
 
-        if (nR < 0) nR = 0; else if (nR > 262143) nR = 262143;
-        if (nG < 0) nG = 0; else if (nG > 262143) nG = 262143;
-        if (nB < 0) nB = 0; else if (nB > 262143) nB = 262143;
+        if (nR < 0) nR = 0; else if (nR > 16777215) nR = 16777215;
+        if (nG < 0) nG = 0; else if (nG > 16777215) nG = 16777215;
+        if (nB < 0) nB = 0; else if (nB > 16777215) nB = 16777215;
 
-        buffer[offset++] = 	((nB >> 2) & 0xf800) |
-							((nG >> 7) & 0x07e0) |
-							((nR >> 13) & 0x001f);
+        buffer[offset++] = 	((nB >> 8) & 0xf800) |
+							((nG >> 13) & 0x07e0) |
+							((nR >> 19) & 0x001f);
       }
    }
 }

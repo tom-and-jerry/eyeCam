@@ -22,7 +22,8 @@ public class ColorRecognizer {
 		yuv[0] = mBuffer[height*mWidth-1 + width];
 		yuv[1] = mBuffer[posU];
 		yuv[2] = mBuffer[posU+1];
-		Log.d(LOG_TAG , "y: " + yuv[0] + " u: " + yuv[1] + " v: " + yuv[2]);
+		int y = yuv[0]+128;
+		Log.d(LOG_TAG , "YUV Values from Buffer: y: " + y + " u: " + yuv[1] + " v: " + yuv[2]);
 		
 		return Color.yuvToColor(yuv);
 	}
