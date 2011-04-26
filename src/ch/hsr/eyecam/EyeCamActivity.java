@@ -86,7 +86,6 @@ public class EyeCamActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		
 		mColorView = (ColorView) findViewById(R.id.cameraSurface);
 		mColorView.setActivityHandler(mHandler);
 		
@@ -114,6 +113,7 @@ public class EyeCamActivity extends Activity {
 				if(orientation != mOrientationCurrent){
 					mOrientationCurrent = orientation;
 					mControlBar.rotate(mOrientationCurrent);
+					mColorView.setOrientation(mOrientationCurrent);
 					Log.d(LOG_TAG, "Orientation: "+mOrientationCurrent);
 				}			
 			}
