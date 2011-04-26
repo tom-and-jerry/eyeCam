@@ -1,6 +1,7 @@
 package ch.hsr.eyecam.view;
 
 import ch.hsr.eyecam.EyeCamActivity;
+import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
 
@@ -12,11 +13,8 @@ import android.hardware.Camera.PreviewCallback;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 
 /**
  * A class extending android.view.View and providing a frame for 
@@ -33,8 +31,7 @@ public class ColorView extends View implements PreviewCallback {
 	private Handler mActivityHandler;
 	private byte[] mDataBuffer;
 	private ColorRecognizer mColorRecognizer;
-	private PopupWindow mPopup;
-	private TextView mTextView;
+	private BubblePopup mPopup;
 	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {
@@ -44,6 +41,9 @@ public class ColorView extends View implements PreviewCallback {
 			if (event.getAction() == MotionEvent.ACTION_DOWN){
 				int x = (int)event.getX();
 				int y = (int)event.getY();
+				
+				if (x < 0) x = 0;
+				if (y < 0) y = 0;
 				
 				int rgb = mBitmap.getPixel(x, y);
 				int r = (rgb & 0xf800) >> 11;
@@ -59,6 +59,7 @@ public class ColorView extends View implements PreviewCallback {
 	
 	public ColorView(Context context) {
 		this(context,null);
+
 	}
 
 	public ColorView(Context context, AttributeSet attrs) {
@@ -80,27 +81,28 @@ public class ColorView extends View implements PreviewCallback {
 			int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
 		if (mBitmap == null && getWidth() > 0) {
-			mBitmap = Bitmap.createBitmap(getWidth(), getHeight(),
-					Bitmap.Config.RGB_565);
-			Log.d(LOG_TAG, "Bitmap size: W: " + getWidth() + " H: "
-					+ getHeight());
-			mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_START_PREVIEW);
-			
+			initBitmap();
 			initPopup();
+			
+			mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_START_PREVIEW);
 		}
 	}
 
+	private void initBitmap() {
+		mBitmap = Bitmap.createBitmap(getWidth(), getHeight(),
+				Bitmap.Config.RGB_565);
+		Log.d(LOG_TAG, "Bitmap size: W: " + getWidth() + " H: "
+				+ getHeight());
+	}
+
 	private void initPopup() {
-		mTextView = new TextView(getContext());
-		mTextView.setBackgroundColor(android.graphics.Color.BLACK);
-		mTextView.setTextColor(android.graphics.Color.WHITE);
-		mPopup = new PopupWindow(mTextView, 100, 20);
+		mPopup = new BubblePopup(getContext(), this);
 	}
 
 	private void showColorAt(int color, int x, int y){
 		mPopup.dismiss();
-		mTextView.setText(color);
-		mPopup.showAtLocation(this, Gravity.CLIP_HORIZONTAL, 0, 0);
+		mPopup.showStringResAt(color, x, y);
+		Log.d(LOG_TAG, "Popup Location on Screen: x: " + x + " y: " + y);
 	}
 
 	@Override
@@ -152,5 +154,9 @@ public class ColorView extends View implements PreviewCallback {
 	public void setDataBuffer(byte[] callBackBuffer, int width, int height) {
 		mDataBuffer = callBackBuffer;
 		mColorRecognizer = new ColorRecognizer(mDataBuffer, width, height);
+	}
+
+	public void setOrientation(Orientation orientation) {
+		if (mPopup != null) mPopup.setOrientation(orientation);
 	}
 }
