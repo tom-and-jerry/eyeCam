@@ -31,7 +31,7 @@ public class ColorView extends View implements PreviewCallback {
 	private Handler mActivityHandler;
 	private byte[] mDataBuffer;
 	private ColorRecognizer mColorRecognizer;
-	private BubblePopup mPopup;
+	private FloatingBubble mPopup;
 	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {
@@ -65,6 +65,7 @@ public class ColorView extends View implements PreviewCallback {
 	public ColorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
+		initPopup();
 		setOnTouchListener(mOnTouchListener);
 	}
 
@@ -82,7 +83,6 @@ public class ColorView extends View implements PreviewCallback {
 		super.onLayout(changed, left, top, right, bottom);
 		if (mBitmap == null && getWidth() > 0) {
 			initBitmap();
-			initPopup();
 			
 			mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_START_PREVIEW);
 		}
@@ -96,7 +96,7 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	private void initPopup() {
-		mPopup = new BubblePopup(getContext(), this);
+		mPopup = new FloatingBubble(getContext(), this);
 	}
 
 	private void showColorAt(int color, int x, int y){
@@ -157,6 +157,6 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	public void setOrientation(Orientation orientation) {
-		if (mPopup != null) mPopup.setOrientation(orientation);
+		mPopup.setOrientation(orientation);
 	}
 }

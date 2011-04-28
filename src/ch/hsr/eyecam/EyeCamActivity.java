@@ -44,7 +44,6 @@ public class EyeCamActivity extends Activity {
 	private boolean mCamIsPreviewing;
 	private byte[] mCallBackBuffer;
 	
-	private OrientationEventListener mOrientationEventListener;
 	private Orientation mOrientationCurrent =  Orientation.UNKNOW;
 	private final DisplayMetrics mMetrics = new DisplayMetrics();
 	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
@@ -54,6 +53,8 @@ public class EyeCamActivity extends Activity {
 	public final static int CAMERA_STOP_PREVIEW = 1;
 		
 	private PowerManager.WakeLock mWakeLock;
+	private OrientationEventListener mOrientationEventListener;
+	
 	private Handler mHandler = new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
@@ -75,11 +76,16 @@ public class EyeCamActivity extends Activity {
 		public void onClick(View v) {
 			if (mCamIsPreviewing) stopCameraPreview();
 			else startCameraPreview();
-			setPlayPausButton();
+			setPlayPauseButton();
 		}
 	};
 	
-	/** Called when the activity is first created.
+	/** 
+	 * Called when the activity is first created.
+	 * 
+	 * @see <a href="http://developer.android.com/reference/
+	 * 			android/app/Activity.html#ActivityLifecycle">
+	 * 			android.app.Activity#ActivityLifecycle</a>
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -97,15 +103,20 @@ public class EyeCamActivity extends Activity {
 		
 		mImageButtonPlay.setOnClickListener(mOnClick);
 		mImageButtonPause.setOnClickListener(mOnClick);
-		setPlayPausButton();
+		setPlayPauseButton();
 
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "eyeCam");
 		
-		mOrientationEventListener = new OrientationEventListener(this
-				, SensorManager.SENSOR_DELAY_NORMAL) {
+		initOrientationEventListener();
+		mOrientationEventListener.enable();
+	}
+
+	private void initOrientationEventListener() {
+		mOrientationEventListener = new OrientationEventListener(this, 
+				SensorManager.SENSOR_DELAY_NORMAL) {
 			
 			@Override
 			public void onOrientationChanged(int inputOrientation) {
@@ -120,29 +131,25 @@ public class EyeCamActivity extends Activity {
 			
 			private Orientation getCurrentOrientation(int orientationInput){
 				int orientation = orientationInput;
-				
 				orientation = orientation % 360;
 				
-				if (orientation < (0 * 90) + 45)
-					return Orientation.PORTRAIT;
-				
-				if (orientation < (1 * 90) + 45) 
-					return Orientation.LANDSCAPE_RIGHT;
-				
-				if (orientation < (2 * 90) + 45) 
-					return Orientation.PORTRAIT;
-				
-				if (orientation < (3 * 90) + 45) 
-					return Orientation.LANDSCAPE_LEFT;
+				if (orientation < (0 * 90) + 45) return Orientation.PORTRAIT;
+				if (orientation < (1 * 90) + 45) return Orientation.LANDSCAPE_RIGHT;
+				if (orientation < (2 * 90) + 45) return Orientation.PORTRAIT;
+				if (orientation < (3 * 90) + 45) return Orientation.LANDSCAPE_LEFT;
 				
 				return Orientation.PORTRAIT;
-				
 			}
 		};
-		mOrientationEventListener.enable();
-		
 	}
 
+	/** 
+	 * Called after onCreate() and onStart().
+	 * 
+	 * @see <a href="http://developer.android.com/reference/
+	 * 			android/app/Activity.html#ActivityLifecycle">
+	 * 			android.app.Activity#ActivityLifecycle</a>
+	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -152,6 +159,13 @@ public class EyeCamActivity extends Activity {
 		mOrientationEventListener.enable();
 	}
 
+	/** 
+	 * Called whenever the Activity will be sent to the background.
+	 * 
+	 * @see <a href="http://developer.android.com/reference/
+	 * 			android/app/Activity.html#ActivityLifecycle">
+	 * 			android.app.Activity#ActivityLifecycle</a>
+	 */
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -161,6 +175,13 @@ public class EyeCamActivity extends Activity {
 		mOrientationEventListener.disable();
 	}
 	
+	/** 
+	 * Called whenever the activity will be shut down.
+	 * 
+	 * @see <a href="http://developer.android.com/reference/
+	 * 			android/app/Activity.html#ActivityLifecycle">
+	 * 			android.app.Activity#ActivityLifecycle</a>
+	 */
 	@Override
 	protected void onDestroy() {
 		mOrientationEventListener.disable();
@@ -230,7 +251,7 @@ public class EyeCamActivity extends Activity {
 		mCamIsPreviewing = false;
 	}
 	
-	private void setPlayPausButton(){
+	private void setPlayPauseButton(){
 		Log.d(LOG_TAG,"PauseButton: "+mImageButtonPause.getVisibility());
 		if(mCamIsPreviewing){
 			mImageButtonPlay.setVisibility(0);
