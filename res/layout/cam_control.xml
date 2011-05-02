@@ -14,43 +14,57 @@
     	android:id="@+id/conrolBar" 
     	android:layout_width="wrap_content" 
     	android:layout_height="match_parent" 
-    	android:orientation="vertical">
+    	android:orientation="vertical"
+    	android:gravity="center"
+    	android:background="@drawable/ic_menu_bar">
     	
         <ImageButton 
         	android:id="@+id/imageButton_Settings" 
-        	android:layout_width="wrap_content" 
-        	android:layout_height="wrap_content"
+        	android:layout_width="match_parent" 
+        	android:layout_height="match_parent"
         	android:background="@null" 
         	android:layout_weight="1" 
+    		android:gravity="center"
         	android:src="@drawable/ic_menu_settings" />
+        	
+        <ImageButton 
+        	android:id="@+id/imageButton_none" 
+        	android:layout_width="match_parent" 
+        	android:layout_height="match_parent"
+        	android:background="@null" 
+        	android:layout_weight="1" 
+    		android:gravity="center"
+        	android:src="@drawable/ic_menu_sad" />
         
         <ch.hsr.eyecam.view.StateImageButton  
         	android:id="@+id/imageButton_Pause" 
-        	android:layout_width="wrap_content" 
-        	android:layout_height="wrap_content"
+        	android:layout_width="match_parent" 
+        	android:layout_height="match_parent"
         	android:background="@null" 
         	android:layout_weight="1"
+    		android:scaleType="fitCenter"
         	eyecam:imgResTrue="@drawable/ic_menu_play"
         	eyecam:imgResFalse="@drawable/ic_menu_pause"
         	/>
-        	
         
         <ch.hsr.eyecam.view.StateImageButton 
         	android:id="@+id/imageButton_Light" 
-        	android:layout_width="wrap_content" 
-        	android:layout_height="wrap_content"
+        	android:layout_width="match_parent" 
+        	android:layout_height="match_parent"
         	android:background="@null" 
         	android:layout_weight="1" 
+    		android:gravity="center"
         	eyecam:imgResFalse="@drawable/ic_menu_light_off"
         	eyecam:imgResTrue="@drawable/ic_menu_light_on"/>
         	
         
         <ImageButton 
         	android:id="@+id/imageButton_Filter" 
-        	android:layout_width="wrap_content" 
-        	android:layout_height="wrap_content"
+        	android:layout_width="match_parent" 
+        	android:layout_height="match_parent"
         	android:background="@null" 
         	android:layout_weight="1" 
+    		android:gravity="center"
         	android:src="@drawable/ic_menu_filter" />
     </ch.hsr.eyecam.view.ControlBar>
 </LinearLayout>
