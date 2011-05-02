@@ -56,6 +56,8 @@ public class ColorView extends View implements PreviewCallback {
 			return false;
 		}
 	};
+	private int mPreviewHeight;
+	private int mPreviewWidth;
 	
 	public ColorView(Context context) {
 		this(context,null);
@@ -89,10 +91,10 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	private void initBitmap() {
-		mBitmap = Bitmap.createBitmap(getWidth(), getHeight(),
+		mBitmap = Bitmap.createBitmap(mPreviewWidth, mPreviewHeight,
 				Bitmap.Config.RGB_565);
-		Log.d(LOG_TAG, "Bitmap size: W: " + getWidth() + " H: "
-				+ getHeight());
+		Log.d(LOG_TAG, "Bitmap size: W: " + mPreviewWidth + " H: "
+				+ mPreviewHeight);
 	}
 
 	private void initPopup() {
@@ -121,10 +123,7 @@ public class ColorView extends View implements PreviewCallback {
 	 */
 	@Override
 	public void onPreviewFrame(byte[] data, Camera cam) {
-		int width = cam.getParameters().getPreviewSize().width;
-		int height = cam.getParameters().getPreviewSize().height;
-
-		ColorTransform.transformImageToBitmap(data, width, height, mBitmap);
+		ColorTransform.transformImageToBitmap(data, mPreviewWidth, mPreviewHeight, mBitmap);
 		cam.addCallbackBuffer(data);
 		invalidate();
 	}
@@ -153,7 +152,9 @@ public class ColorView extends View implements PreviewCallback {
 	 */
 	public void setDataBuffer(byte[] callBackBuffer, int width, int height) {
 		mDataBuffer = callBackBuffer;
-		mColorRecognizer = new ColorRecognizer(mDataBuffer, width, height);
+		mPreviewHeight = height;
+		mPreviewWidth = width;
+		mColorRecognizer = new ColorRecognizer(mDataBuffer, mPreviewWidth, mPreviewHeight);
 	}
 
 	public void setOrientation(Orientation orientation) {
