@@ -2,10 +2,6 @@ package ch.hsr.eyecam;
 
 import java.util.List;
 
-import ch.hsr.eyecam.colormodel.ColorTransform;
-import ch.hsr.eyecam.view.ColorView;
-import ch.hsr.eyecam.view.ControlBar;
-
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
@@ -23,7 +19,9 @@ import android.view.MenuItem;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import ch.hsr.eyecam.colormodel.ColorTransform;
+import ch.hsr.eyecam.view.ColorView;
+import ch.hsr.eyecam.view.ControlBar;
 
 /**
  * This class represents the core of the eyeCam application. It is responsible for
@@ -39,7 +37,6 @@ public class EyeCamActivity extends Activity {
 	private Camera mCamera;
 	private ColorView mColorView;
 	private ControlBar mControlBar;
-	private ImageButton mImageButtonPlay, mImageButtonPause;
 	
 	private boolean mCamIsPreviewing;
 	private byte[] mCallBackBuffer;
@@ -76,7 +73,6 @@ public class EyeCamActivity extends Activity {
 		public void onClick(View v) {
 			if (mCamIsPreviewing) stopCameraPreview();
 			else startCameraPreview();
-			setPlayPauseButton();
 		}
 	};
 	
@@ -96,15 +92,11 @@ public class EyeCamActivity extends Activity {
 		mColorView.setActivityHandler(mHandler);
 		
 		mControlBar = (ControlBar) findViewById(R.id.conrolBar);
+		mControlBar.setActivityHandler(mHandler);
+		
+		mControlBar.enableOnLickListerByPlayPausButton();
 		mControlBar.rotate(Orientation.UNKNOW);
-		
-		mImageButtonPlay = (ImageButton)findViewById(R.id.imageButton_Play);
-		mImageButtonPause = (ImageButton)findViewById(R.id.imageButton_Pause);
-		
-		mImageButtonPlay.setOnClickListener(mOnClick);
-		mImageButtonPause.setOnClickListener(mOnClick);
-		setPlayPauseButton();
-
+	
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -249,18 +241,6 @@ public class EyeCamActivity extends Activity {
 		mCamera.setPreviewCallbackWithBuffer(null);
 		mCamera.stopPreview();
 		mCamIsPreviewing = false;
-	}
-	
-	private void setPlayPauseButton(){
-		Log.d(LOG_TAG,"PauseButton: "+mImageButtonPause.getVisibility());
-		if(mCamIsPreviewing){
-			mImageButtonPlay.setVisibility(0);
-			mImageButtonPause.setVisibility(2);
-		}else{
-			mImageButtonPlay.setVisibility(2);
-			mImageButtonPause.setVisibility(1);
-		}
-		Log.d(LOG_TAG,"PauseButton: "+mImageButtonPause.getVisibility());
 	}
 	
 	private boolean isNotNull(Object anyObject) {

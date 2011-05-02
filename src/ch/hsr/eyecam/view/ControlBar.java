@@ -1,11 +1,14 @@
 package ch.hsr.eyecam.view;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import ch.hsr.eyecam.EyeCamActivity;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.R;
 
@@ -20,12 +23,22 @@ import ch.hsr.eyecam.R;
  */
 
 public class ControlBar extends LinearLayout {
-
 	private Animation mAnimationPortraitLeft ,mAnimationPortraitRight
 					,mAnimationLeft ,mAnimationRight;
+	
 	private Orientation mLastKnowOrientation;
+	private Handler mActivityHandler;	
 	
-	
+	private OnClickListener mOnClickListenerPlayPause = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if(((StateImageButton)v).isChecked())
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
+			else
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_START_PREVIEW);
+		}
+	};
+
 	private final static String LOG_TAG = "ch.hsr.eyecam.view.ControlBar";
 	
 	public ControlBar(Context context, AttributeSet attrs) {
@@ -45,6 +58,10 @@ public class ControlBar extends LinearLayout {
 		mAnimationRight = AnimationUtils.loadAnimation(
 				context.getApplicationContext()
 				,R.anim.control_to_right_lanscape);
+	}
+	
+	public void enableOnLickListerByPlayPausButton(){
+		findViewById(R.id.imageButton_Pause).setOnClickListener(mOnClickListenerPlayPause);
 	}
 	
 	private void rotateButtons(Animation animation){
@@ -76,4 +93,19 @@ public class ControlBar extends LinearLayout {
 		mLastKnowOrientation = orientation;
 	}
 	
+
+	/**
+	 * This method sets the activity handler used to send messages
+	 * for starting and stopping the Camera preview since ControlBar
+	 * doesn't and shouldn't know about the Camera instance itself.
+	 * 
+	 * @param handler the activity handler used for message passing.
+	 * @see <a href="http://developer.android.com/reference/
+	 *		android/os/Handler.html">
+	 * 		android.os.Handler</a>
+	 */
+	public void setActivityHandler(Handler handler) {
+		mActivityHandler = handler;
+	}
+		
 }
