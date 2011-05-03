@@ -3,5 +3,6 @@
 	<declare-styleable name="StateImageButton">
 		<attr name="imgResTrue" format="reference" />
 		<attr name="imgResFalse" format="reference"/>
+		<attr name="imgResDisabled" format="reference"/>
 	</declare-styleable>
 </resources>

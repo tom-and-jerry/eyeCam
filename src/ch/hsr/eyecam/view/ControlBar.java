@@ -29,13 +29,26 @@ public class ControlBar extends LinearLayout {
 	private Orientation mLastKnowOrientation;
 	private Handler mActivityHandler;	
 	
-	private OnClickListener mOnClickListenerPlayPause = new OnClickListener() {
+	private OnClickListener mOnClickPlayPause = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if(((StateImageButton)v).isChecked()){
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
+				((StateImageButton)findViewById(R.id.imageButton_Light)).setChecked(false);
+			}
+			else
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_START_PREVIEW);
+		}
+	};
+	
+	private OnClickListener mOnClickLight = new OnClickListener() {
+		
 		@Override
 		public void onClick(View v) {
 			if(((StateImageButton)v).isChecked())
-				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_LIGHT_ON);
 			else
-				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_START_PREVIEW);
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_LIGHT_OFF);
 		}
 	};
 
@@ -60,8 +73,9 @@ public class ControlBar extends LinearLayout {
 				,R.anim.control_to_right_lanscape);
 	}
 	
-	public void enableOnLickListerByPlayPausButton(){
-		findViewById(R.id.imageButton_Pause).setOnClickListener(mOnClickListenerPlayPause);
+	public void enableOnClickListers(){
+		findViewById(R.id.imageButton_Pause).setOnClickListener(mOnClickPlayPause);
+		findViewById(R.id.imageButton_Light).setOnClickListener(mOnClickLight);
 	}
 	
 	private void rotateButtons(Animation animation){
@@ -106,6 +120,10 @@ public class ControlBar extends LinearLayout {
 	 */
 	public void setActivityHandler(Handler handler) {
 		mActivityHandler = handler;
+	}
+
+	public void enableLight(boolean b) {
+		((StateImageButton)findViewById(R.id.imageButton_Light)).setClickable(b);
 	}
 		
 }

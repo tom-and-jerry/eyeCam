@@ -59,7 +59,8 @@
     		android:gravity="center"
     		android:padding="3px"
         	eyecam:imgResFalse="@drawable/ic_menu_light_off"
-        	eyecam:imgResTrue="@drawable/ic_menu_light_on"/>
+        	eyecam:imgResTrue="@drawable/ic_menu_light_on"
+        	eyecam:imgResDisabled="@drawable/ic_menu_light_disabled"/>
         	
         
         <ImageButton 

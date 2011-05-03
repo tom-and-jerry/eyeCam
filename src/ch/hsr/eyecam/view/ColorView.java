@@ -1,6 +1,5 @@
 package ch.hsr.eyecam.view;
 
-import ch.hsr.eyecam.EyeCamActivity;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
@@ -10,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -28,7 +26,6 @@ import android.view.View;
  */
 public class ColorView extends View implements PreviewCallback {
 	private Bitmap mBitmap;
-	private Handler mActivityHandler;
 	private byte[] mDataBuffer;
 	private ColorRecognizer mColorRecognizer;
 	private FloatingBubble mPopup;
@@ -66,28 +63,7 @@ public class ColorView extends View implements PreviewCallback {
 
 	public ColorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		
 		initPopup();
-		setOnTouchListener(mOnTouchListener);
-	}
-
-	/**
-	 * onLayout() is used as a callback for when to create the bitmap and 
-	 * when to start the Camera preview.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-     *		android/view/View.html#onLayout(boolean, int, int, int, int)">
-     * 		android.view.View#onLayout(boolean, int, int, int, int)</a>
-	 */
-	@Override
-	protected void onLayout(boolean changed, int left, int top, int right,
-			int bottom) {
-		super.onLayout(changed, left, top, right, bottom);
-		if (mBitmap == null && getWidth() > 0) {
-			initBitmap();
-			
-			mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_START_PREVIEW);
-		}
 	}
 
 	private void initBitmap() {
@@ -129,20 +105,6 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	/**
-	 * This method sets the activity handler used to send messages
-	 * for starting and stopping the Camera preview since ColorView
-	 * doesn't and shouldn't know about the Camera instance itself.
-	 * 
-	 * @param handler the activity handler used for message passing.
-	 * @see <a href="http://developer.android.com/reference/
-	 *		android/os/Handler.html">
-	 * 		android.os.Handler</a>
-	 */
-	public void setActivityHandler(Handler handler) {
-		mActivityHandler = handler;
-	}
-
-	/**
 	 * This method is used to set the data buffer used for the camera
 	 * preview.
 	 * 
@@ -155,9 +117,18 @@ public class ColorView extends View implements PreviewCallback {
 		mPreviewHeight = height;
 		mPreviewWidth = width;
 		mColorRecognizer = new ColorRecognizer(mDataBuffer, mPreviewWidth, mPreviewHeight);
+		initBitmap();
 	}
 
 	public void setOrientation(Orientation orientation) {
 		mPopup.setOrientation(orientation);
+	}
+
+	public void enablePopup(boolean showPopup) {
+		if(showPopup) setOnTouchListener(mOnTouchListener);
+		else {
+			setOnTouchListener(null);
+			mPopup.dismiss();
+		}
 	}
 }

@@ -27,7 +27,8 @@ import ch.hsr.eyecam.R;
 public class StateImageButton extends ImageButton implements Checkable{
 
 	private boolean mState;
-	private int mImgResTrue, mImgResFalse;
+	private boolean mClickable;
+	private int mImgResTrue, mImgResFalse, mImgResDisabled;
 	private static String LOG_TAG = "ch.hsr.eyecam.StateImageButton";
 	
 	/**
@@ -38,6 +39,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 	public StateImageButton(Context contex){
 		super(contex);
 		mState= false;
+		mClickable = true;
 		setImage();
 	}
 	
@@ -50,7 +52,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 	public StateImageButton(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mState = false;
-		
+		mClickable = true;
 		
 		TypedArray typedArrayAttr = context.obtainStyledAttributes(attrs
 				,R.styleable.StateImageButton);
@@ -60,12 +62,15 @@ public class StateImageButton extends ImageButton implements Checkable{
 		
 		mImgResFalse = typedArrayAttr.getResourceId(R.styleable.StateImageButton_imgResFalse
 				,R.drawable.ic_menu_sad);
+		
+		mImgResDisabled = typedArrayAttr.getResourceId(R.styleable.StateImageButton_imgResDisabled
+				,R.drawable.ic_menu_sad);
 		setImage();
 	}
 	
 	private void setImage(){
-		if(mState) this.setImageResource(mImgResTrue);
-		if(!mState) this.setImageResource(mImgResFalse);
+		if(mState) setImageResource(mImgResTrue);
+		else setImageResource(mImgResFalse);
 	}
 	
 	/**
@@ -96,7 +101,9 @@ public class StateImageButton extends ImageButton implements Checkable{
 
 	@Override
 	public void setChecked(boolean checked) {
+		if(!isClickable())return;
 		mState = checked;
+		Log.d(LOG_TAG, "State has changed! From:"+mState +" To: "+mState);
 		setImage();
 	}
 
@@ -107,15 +114,26 @@ public class StateImageButton extends ImageButton implements Checkable{
 	@Override
 	public void toggle() {
 		setChecked(!isChecked());
-		setImage();
-		Log.d(LOG_TAG, "State has changed! From:"+!mState +" To: "+mState);
-		
 	}
 	
 	@Override
 	public boolean performClick() {
 		toggle();
 		return super.performClick();
+	}
+	
+	@Override
+	public void setClickable(boolean clickable) {
+		if(!clickable) {
+			setImageResource(mImgResDisabled);
+			setOnClickListener(null);
+		}
+		mClickable = clickable;
+	}
+	
+	@Override
+	public boolean isClickable() {
+		return mClickable;
 	}
 
 }
