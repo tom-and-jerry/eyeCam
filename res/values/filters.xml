@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="filter_none">none</string>
+	<string name="filter_simulate">simulation</string>
+	<string name="filter_false_colors">false colors</string>
+	<string name="filter_intensify">intensify color difference</string>
+	<string name="filter_black">black</string>
+</resources>

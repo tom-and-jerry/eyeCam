@@ -51,6 +51,18 @@ public class ControlBar extends LinearLayout {
 				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_LIGHT_OFF);
 		}
 	};
+	
+	private OnClickListener mOnClickFilter = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Log.d(LOG_TAG, "inflating filter menu");
+			inflateMenu(mFilterMenu);
+		}
+		
+	};
+
+	private MenuBubble mFilterMenu;
 
 	private final static String LOG_TAG = "ch.hsr.eyecam.view.ControlBar";
 	
@@ -76,6 +88,27 @@ public class ControlBar extends LinearLayout {
 	public void enableOnClickListers(){
 		findViewById(R.id.imageButton_Pause).setOnClickListener(mOnClickPlayPause);
 		findViewById(R.id.imageButton_Light).setOnClickListener(mOnClickLight);
+		
+		initFilterMenu();
+		initPreferencesMenu();
+	}
+	
+	private void initFilterMenu() {
+		View contentView = new FilterListView(getContext());
+		View anchor = findViewById(R.id.imageButton_Filter);
+		
+		mFilterMenu = new MenuBubble(anchor, contentView);
+		mFilterMenu.setArrowStyle(BubbleView.ARROW_LEFT);
+		anchor.setOnClickListener(mOnClickFilter);
+	}
+
+	private void initPreferencesMenu() {
+		//TODO
+	}
+
+	protected void inflateMenu(MenuBubble menu) {
+		if (menu.isShowing()) menu.dismiss();
+		else menu.show();
 	}
 	
 	private void rotateButtons(Animation animation){

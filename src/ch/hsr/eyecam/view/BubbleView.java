@@ -85,6 +85,7 @@ public class BubbleView extends FrameLayout {
 	 */
 	public void setOrientation(Orientation orientation){
 		mOrientation = orientation;
+		measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 	}
 
 	/**
@@ -105,10 +106,10 @@ public class BubbleView extends FrameLayout {
 	 * This method is used to specify whether only the content of the bubble should
 	 * be rotated instead of the whole bubble (including the arrow).
 	 * 
-	 * @param contentRotation. false if you want to rotate the whole bubble.
+	 * @param frameRotation. true if you want to rotate the whole bubble.
 	 */
-	public void setOnlyContentRotation(boolean contentRotation){
-		if (contentRotation) mFrameMatrix = new Matrix(mRotationMatrix);
+	public void setFrameRotation(boolean frameRotation){
+		if (!frameRotation) mFrameMatrix = new Matrix(mRotationMatrix);
 		else mFrameMatrix = null;
 	}
 	
