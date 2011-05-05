@@ -15,10 +15,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.OrientationEventListener;
-import ch.hsr.eyecam.colormodel.ColorTransform;
 import ch.hsr.eyecam.view.ColorView;
 import ch.hsr.eyecam.view.ControlBar;
 
@@ -33,25 +30,14 @@ import ch.hsr.eyecam.view.ControlBar;
  * 			android.app.Activity</a>
  */
 public class EyeCamActivity extends Activity {
-	private Camera mCamera;
-	private ColorView mColorView;
-	private ControlBar mControlBar;
-	
-	private byte[] mCallBackBuffer;
-	
-	private Orientation mOrientationCurrent =  Orientation.UNKNOW;
-	private final DisplayMetrics mMetrics = new DisplayMetrics();
-	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
-	
-	
-	public final static int CAMERA_START_PREVIEW = 0;
-	public final static int CAMERA_STOP_PREVIEW = 1;
-	
-	public final static int CAMERA_LIGHT_OFF = 2;
-	public final static int CAMERA_LIGHT_ON = 3;
-		
 	private PowerManager.WakeLock mWakeLock;
 	private OrientationEventListener mOrientationEventListener;
+	private Camera mCamera;
+	private byte[] mCallBackBuffer;
+	
+	private ColorView mColorView;
+	private ControlBar mControlBar;
+	private Orientation mOrientationCurrent =  Orientation.UNKNOW;
 	
 	private Handler mHandler = new Handler(){
 		@Override
@@ -74,7 +60,20 @@ public class EyeCamActivity extends Activity {
 
 	};
 	
+	private final DisplayMetrics mMetrics = new DisplayMetrics();
+	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
 	
+	public final static int CAMERA_START_PREVIEW = 0;
+	public final static int CAMERA_STOP_PREVIEW = 1;
+	public final static int CAMERA_LIGHT_OFF = 2;
+	public final static int CAMERA_LIGHT_ON = 3;
+	
+	private void setCameraLight(String cameraFlashMode) {
+		Parameters parameters = mCamera.getParameters();
+		parameters.setFlashMode(cameraFlashMode);
+		mCamera.setParameters(parameters);
+	}
+
 	/** 
 	 * Called when the activity is first created.
 	 * 
@@ -91,8 +90,7 @@ public class EyeCamActivity extends Activity {
 		
 		mControlBar = (ControlBar) findViewById(R.id.conrolBar);
 		mControlBar.setActivityHandler(mHandler);
-		
-		mControlBar.enableOnClickListers();
+		mControlBar.enableOnClickListeners();
 		mControlBar.rotate(Orientation.UNKNOW);
 	
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
@@ -102,12 +100,6 @@ public class EyeCamActivity extends Activity {
 		
 		initOrientationEventListener();
 		mOrientationEventListener.enable();
-	}
-
-	private void setCameraLight(String cameraFlashMode) {
-		Parameters parameters = mCamera.getParameters();
-		parameters.setFlashMode(cameraFlashMode);
-		mCamera.setParameters(parameters);
 	}
 
 	private void initOrientationEventListener() {
@@ -154,101 +146,6 @@ public class EyeCamActivity extends Activity {
 		mOrientationEventListener.enable();
 	}
 
-	/** 
-	 * Called whenever the Activity will be sent to the background.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#ActivityLifecycle">
-	 * 			android.app.Activity#ActivityLifecycle</a>
-	 */
-	@Override
-	protected void onPause() {
-		super.onPause();
-		releaseCamera();
-		mWakeLock.release();
-		mOrientationEventListener.disable();
-	}
-	
-	/** 
-	 * Called whenever the activity will be shut down.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#ActivityLifecycle">
-	 * 			android.app.Activity#ActivityLifecycle</a>
-	 */
-	@Override
-	protected void onDestroy() {
-		mOrientationEventListener.disable();
-		super.onDestroy();
-	}
-
-	/**
-	 * By overwriting this hook, the activity blocks search requests.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#onSearchRequested()">
-     * 			android.app.Activity#onSearchRequested()</a>
-	 */
-	@Override
-	public boolean onSearchRequested(){
-		return false;
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		menu.add(0,1,0,"None");
-		menu.add(0,2,0,"Simulate");
-		menu.add(0,3,0,"Intensify");
-		menu.add(0,4,0,"Partial False Colors");
-		menu.add(0,5,0,"Partial Black");
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-		switch (item.getItemId()){
-		case 1:
-			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_NONE);
-			break;
-		case 2:
-			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_SIMULATE);
-			break;
-		case 3:
-			ColorTransform.setEffect(ColorTransform.COLOR_EFFECT_INTENSIFY_DIFFERENCE);
-			break;
-		case 4:
-			ColorTransform.setPartialEffect(ColorTransform.COLOR_EFFECT_FALSE_COLORS);
-			break;
-		case 5:
-			ColorTransform.setPartialEffect(ColorTransform.COLOR_EFFECT_BLACK);
-			break;
-		}
-		return true;
-	}
-	
-	private void startCameraPreview() {
-		mCamera.addCallbackBuffer(mCallBackBuffer);
-		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
-		mCamera.startPreview();
-		mColorView.enablePopup(false);
-	}
-	
-	private void stopCameraPreview() {
-		mCamera.setPreviewCallbackWithBuffer(null);
-		mCamera.stopPreview();
-		mColorView.enablePopup(true);
-	}
-	
-	private boolean isNotNull(Object anyObject) {
-		return anyObject != null;
-	}
-	
-	private boolean isNull(Object anyObject){
-		return !isNotNull(anyObject);
-	}
-	
 	private void initCamera() {
 		mCamera= Camera.open();
 		Camera.Parameters parameters = mCamera.getParameters();	
@@ -270,14 +167,6 @@ public class EyeCamActivity extends Activity {
 		startCameraPreview();
 	}
 
-	private void disableFlashIfUnsupported(Camera.Parameters parameters) {
-		if(parameters.getSupportedFlashModes() == null){
-			mControlBar.enableLight(false);
-		}
-		else if(parameters.getSupportedFlashModes().contains(Camera.Parameters.FLASH_MODE_TORCH))
-			mControlBar.enableLight(false);
-	}
-
 	private Size getOptimalSize(List<Size> sizeList){
 		if(isNull(sizeList)) return null;
 		
@@ -297,11 +186,82 @@ public class EyeCamActivity extends Activity {
 		}
 		return optSize;
 	}
+
+	private void disableFlashIfUnsupported(Camera.Parameters parameters) {
+		if(parameters.getSupportedFlashModes() == null){
+			mControlBar.enableLight(false);
+		}
+		else if(parameters.getSupportedFlashModes().contains(Camera.Parameters.FLASH_MODE_TORCH))
+			mControlBar.enableLight(false);
+	}
+
+	private void startCameraPreview() {
+		mCamera.addCallbackBuffer(mCallBackBuffer);
+		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
+		mCamera.startPreview();
+		mColorView.enablePopup(false);
+	}
+
+	/** 
+	 * Called whenever the Activity will be sent to the background.
+	 * 
+	 * @see <a href="http://developer.android.com/reference/
+	 * 			android/app/Activity.html#ActivityLifecycle">
+	 * 			android.app.Activity#ActivityLifecycle</a>
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+		releaseCamera();
+		mWakeLock.release();
+		mOrientationEventListener.disable();
+	}
 	
 	private void releaseCamera(){
 		if(isNull(mCamera)) return;
 		stopCameraPreview();
 		mCamera.release();
 		mCamera = null;
+	}
+
+	private void stopCameraPreview() {
+		mCamera.setPreviewCallbackWithBuffer(null);
+		mCamera.stopPreview();
+		mColorView.enablePopup(true);
+	}
+
+	/** 
+	 * Called whenever the activity will be shut down.
+	 * 
+	 * @see <a href="http://developer.android.com/reference/
+	 * 			android/app/Activity.html#ActivityLifecycle">
+	 * 			android.app.Activity#ActivityLifecycle</a>
+	 */
+	@Override
+	protected void onDestroy() {
+		mOrientationEventListener.disable();
+		mColorView.dismissPopup();
+		mControlBar.dismissMenu();
+		super.onDestroy();
+	}
+
+	private boolean isNotNull(Object anyObject) {
+		return anyObject != null;
+	}
+	
+	private boolean isNull(Object anyObject){
+		return !isNotNull(anyObject);
+	}
+
+	/**
+	 * By overwriting this hook, the activity blocks search requests.
+	 * 
+	 * @see <a href="http://developer.android.com/reference/
+	 * 			android/app/Activity.html#onSearchRequested()">
+	 * 			android.app.Activity#onSearchRequested()</a>
+	 */
+	@Override
+	public boolean onSearchRequested(){
+		return false;
 	}
 }

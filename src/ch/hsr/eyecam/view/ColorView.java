@@ -3,6 +3,7 @@ package ch.hsr.eyecam.view;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
+import ch.hsr.eyecam.widget.FloatingBubble;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -26,15 +27,16 @@ import android.view.View;
  */
 public class ColorView extends View implements PreviewCallback {
 	private Bitmap mBitmap;
+	private int mPreviewHeight;
+	private int mPreviewWidth;
 	private byte[] mDataBuffer;
+	
 	private ColorRecognizer mColorRecognizer;
 	private FloatingBubble mPopup;
-	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			//TODO: handle devices with sub-pixel accuracy
 			if (event.getAction() == MotionEvent.ACTION_DOWN){
 				int x = (int)event.getX();
 				int y = (int)event.getY();
@@ -53,12 +55,12 @@ public class ColorView extends View implements PreviewCallback {
 			return false;
 		}
 	};
-	private int mPreviewHeight;
-	private int mPreviewWidth;
+	
+	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 	
 	public ColorView(Context context) {
-		this(context,null);
-
+		super(context);
+		initPopup();
 	}
 
 	public ColorView(Context context, AttributeSet attrs) {
@@ -130,5 +132,9 @@ public class ColorView extends View implements PreviewCallback {
 			setOnTouchListener(null);
 			mPopup.dismiss();
 		}
+	}
+
+	public void dismissPopup() {
+		mPopup.dismiss();
 	}
 }
