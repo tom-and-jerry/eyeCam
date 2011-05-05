@@ -1,4 +1,4 @@
-package ch.hsr.eyecam.view;
+package ch.hsr.eyecam.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -27,8 +27,10 @@ import ch.hsr.eyecam.R;
 public class StateImageButton extends ImageButton implements Checkable{
 
 	private boolean mState;
-	private boolean mClickable;
+	private boolean mEnabled;
 	private int mImgResTrue, mImgResFalse, mImgResDisabled;
+	private OnClickListener mOnClickDisabled = null;
+	private OnClickListener mOnClickListener;
 	private static String LOG_TAG = "ch.hsr.eyecam.StateImageButton";
 	
 	/**
@@ -39,7 +41,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 	public StateImageButton(Context contex){
 		super(contex);
 		mState= false;
-		mClickable = true;
+		mEnabled = true;
 		setImage();
 	}
 	
@@ -52,19 +54,18 @@ public class StateImageButton extends ImageButton implements Checkable{
 	public StateImageButton(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mState = false;
-		mClickable = true;
+		mEnabled = true;
 		
 		TypedArray typedArrayAttr = context.obtainStyledAttributes(attrs
 				,R.styleable.StateImageButton);
 	
-		mImgResTrue = typedArrayAttr.getResourceId(R.styleable.StateImageButton_imgResTrue
-				,R.drawable.ic_menu_sad);
+		mImgResTrue = typedArrayAttr.getResourceId(
+				R.styleable.StateImageButton_imgResTrue, R.drawable.ic_menu_sad);
+		mImgResFalse = typedArrayAttr.getResourceId(
+				R.styleable.StateImageButton_imgResFalse, R.drawable.ic_menu_sad);
+		mImgResDisabled = typedArrayAttr.getResourceId(
+				R.styleable.StateImageButton_imgResDisabled, R.drawable.ic_menu_sad);
 		
-		mImgResFalse = typedArrayAttr.getResourceId(R.styleable.StateImageButton_imgResFalse
-				,R.drawable.ic_menu_sad);
-		
-		mImgResDisabled = typedArrayAttr.getResourceId(R.styleable.StateImageButton_imgResDisabled
-				,R.drawable.ic_menu_sad);
 		setImage();
 	}
 	
@@ -74,7 +75,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 	}
 	
 	/**
-	 * To set the image which will display by the state true. It shoul be set 
+	 * To set the image which will display by the state true. It should be set 
 	 * by the xml-file. 
 	 * 
 	 * @param resId
@@ -84,16 +85,25 @@ public class StateImageButton extends ImageButton implements Checkable{
 	}
 	
 	/**
-	 * To set the image which will display by the state false. It shoul be set 
+	 * To set the image which will display by the state false. It should be set 
 	 * by the xml-file. 
 	 * 
 	 * @param resId
 	 */
-	
 	public void setImgResFalse(int resId){
 		mImgResFalse = resId;
 	}
 
+	/**
+	 * To set the image which will display by the state disabled. It should be set 
+	 * by the xml-file. 
+	 * 
+	 * @param resId
+	 */
+	public void setImgResDisabled(int resId){
+		mImgResDisabled = resId;
+	}
+	
 	@Override
 	public boolean isChecked() {
 		return mState;
@@ -101,7 +111,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 
 	@Override
 	public void setChecked(boolean checked) {
-		if(!isClickable())return;
+		if(!isEnabled())return;
 		mState = checked;
 		Log.d(LOG_TAG, "State has changed! From:"+mState +" To: "+mState);
 		setImage();
@@ -122,18 +132,28 @@ public class StateImageButton extends ImageButton implements Checkable{
 		return super.performClick();
 	}
 	
-	@Override
-	public void setClickable(boolean clickable) {
-		if(!clickable) {
+	public void setEnabled(boolean enabled) {
+		if(!enabled) {
 			setImageResource(mImgResDisabled);
-			setOnClickListener(null);
+			super.setOnClickListener(mOnClickDisabled);
+		} else {
+			super.setOnClickListener(mOnClickListener);
+			setImage();
 		}
-		mClickable = clickable;
+		mEnabled = enabled;
+	}
+	
+	public boolean isEnabled(){
+		return mEnabled;
+	}
+	
+	public void setOnDisabledClickListener(OnClickListener onClickDisabled){
+		mOnClickDisabled = onClickDisabled;
 	}
 	
 	@Override
-	public boolean isClickable() {
-		return mClickable;
+	public void setOnClickListener(OnClickListener l) {
+		mOnClickListener = l;
+		super.setOnClickListener(mOnClickListener);
 	}
-
 }

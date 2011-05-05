@@ -38,7 +38,7 @@
     		android:padding="3px"
         	android:src="@drawable/ic_menu_none" />
         
-        <ch.hsr.eyecam.view.StateImageButton  
+        <ch.hsr.eyecam.widget.StateImageButton  
         	android:id="@+id/imageButton_Pause" 
         	android:layout_width="match_parent" 
         	android:layout_height="match_parent"
@@ -50,7 +50,7 @@
         	eyecam:imgResFalse="@drawable/ic_menu_pause"
         	/>
         
-        <ch.hsr.eyecam.view.StateImageButton 
+        <ch.hsr.eyecam.widget.StateImageButton 
         	android:id="@+id/imageButton_Light" 
         	android:layout_width="match_parent" 
         	android:layout_height="match_parent"

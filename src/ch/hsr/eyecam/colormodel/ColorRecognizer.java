@@ -3,11 +3,12 @@ package ch.hsr.eyecam.colormodel;
 import android.util.Log;
 
 public class ColorRecognizer {
-	private static final String LOG_TAG = "ch.hsr.eyecam.colormodel.ColorRecognizer";
-	private static final int BYTES_PER_PIXEL = 2;
 	private int mHeight;
 	private int mWidth;
 	private byte[] mBuffer;
+	
+	private static final int BYTES_PER_PIXEL = 2;
+	private static final String LOG_TAG = "ch.hsr.eyecam.colormodel.ColorRecognizer";
 
 	public ColorRecognizer(byte[] buffer, int width, int height) {
 		mBuffer = buffer;

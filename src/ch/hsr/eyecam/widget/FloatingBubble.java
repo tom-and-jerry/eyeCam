@@ -1,4 +1,4 @@
-package ch.hsr.eyecam.view;
+package ch.hsr.eyecam.widget;
 
 import ch.hsr.eyecam.Orientation;
 import android.content.Context;
