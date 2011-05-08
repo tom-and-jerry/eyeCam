@@ -1,6 +1,7 @@
 package ch.hsr.eyecam.view;
 
 import ch.hsr.eyecam.R;
+import ch.hsr.eyecam.Settings;
 import ch.hsr.eyecam.colormodel.ColorTransform;
 import android.content.Context;
 import android.widget.LinearLayout;
@@ -14,13 +15,13 @@ public class FilterMenu extends LinearLayout implements OnCheckedChangeListener{
 
 	public FilterMenu(Context context) {
 		super(context);
-		
 		mContext = context;
 		mRadioGroup = new RadioGroup(context);
-		mRadioGroup.setOnCheckedChangeListener(this);
-		
+		mRadioGroup.setOnCheckedChangeListener(this);	
 		initItems();
 	}
+	
+	
 	
 	private void initItems() {
 		addRadioButton(R.string.filter_none, ColorTransform.COLOR_EFFECT_NONE);
@@ -42,7 +43,9 @@ public class FilterMenu extends LinearLayout implements OnCheckedChangeListener{
 	
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
-		ColorTransform.setEffect(checkedId);
+		if(Settings.Partial)ColorTransform.setPartialEffect(checkedId);
+		else ColorTransform.setEffect(checkedId);
+		Settings.ChossenFilter = checkedId;
 		mRadioGroup.invalidate();
 	}
 }
