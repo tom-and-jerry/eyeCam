@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
+  android:id="@+id/settings_menu"
+  android:layout_width="wrap_content"
   android:layout_height="wrap_content">
   <TextView
   		android:id="@+id/seperator" 
@@ -9,4 +10,21 @@
 		android:layout_height="wrap_content" 
 		android:gravity="center"
 		android:text="seperator"/>
+		
+	<RadioGroup 
+		android:id="@+id/radioGroup_partial"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<RadioButton
+			android:id="@+id/radioButton_enable_partial"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/enable_partial" />
+		<RadioButton
+			android:id="@+id/radioButton_disable_partial"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/disable_partial" />
+	</RadioGroup>
+		
 </LinearLayout>

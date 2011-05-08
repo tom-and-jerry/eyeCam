@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -29,6 +30,7 @@ public class ControlBar extends LinearLayout {
 					,mAnimationLeft ,mAnimationRight;
 	private Handler mActivityHandler;	
 	private Orientation mLastKnowOrientation;
+	private LayoutInflater mInflater;
 	private MenuBubble mFilterMenu, mSettingsMenu;
 	
 	private OnClickListener mOnClickPlayPause = new OnClickListener() {
@@ -90,6 +92,8 @@ public class ControlBar extends LinearLayout {
 		mAnimationRight = AnimationUtils.loadAnimation(
 				context.getApplicationContext()
 				,R.anim.control_to_right_lanscape);
+		
+		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 	
 	public void enableOnClickListeners(){
@@ -109,9 +113,9 @@ public class ControlBar extends LinearLayout {
 	}
 
 	private void initSettingsMenu() {
-		SettingsMenu contentView = new SettingsMenu(getContext());
+		View contentView = mInflater.inflate(R.layout.settings_menu, null);
 		View anchor = findViewById(R.id.imageButton_Settings);
-		
+		Log.d(LOG_TAG, "contentView: "+contentView);
 		mSettingsMenu = new MenuBubble(anchor, contentView);
 		anchor.setOnClickListener(mOnClickSettings);
 	}
