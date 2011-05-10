@@ -2,7 +2,6 @@ package ch.hsr.eyecam.widget;
 
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -31,8 +30,6 @@ public class BubbleView extends FrameLayout {
 	private View mContentView;
 	private FrameLayout mFrame;
 	private Orientation mOrientation;
-	
-	private static final String LOG_TAG = "ch.hsr.eyecam.widget.BubbleView";
 	
 	/**
 	 * Constant for defining a central placed arrow of the bubble. The 
@@ -98,7 +95,7 @@ public class BubbleView extends FrameLayout {
 	}
 
 	public void updateView() {
-		onMeasure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+		measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 	}
 	/**
 	 * Sets the arrow style as defined in the ARROW_X constants. The view will
@@ -181,7 +178,6 @@ public class BubbleView extends FrameLayout {
 	public boolean onTouchEvent(MotionEvent event) {
 		float resultingX = event.getX();
 		float resultingY = event.getY();
-		Log.d(LOG_TAG, "Old x: " + event.getX() + " Old y: " + event.getY());
 		
 		switch(mOrientation){
 		case PORTRAIT:
@@ -195,7 +191,6 @@ public class BubbleView extends FrameLayout {
 		} 
 
 		event.setLocation(resultingX, resultingY);
-		Log.d(LOG_TAG, "New x: " + event.getX() + " New y: " + event.getY());
 		return mContentView.dispatchTouchEvent(event);
 	}
 	

@@ -36,7 +36,7 @@ public class ColorTransform {
 	 * This effect is used for testing reasons. It sets the color to
 	 * black instead of transforming it.
 	 */
-	public static final int COLOR_EFFECT_BLACK = 4;
+	public static final int COLOR_EFFECT_DALTONIZE = 4;
 
 	/**
 	 * Sets the effect to be used for the transformation. The default 

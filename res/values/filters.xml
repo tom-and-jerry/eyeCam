@@ -4,5 +4,5 @@
 	<string name="filter_simulate">simulation</string>
 	<string name="filter_false_colors">false colors</string>
 	<string name="filter_intensify">intensify color difference</string>
-	<string name="filter_black">black</string>
+	<string name="filter_daltonize">Daltonize</string>
 </resources>

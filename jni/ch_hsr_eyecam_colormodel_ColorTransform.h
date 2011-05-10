@@ -15,8 +15,8 @@ extern "C" {
 #define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_FALSE_COLORS 2L
 #undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_INTENSIFY_DIFFERENCE
 #define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_INTENSIFY_DIFFERENCE 3L
-#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_BLACK
-#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_BLACK 4L
+#undef ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_DALTONIZE
+#define ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_DALTONIZE 4L
 /*
  * Class:     ch_hsr_eyecam_colormodel_ColorTransform
  * Method:    setEffect

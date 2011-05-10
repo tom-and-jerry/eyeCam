@@ -45,9 +45,9 @@ public class ColorView extends View implements PreviewCallback {
 				if (y < 0) y = 0;
 				
 				int rgb = mBitmap.getPixel(x, y);
-				int r = (rgb & 0xf800) >> 11;
-				int g = (rgb & 0x07e0) >> 5;
-				int b = (rgb & 0x001f);
+				int r = (rgb & 0xff0000) >> 16;
+				int g = (rgb & 0x00ff00) >> 8;
+				int b = (rgb & 0x0000ff);
 				Log.d(LOG_TAG, "RGB Values from Screen: r: " + r + " g: " + g + " b: " + b);
 				showColorAt(mColorRecognizer.getColorAt(x, y), x, y);
 				return true;
