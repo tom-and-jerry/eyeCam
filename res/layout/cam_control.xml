@@ -11,7 +11,7 @@
     	android:layout_weight="5" />
     
     <ch.hsr.eyecam.view.ControlBar 
-    	android:id="@+id/conrolBar" 
+    	android:id="@+id/controlBar" 
     	android:layout_width="wrap_content" 
     	android:layout_height="match_parent" 
     	android:orientation="vertical"

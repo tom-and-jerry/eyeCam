@@ -30,7 +30,6 @@ public class ControlBar extends LinearLayout {
 					,mAnimationLeft ,mAnimationRight;
 	private Handler mActivityHandler;	
 	private Orientation mLastKnowOrientation;
-	private LayoutInflater mInflater;
 	private MenuBubble mFilterMenu, mSettingsMenu;
 	
 	private OnClickListener mOnClickPlayPause = new OnClickListener() {
@@ -92,31 +91,23 @@ public class ControlBar extends LinearLayout {
 				context.getApplicationContext()
 				,R.anim.control_to_right_lanscape);
 		
-		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 	
 	public void enableOnClickListeners(){
 		findViewById(R.id.imageButton_Pause).setOnClickListener(mOnClickPlayPause);
 		findViewById(R.id.imageButton_Light).setOnClickListener(mOnClickLight);
-		
-		initFilterMenu();
-		initSettingsMenu();
+		mFilterMenu = initMenu(R.id.imageButton_Filter,R.layout.filter_menu,mOnClickFilter);
+		mSettingsMenu = initMenu(R.id.imageButton_Settings,R.layout.settings_menu,mOnClickSettings);
 	}
 	
-	private void initFilterMenu() {
-		FilterMenu contentView = new FilterMenu(getContext());
-		View anchor = findViewById(R.id.imageButton_Filter);
-		
-		mFilterMenu = new MenuBubble(anchor, contentView);
-		anchor.setOnClickListener(mOnClickFilter);
-	}
-
-	private void initSettingsMenu() {
-		View contentView = mInflater.inflate(R.layout.settings_menu, null);
-		View anchor = findViewById(R.id.imageButton_Settings);
-		Log.d(LOG_TAG, "contentView: "+contentView);
-		mSettingsMenu = new MenuBubble(anchor, contentView);
-		anchor.setOnClickListener(mOnClickSettings);
+	private MenuBubble initMenu(int resIdAnchorButton,int resIdMenu, 
+			OnClickListener onClickListenr) {
+		LayoutInflater inflater = (LayoutInflater) getContext()
+			.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View contentView = inflater.inflate(resIdMenu, null);
+		View anchor = findViewById(resIdAnchorButton);
+		anchor.setOnClickListener(onClickListenr);
+		return new MenuBubble(anchor, contentView);
 	}
 
 	protected void inflateMenu(MenuBubble menu) {

@@ -5,4 +5,15 @@
 		<attr name="imgResFalse" format="reference"/>
 		<attr name="imgResDisabled" format="reference"/>
 	</declare-styleable>
+	
+	<declare-styleable name="PreferencesRadioGroup">
+		<attr name="defaultRadioButtonIndex" format="integer" />
+		<attr name="key" format="string"/>
+		<attr name="title" format="reference"/>
+		<attr name="enableSeperator" format="boolean" />
+	</declare-styleable>
+	
+	<declare-styleable name="PreferencesRadioButton">
+		<attr name="refValue" format="reference" />
+	</declare-styleable>
 </resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<integer name="partial_off">0</integer>
+	<integer name="partial_on">1</integer>
+</resources>

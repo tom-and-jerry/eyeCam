@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+ xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:eyecam="http://schemas.android.com/apk/res/ch.hsr.eyecam"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical">
+  
+  <ch.hsr.eyecam.widget.PreferencesRadioGroup
+		android:id="@+id/Filter"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		eyecam:title="@string/title_filter">
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/filter_none"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_none"
+			eyecam:refValue="@integer/filter_none"/>
+			
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/filter_simulate"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_simulate"
+			eyecam:refValue="@integer/filter_simulate"/>	
+			
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/filter_false_colors"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_false_colors"
+			eyecam:refValue="@integer/filter_false_colors"/>
+			
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/filter_intensify"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_intensify"
+			eyecam:refValue="@integer/filter_intensify"/>
+			
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/filter_daltonize"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_daltonize"
+			eyecam:refValue="@integer/filter_daltonize"/>
+	</ch.hsr.eyecam.widget.PreferencesRadioGroup>
+</LinearLayout>

@@ -4,6 +4,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
@@ -13,10 +15,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
+import ch.hsr.eyecam.colormodel.ColorTransform;
 import ch.hsr.eyecam.view.ColorView;
 import ch.hsr.eyecam.view.ControlBar;
 
@@ -68,6 +72,8 @@ public class EyeCamActivity extends Activity {
 	public final static int CAMERA_STOP_PREVIEW = 1;
 	public final static int CAMERA_LIGHT_OFF = 2;
 	public final static int CAMERA_LIGHT_ON = 3;
+	public final static String PREF_FILE_NAME = "ch.hsr.eyecam.preferences";
+	private OnSharedPreferenceChangeListener mPrefFilter;
 	
 	private void setCameraLight(String cameraFlashMode) {
 		Parameters parameters = mCamera.getParameters();
@@ -88,7 +94,7 @@ public class EyeCamActivity extends Activity {
 		setContentView(R.layout.main);
 		
 		mColorView = (ColorView) findViewById(R.id.cameraSurface);
-		mControlBar = (ControlBar) findViewById(R.id.conrolBar);
+		mControlBar = (ControlBar) findViewById(R.id.controlBar);
 		mControlBar.setActivityHandler(mHandler);
 		mControlBar.enableOnClickListeners();
 		mControlBar.rotate(Orientation.UNKNOW);
@@ -101,6 +107,7 @@ public class EyeCamActivity extends Activity {
 		
 		initOrientationEventListener();
 		mOrientationEventListener.enable();
+		registerChangeListener();	
 	}
 
 	private void initOrientationEventListener() {
@@ -275,5 +282,22 @@ public class EyeCamActivity extends Activity {
 		}
 		
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	private void registerChangeListener(){
+		mPrefFilter = new OnSharedPreferenceChangeListener(){
+			
+			@Override
+			public void onSharedPreferenceChanged(
+					SharedPreferences sharedPreferences, String key) {
+				Log.d(LOG_TAG, "Get key:"+key);
+				String filterKey = getResources().getString(R.string.title_filter);
+				if(key.equals(filterKey)) 
+					ColorTransform.setEffect(sharedPreferences.getInt(key, 0));
+			}
+			
+		};
+		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+		sPref.registerOnSharedPreferenceChangeListener(mPrefFilter);
 	}
 }
