@@ -58,7 +58,6 @@ public class ControlBar extends LinearLayout {
 		
 		@Override
 		public void onClick(View v) {
-			Log.d(LOG_TAG, "inflating filter menu");
 			inflateMenu(mFilterMenu);
 		}
 		
@@ -108,6 +107,10 @@ public class ControlBar extends LinearLayout {
 	protected void inflateMenu(MenuBubble menu) {
 		if (menu.isShowing()) menu.dismiss();
 		else menu.show();
+	}
+	
+	public boolean isMenuShowing() {
+		return mFilterMenu.isShowing();
 	}
 	
 	private void rotateChildViews(Animation animation){
@@ -162,5 +165,11 @@ public class ControlBar extends LinearLayout {
 	public void dismissMenu() {
 		mFilterMenu.dismiss();
 	}
-		
+
+	public void setCamIsPreviewing() {
+		StateImageButton pause = (StateImageButton)findViewById(R.id.imageButton_Pause);
+		pause.setOnClickListener(null);
+		pause.setChecked(false);
+		pause.setOnClickListener(mOnClickPlayPause);
+	}
 }

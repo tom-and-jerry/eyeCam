@@ -27,7 +27,7 @@ public class FilterMenu extends LinearLayout implements OnCheckedChangeListener{
 		addRadioButton(R.string.filter_simulate, ColorTransform.COLOR_EFFECT_SIMULATE);
 		addRadioButton(R.string.filter_false_colors, ColorTransform.COLOR_EFFECT_FALSE_COLORS);
 		addRadioButton(R.string.filter_intensify, ColorTransform.COLOR_EFFECT_INTENSIFY_DIFFERENCE);
-		addRadioButton(R.string.filter_black, ColorTransform.COLOR_EFFECT_BLACK);
+		addRadioButton(R.string.filter_daltonize, ColorTransform.COLOR_EFFECT_DALTONIZE);
 		
 		addView(mRadioGroup);
 	}

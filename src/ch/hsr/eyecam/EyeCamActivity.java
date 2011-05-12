@@ -15,6 +15,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import ch.hsr.eyecam.view.ColorView;
 import ch.hsr.eyecam.view.ControlBar;
@@ -87,7 +88,6 @@ public class EyeCamActivity extends Activity {
 		setContentView(R.layout.main);
 		
 		mColorView = (ColorView) findViewById(R.id.cameraSurface);
-		
 		mControlBar = (ControlBar) findViewById(R.id.conrolBar);
 		mControlBar.setActivityHandler(mHandler);
 		mControlBar.enableOnClickListeners();
@@ -165,6 +165,7 @@ public class EyeCamActivity extends Activity {
 		mColorView.setDataBuffer(mCallBackBuffer, optSize.width, optSize.height);
 		mCamera.setParameters(parameters);
 		startCameraPreview();
+		mControlBar.setCamIsPreviewing();
 	}
 
 	private Size getOptimalSize(List<Size> sizeList){
@@ -192,7 +193,7 @@ public class EyeCamActivity extends Activity {
 			mControlBar.enableLight(false);
 		}
 		else if(parameters.getSupportedFlashModes().contains(Camera.Parameters.FLASH_MODE_TORCH))
-			mControlBar.enableLight(false);
+			mControlBar.enableLight(true);
 	}
 
 	private void startCameraPreview() {
@@ -263,5 +264,15 @@ public class EyeCamActivity extends Activity {
 	@Override
 	public boolean onSearchRequested(){
 		return false;
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (mControlBar.isMenuShowing()){
+			mControlBar.dismissMenu();
+			return true;
+		}
+		
+		return super.onKeyDown(keyCode, event);
 	}
 }
