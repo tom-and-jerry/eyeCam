@@ -13,7 +13,7 @@ public class PreferencesRadioButton extends RadioButton {
 		super(context, attrs);
 		TypedArray typedArray = context.obtainStyledAttributes(attrs,
 				R.styleable.PreferencesRadioButton);
-		mValue = typedArray.getInt(R.styleable.PreferencesRadioButton_refValue, 0);
+		mValue = typedArray.getInt(R.styleable.PreferencesRadioButton_intValue, 0);
 	}
 	
 	public int getValue(){

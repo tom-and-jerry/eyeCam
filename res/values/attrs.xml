@@ -14,6 +14,6 @@
 	</declare-styleable>
 	
 	<declare-styleable name="PreferencesRadioButton">
-		<attr name="refValue" format="reference" />
+		<attr name="intValue" format="integer" />
 	</declare-styleable>
 </resources>

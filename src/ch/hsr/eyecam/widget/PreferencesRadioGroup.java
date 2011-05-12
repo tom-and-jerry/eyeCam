@@ -30,7 +30,7 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 				R.styleable.PreferencesRadioGroup);
 		
 		mTitle = getString(R.styleable.PreferencesRadioGroup_title
-				, R.string.no_title_set);
+				, R.string.setting_no_title);
 		
 		mEnableSeperator = mTypedArray.getBoolean(
 				R.styleable.PreferencesRadioGroup_enableSeperator, true);

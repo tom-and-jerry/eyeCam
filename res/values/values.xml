@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="filter_key">key_filter</string>
+	<integer name="filter_none">0</integer>
+	<integer name="filter_simulate">1</integer>
+	<integer name="filter_false_colors">2</integer>
+	<integer name="filter_intensify">3</integer>
+	<integer name="filter_daltonize">4</integer>
+	
+	<string name="partial_key">key_partial</string>
+	<integer name="partial_off">0</integer>
+	<integer name="partial_on">1</integer>
+	
+	<string name="menu_size_key">key_menusize</string>
+	<dimen name="menu_size_small">200pt</dimen>
+	<dimen name="menu_size_medium">300pt</dimen>
+	<dimen name="menu_size_large">400pt</dimen>
+
+	<string name="text_size_key">key_textsize</string>
+	<dimen name="text_size_small">5pt</dimen>
+	<dimen name="text_size_medium">7pt</dimen>
+	<dimen name="text_size_large">9pt</dimen>
+</resources>

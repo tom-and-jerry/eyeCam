@@ -10,50 +10,52 @@
 		android:id="@+id/Partial"
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
-		eyecam:title="@string/title_partial">
+		eyecam:key="@string/partial_key"
+		eyecam:title="@string/setting_partial_title">
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/radioButton_enable_partial"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:text="@string/enable_partial"
-			eyecam:refValue="@integer/partial_on"/>
+			android:text="@string/setting_partial_enable"
+			eyecam:intValue="@integer/partial_on"/>
 			
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/radioButton_disable_partial"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:text="@string/disable_partial"
-			eyecam:refValue="@integer/partial_off"/>	
+			android:text="@string/setting_partial_disable"
+			eyecam:intValue="@integer/partial_off"/>	
 	</ch.hsr.eyecam.widget.PreferencesRadioGroup>
 	
-	<!-- <ch.hsr.eyecam.widget.PreferencesRadioGroup
+	<ch.hsr.eyecam.widget.PreferencesRadioGroup
 		android:id="@+id/Text_Size"
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
-		eyecam:title="@string/title_text_size">
+		eyecam:key="@string/text_size_key"
+		eyecam:title="@string/setting_textsize_title">
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/text_size_small"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:textSize="@dimen/text_small"
-			android:text="@string/size_small"
-			eyecam:refValue="@dimen/text_small"/>
+			android:textSize="@dimen/text_size_small"
+			android:text="@string/setting_size_small"
+			eyecam:intValue="@dimen/text_size_small"/>
 			
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/text_size_medium"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:textSize="@dimen/text_medium"
-			android:text="@string/size_medium"
-			eyecam:refValue="@dimen/text_medium"/>
+			android:textSize="@dimen/text_size_medium"
+			android:text="@string/setting_size_medium"
+			eyecam:intValue="@dimen/text_size_medium"/>
 			
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/text_size_large"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:textSize="@dimen/text_large"
-			android:text="@string/size_large"
-			eyecam:refValue="@dimen/text_large"/>
+			android:textSize="@dimen/text_size_large"
+			android:text="@string/setting_size_large"
+			eyecam:intValue="@dimen/text_size_large"/>
 				
 	</ch.hsr.eyecam.widget.PreferencesRadioGroup>
 	
@@ -61,29 +63,28 @@
 		android:id="@+id/Text_Size"
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
-		eyecam:title="@string/title_menu_size">
+		eyecam:key="@string/menu_size_key"
+		eyecam:title="@string/setting_menusize_title">
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/menu_size_small"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:text="@string/size_small"
-			eyecam:refValue="@dimen/text_small"/>
+			android:text="@string/setting_size_small"
+			eyecam:intValue="@dimen/menu_size_small"/>
 			
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/menu_size_medium"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:text="@string/size_medium"
-			eyecam:refValue="@dimen/text_medium"/>
+			android:text="@string/setting_size_medium"
+			eyecam:intValue="@dimen/menu_size_medium"/>
 			
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/menu_size_large"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:text="@string/size_large"
-			eyecam:refValue="@dimen/text_large"/>
+			android:text="@string/setting_size_large"
+			eyecam:intValue="@dimen/menu_size_large"/>
 				
 	</ch.hsr.eyecam.widget.PreferencesRadioGroup>-->
-	
-	
 </LinearLayout>

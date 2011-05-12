@@ -16,34 +16,34 @@
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:text="@string/filter_none"
-			eyecam:refValue="@integer/filter_none"/>
+			eyecam:intValue="@integer/filter_none"/>
 			
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/filter_simulate"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:text="@string/filter_simulate"
-			eyecam:refValue="@integer/filter_simulate"/>	
+			eyecam:intValue="@integer/filter_simulate"/>	
 			
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/filter_false_colors"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:text="@string/filter_false_colors"
-			eyecam:refValue="@integer/filter_false_colors"/>
+			eyecam:intValue="@integer/filter_false_colors"/>
 			
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/filter_intensify"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:text="@string/filter_intensify"
-			eyecam:refValue="@integer/filter_intensify"/>
+			eyecam:intValue="@integer/filter_intensify"/>
 			
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/filter_daltonize"
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:text="@string/filter_daltonize"
-			eyecam:refValue="@integer/filter_daltonize"/>
+			eyecam:intValue="@integer/filter_daltonize"/>
 	</ch.hsr.eyecam.widget.PreferencesRadioGroup>
 </LinearLayout>

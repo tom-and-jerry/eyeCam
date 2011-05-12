@@ -1,4 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">eyeCam</string>
+    
+    <string name="color_black">black</string>
+    <string name="color_grey">grey</string>
+    <string name="color_white">white</string>
+    <string name="color_red">red</string>
+    <string name="color_brown">brown</string>
+    <string name="color_purple">purple</string>
+    <string name="color_pink">pink</string>
+    <string name="color_orange">orange</string>
+    <string name="color_yellow">yellow</string>
+    <string name="color_green">green</string>
+    <string name="color_blue">blue</string>
+    <string name="color_turquoise">turquoise</string>
+    <string name="color_unknown">unknown</string>
+    
+    <string name="title_filter">Filter</string>
+	<string name="filter_none">none</string>
+	<string name="filter_simulate">simulation</string>
+	<string name="filter_false_colors">false colors</string>
+	<string name="filter_intensify">intensify color difference</string>
+	<string name="filter_daltonize">Daltonize</string>
+	
+	<string name="setting_partial_title">Partial</string>
+	<string name="setting_partial_enable">on</string>
+	<string name="setting_partial_disable">off</string>
+
+	<string name="setting_textsize_title">Text size</string>
+	<string name="setting_menusize_title">Menu size</string>
+	<string name="setting_size_small">small</string>
+	<string name="setting_size_medium">medium</string>
+	<string name="setting_size_large">large</string>
+	
+	<string name="setting_no_title">no title</string>
+	<string name="setting_no_key">no key</string>
 </resources>
