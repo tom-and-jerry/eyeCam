@@ -7,7 +7,7 @@ import android.widget.RadioButton;
 import ch.hsr.eyecam.R;
 
 public class PreferencesRadioButton extends RadioButton {
-	private int mValue =0;
+	private int mValue;
 
 	public PreferencesRadioButton(Context context, AttributeSet attrs) {
 		super(context, attrs);

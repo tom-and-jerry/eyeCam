@@ -12,12 +12,15 @@
 	<integer name="partial_on">1</integer>
 	
 	<string name="menu_size_key">key_menusize</string>
-	<dimen name="menu_size_small">200pt</dimen>
-	<dimen name="menu_size_medium">300pt</dimen>
-	<dimen name="menu_size_large">400pt</dimen>
+	<integer name="menu_size_small">70</integer>
+	<integer name="menu_size_medium">90</integer>
+	<integer name="menu_size_large">110</integer>
 
 	<string name="text_size_key">key_textsize</string>
-	<dimen name="text_size_small">5pt</dimen>
-	<dimen name="text_size_medium">7pt</dimen>
-	<dimen name="text_size_large">9pt</dimen>
+	<dimen name="text_size_small_pt">5pt</dimen>
+	<integer name="text_size_small">5</integer>
+	<dimen name="text_size_medium_pt">7pt</dimen>
+	<integer name="text_size_medium">7</integer>
+	<dimen name="text_size_large_pt">9pt</dimen>
+	<integer name="text_size_large">9</integer>
 </resources>

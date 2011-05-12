@@ -10,7 +10,10 @@
 		android:id="@+id/Filter"
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
+		eyecam:defaultValue="@integer/filter_none"
+		eyecam:key="@string/filter_key"
 		eyecam:title="@string/title_filter">
+		
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
 			android:id="@+id/filter_none"
 			android:layout_height="wrap_content"

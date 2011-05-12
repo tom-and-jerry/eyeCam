@@ -20,7 +20,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
-import ch.hsr.eyecam.colormodel.ColorTransform;
 import ch.hsr.eyecam.view.ColorView;
 import ch.hsr.eyecam.view.ControlBar;
 
@@ -140,18 +139,37 @@ public class EyeCamActivity extends Activity {
 
 	private void registerPreferenceChangeListener(){
 		mPrefFilter = new OnSharedPreferenceChangeListener(){
-			String mFilterKey = getResources().getString(R.string.title_filter);
+			String mFilterKey = getResources().getString(R.string.filter_key);
+			String mMenuSizeKey = getResources().getString(R.string.menu_size_key);
+			String mTextSizeKey = getResources().getString(R.string.text_size_key);
+			String mPartialKey = getResources().getString(R.string.partial_key);
+			
+			private int mDefFilter = getResources().getInteger(R.integer.filter_none);
+			private int mDefTextSize = getResources().getInteger(R.integer.text_size_medium);
+			private int mDefMenuSize = getResources().getInteger(R.integer.menu_size_medium);
+			private int mPartialOff = getResources().getInteger(R.integer.partial_off);
+			private int mPartialOn = getResources().getInteger(R.integer.partial_on);
 			
 			@Override
 			public void onSharedPreferenceChanged(SharedPreferences shPref, String key) {
 				Log.d(LOG_TAG, "Preferences changed for key: " + key);
-				if(key.equals(mFilterKey)) 
-					ColorTransform.setEffect(shPref.getInt(key, 0));
+				
+				if(key.equals(mFilterKey)){
+					mColorView.setEffect(shPref.getInt(key, mDefFilter));
+				} else if(key.equals(mTextSizeKey)){
+					mColorView.setPopupTextSize(shPref.getInt(key, mDefTextSize));
+				} else if(key.equals(mMenuSizeKey)){
+					mControlBar.setMenuSize(shPref.getInt(key, mDefMenuSize));
+				} else if(key.equals(mPartialKey)){
+					if (shPref.getInt(key, mPartialOff) == mPartialOn)
+						mColorView.enablePartialEffects(true);
+					else mColorView.enablePartialEffects(false);
+				}
 			}
 			
 		};
 		
-		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
 		shPref.registerOnSharedPreferenceChangeListener(mPrefFilter);
 	}
 

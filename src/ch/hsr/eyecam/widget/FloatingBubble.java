@@ -2,6 +2,7 @@ package ch.hsr.eyecam.widget;
 
 import ch.hsr.eyecam.Orientation;
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -95,5 +96,14 @@ public class FloatingBubble extends PopupWindow {
 		if (isShowing()) dismiss();
 		mOrientation = orientation;
 		mBubbleView.setOrientation(orientation);
+	}
+
+	/**
+	 * 
+	 * @param size in pt
+	 */
+	public void setTextSize(int size) {
+		mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PT, size);
+		mBubbleView.updateView();
 	}
 }

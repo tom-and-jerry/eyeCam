@@ -29,6 +29,7 @@ public class ColorView extends View implements PreviewCallback {
 	private Bitmap mBitmap;
 	private int mPreviewHeight;
 	private int mPreviewWidth;
+	private boolean mPartialEnabled;
 	private byte[] mDataBuffer;
 	
 	private ColorRecognizer mColorRecognizer;
@@ -61,11 +62,13 @@ public class ColorView extends View implements PreviewCallback {
 	public ColorView(Context context) {
 		super(context);
 		initPopup();
+		mPartialEnabled = false;
 	}
 
 	public ColorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initPopup();
+		mPartialEnabled = false;
 	}
 
 	private void initBitmap() {
@@ -136,5 +139,22 @@ public class ColorView extends View implements PreviewCallback {
 
 	public void dismissPopup() {
 		mPopup.dismiss();
+	}
+
+	/**
+	 * 
+	 * @param size in pt
+	 */
+	public void setPopupTextSize(int size) {
+		mPopup.setTextSize(size);
+	}
+	
+	public void enablePartialEffects(boolean partialEnabled){
+		mPartialEnabled = partialEnabled;
+	}
+
+	public void setEffect(int effect) {
+		if (mPartialEnabled) ColorTransform.setPartialEffect(effect);
+		else ColorTransform.setEffect(effect);
 	}
 }

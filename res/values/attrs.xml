@@ -7,7 +7,7 @@
 	</declare-styleable>
 	
 	<declare-styleable name="PreferencesRadioGroup">
-		<attr name="defaultRadioButtonIndex" format="integer" />
+		<attr name="defaultValue" format="integer" />
 		<attr name="key" format="string"/>
 		<attr name="title" format="reference"/>
 		<attr name="enableSeperator" format="boolean" />

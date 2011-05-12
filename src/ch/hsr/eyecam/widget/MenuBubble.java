@@ -2,6 +2,7 @@ package ch.hsr.eyecam.widget;
 
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.R;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
@@ -16,8 +17,8 @@ public class MenuBubble extends PopupWindow{
 	private View mContentView;
 	private ScrollView mScrollView;
 	
-	private static int MENU_WIDTH = 200;
-	private static int MENU_HEIGHT = 200;
+	private int mWidth;
+	private int mHeight;
 	private static int OFFSET = 20;
 
 	public MenuBubble(View anchor) {
@@ -28,8 +29,8 @@ public class MenuBubble extends PopupWindow{
 		setTouchable(true);
 		setAnimationStyle(android.R.style.Animation_Dialog);
 		setBackgroundDrawable(null);
-		setWidth(MENU_WIDTH);
-		setHeight(MENU_HEIGHT);
+		setWidth(200);
+		setHeight(200);
 	}
 	
 	public MenuBubble(View anchor, View contentView) {
@@ -60,10 +61,34 @@ public class MenuBubble extends PopupWindow{
 		super.setContentView(mBubbleView);
 	}
 
+	/**
+	 * 
+	 * @param width in pt
+	 * @param height in pt
+	 */
 	public void setSize(int width, int height){
-		MENU_HEIGHT = height;
-		MENU_WIDTH = width;
-		OFFSET = width / 10;
+		int iWidth = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, 
+				width, mAnchorView.getContext().getResources().getDisplayMetrics());
+		int iHeight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, 
+				height, mAnchorView.getContext().getResources().getDisplayMetrics());
+		
+		boolean wasShowing = isShowing();
+		dismiss();
+		setWidth(iWidth);
+		setHeight(iHeight);
+		if (wasShowing) show();
+	}
+	
+	@Override
+	public void setHeight(int height) {
+		mHeight= height;
+		super.setHeight(height);
+	}
+	
+	@Override
+	public void setWidth(int width) {
+		mWidth = width;
+		super.setWidth(width);
 	}
 	
 	public void setContentOrientation(Orientation orientation){
@@ -74,7 +99,7 @@ public class MenuBubble extends PopupWindow{
 	public void show(){
 		mAnchorView.getLocationOnScreen(mLocation);
 		showAtLocation(mAnchorView, Gravity.NO_GRAVITY, 
-				mLocation[0]-MENU_WIDTH, 
-				mLocation[1]-MENU_HEIGHT+mAnchorView.getHeight()+OFFSET);
+				mLocation[0]-mWidth, 
+				mLocation[1]-mHeight+mAnchorView.getHeight()+OFFSET);
 	}
 }

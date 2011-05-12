@@ -58,6 +58,7 @@ public class ControlBar extends LinearLayout {
 	private OnClickListener mOnClickFilter = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			mSettingsMenu.dismiss();
 			inflateMenu(mFilterMenu);
 		}		
 	};
@@ -66,7 +67,7 @@ public class ControlBar extends LinearLayout {
 		
 		@Override
 		public void onClick(View v) {
-			Log.d(LOG_TAG, "inflating filter menu");
+			mFilterMenu.dismiss();
 			inflateMenu(mSettingsMenu);			
 		}
 	};
@@ -116,7 +117,7 @@ public class ControlBar extends LinearLayout {
 	}
 	
 	public boolean isMenuShowing() {
-		return mFilterMenu.isShowing();
+		return mFilterMenu.isShowing() | mSettingsMenu.isShowing();
 	}
 	
 	private void rotateChildViews(Animation animation){
@@ -180,6 +181,11 @@ public class ControlBar extends LinearLayout {
 		pause.setOnClickListener(null);
 		pause.setChecked(false);
 		pause.setOnClickListener(mOnClickPlayPause);
+	}
+
+	public void setMenuSize(int size) {
+		mFilterMenu.setSize(size, size);
+		mSettingsMenu.setSize(size, size);
 	}
 
 }
