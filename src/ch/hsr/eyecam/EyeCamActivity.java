@@ -92,6 +92,7 @@ public class EyeCamActivity extends Activity {
 		mControlBar.setActivityHandler(mHandler);
 		mControlBar.enableOnClickListeners();
 		mControlBar.rotate(Orientation.UNKNOW);
+		
 	
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		

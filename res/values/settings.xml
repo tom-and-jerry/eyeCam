@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="enable_partial">partial</string>
+	<string name="disable_partial">the hole pictures</string>
+	<string name="text_size_small">text size small</string>
+	<string name="text_size_medium">text size medium</string>
+	<string name="text_size_large">text size large</string>
+	<string name="menu_size_small">menu size small</string>
+	<string name="menu_size_medium">menu size medium</string>
+	<string name="menu_size_large">menu size large</string>
+</resources>

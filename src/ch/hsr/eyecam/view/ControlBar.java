@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -29,7 +30,8 @@ public class ControlBar extends LinearLayout {
 					,mAnimationLeft ,mAnimationRight;
 	private Handler mActivityHandler;	
 	private Orientation mLastKnowOrientation;
-	private MenuBubble mFilterMenu;
+	private LayoutInflater mInflater;
+	private MenuBubble mFilterMenu, mSettingsMenu;
 	
 	private OnClickListener mOnClickPlayPause = new OnClickListener() {
 		@Override
@@ -55,12 +57,19 @@ public class ControlBar extends LinearLayout {
 	};
 	
 	private OnClickListener mOnClickFilter = new OnClickListener() {
-		
 		@Override
 		public void onClick(View v) {
 			inflateMenu(mFilterMenu);
-		}
+		}		
+	};
+	
+	private OnClickListener mOnClickSettings = new OnClickListener() {
 		
+		@Override
+		public void onClick(View v) {
+			Log.d(LOG_TAG, "inflating filter menu");
+			inflateMenu(mSettingsMenu);			
+		}
 	};
 
 	private final static String LOG_TAG = "ch.hsr.eyecam.view.ControlBar";
@@ -82,6 +91,8 @@ public class ControlBar extends LinearLayout {
 		mAnimationRight = AnimationUtils.loadAnimation(
 				context.getApplicationContext()
 				,R.anim.control_to_right_lanscape);
+		
+		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 	
 	public void enableOnClickListeners(){
@@ -89,7 +100,7 @@ public class ControlBar extends LinearLayout {
 		findViewById(R.id.imageButton_Light).setOnClickListener(mOnClickLight);
 		
 		initFilterMenu();
-		initPreferencesMenu();
+		initSettingsMenu();
 	}
 	
 	private void initFilterMenu() {
@@ -100,8 +111,12 @@ public class ControlBar extends LinearLayout {
 		anchor.setOnClickListener(mOnClickFilter);
 	}
 
-	private void initPreferencesMenu() {
-		//TODO
+	private void initSettingsMenu() {
+		View contentView = mInflater.inflate(R.layout.settings_menu, null);
+		View anchor = findViewById(R.id.imageButton_Settings);
+		Log.d(LOG_TAG, "contentView: "+contentView);
+		mSettingsMenu = new MenuBubble(anchor, contentView);
+		anchor.setOnClickListener(mOnClickSettings);
 	}
 
 	protected void inflateMenu(MenuBubble menu) {
@@ -120,6 +135,7 @@ public class ControlBar extends LinearLayout {
 	
 	public void rotate(Orientation orientation){
 		mFilterMenu.setContentOrientation(orientation);
+		mSettingsMenu.setContentOrientation(orientation);
 		
 		if(mLastKnowOrientation == Orientation.LANDSCAPE_LEFT
 			&& orientation == Orientation.PORTRAIT)
@@ -164,7 +180,9 @@ public class ControlBar extends LinearLayout {
 
 	public void dismissMenu() {
 		mFilterMenu.dismiss();
+		mSettingsMenu.dismiss();
 	}
+
 
 	public void setCamIsPreviewing() {
 		StateImageButton pause = (StateImageButton)findViewById(R.id.imageButton_Pause);
@@ -172,4 +190,5 @@ public class ControlBar extends LinearLayout {
 		pause.setChecked(false);
 		pause.setOnClickListener(mOnClickPlayPause);
 	}
+
 }
