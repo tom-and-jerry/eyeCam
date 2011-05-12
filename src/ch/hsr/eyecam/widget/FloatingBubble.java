@@ -67,16 +67,16 @@ public class FloatingBubble extends PopupWindow {
 		
 		switch (mOrientation){
 		case LANDSCAPE_LEFT:
-			transX = mBubbleView.getWidth() /2;
-			transY = mBubbleView.getHeight() + offset;
+			transX = mBubbleView.getMeasuredWidth() /2;
+			transY = mBubbleView.getMeasuredHeight() + offset;
 			break;
 		case LANDSCAPE_RIGHT:
-			transX = mBubbleView.getWidth() /2;
+			transX = mBubbleView.getMeasuredWidth() /2;
 			transY = -offset;
 			break;
 		case PORTRAIT:
-			transX = mBubbleView.getHeight() + offset;
-			transY = mBubbleView.getWidth() /2;
+			transX = mBubbleView.getMeasuredWidth() + offset;
+			transY = mBubbleView.getMeasuredHeight() /2;
 			break;
 		}
 		

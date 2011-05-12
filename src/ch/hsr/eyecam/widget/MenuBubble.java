@@ -2,10 +2,9 @@ package ch.hsr.eyecam.widget;
 
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.R;
-import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.View.OnFocusChangeListener;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 
@@ -16,26 +15,20 @@ public class MenuBubble extends PopupWindow{
 	private int[] mLocation;
 	private View mContentView;
 	private ScrollView mScrollView;
-	private ImageView mArrow;
-	private int mArrowWidth;
 	
-	private static final int MENU_WIDTH = 250;
-	private static final int MENU_HEIGHT = 250;
+	private static int MENU_WIDTH = 200;
+	private static int MENU_HEIGHT = 200;
+	private static int OFFSET = 20;
 
 	public MenuBubble(View anchor) {
 		super(anchor.getContext());
-		Context context  = anchor.getContext();
 		mAnchorView = anchor;
 		mLocation = new int[2];
 		
-		
-		mArrow = new ImageView(context);
-		mArrow.setBackgroundResource(R.drawable.arrow_right);
-		mArrowWidth = mArrow.getWidth();
-		
+		setTouchable(true);
 		setAnimationStyle(android.R.style.Animation_Dialog);
 		setBackgroundDrawable(null);
-		setWidth(MENU_WIDTH+mArrowWidth);
+		setWidth(MENU_WIDTH);
 		setHeight(MENU_HEIGHT);
 	}
 	
@@ -51,15 +44,28 @@ public class MenuBubble extends PopupWindow{
 		mScrollView = new ScrollView(contentView.getContext());
 		mScrollView.setFillViewport(false);
 		mScrollView.setVerticalScrollBarEnabled(true);
+		mScrollView.setScrollbarFadingEnabled(false);
 		mScrollView.addView(mContentView);
 		
 		mBubbleView = new BubbleView(mScrollView);
 		mBubbleView.setOrientation(Orientation.PORTRAIT);
 		mBubbleView.setArrowStyle(R.drawable.popup_arrow_none);
+		mBubbleView.setOnFocusChangeListener(new OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (!hasFocus) dismiss();
+			}
+		});
 		
 		super.setContentView(mBubbleView);
 	}
 
+	public void setSize(int width, int height){
+		MENU_HEIGHT = height;
+		MENU_WIDTH = width;
+		OFFSET = width / 10;
+	}
+	
 	public void setContentOrientation(Orientation orientation){
 		mBubbleView.setOrientation(orientation);
 		if (isShowing()) mBubbleView.updateView();
@@ -69,6 +75,6 @@ public class MenuBubble extends PopupWindow{
 		mAnchorView.getLocationOnScreen(mLocation);
 		showAtLocation(mAnchorView, Gravity.NO_GRAVITY, 
 				mLocation[0]-MENU_WIDTH, 
-				mLocation[1]-MENU_HEIGHT+mAnchorView.getHeight()+10);
+				mLocation[1]-MENU_HEIGHT+mAnchorView.getHeight()+OFFSET);
 	}
 }

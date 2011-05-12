@@ -63,22 +63,23 @@ public class Color {
 		int min = Math.min(Math.min(r, g), b);
 		
 		float chroma = max - min;
-		float luma = (max + min)/512.0f;
+		float luma = (max + min)/510.0f;
 		hsl[2] = luma;
 		
-		if (max == r) hsl[0] = 60*((g-b)/chroma)%6;
+		if (max == r) hsl[0] = 60*((g-b)/chroma);
 		else if (max == g) hsl[0] = 60*(((b-r)/chroma)+2);
 		else if (max == b) hsl[0] = 60*(((r-g)/chroma)+4);
 		
-		if (chroma != 0) hsl[1] = chroma/(1-Math.abs(2*luma-1));
+		if (chroma != 0) hsl[1] = chroma/(255.0f*(1-Math.abs(2*luma-1)));
 		Log.d(LOG_TAG , "converted hsl Values: h: " + hsl[0] + " s: " + hsl[1] + " l: " + hsl[2]);
 		return hslToColor(hsl);
 	}
 	
 	public static int hslToColor(float[] hsl){
 		if (hsl[2] < 0.2) return BLACK;
-		else if (hsl[2] > 0.85) return WHITE;
-		else if (hsl[2] > 0.7) return GREY;
+		else if (hsl[2] > 0.8) return WHITE;
+		
+		if (hsl[1] < 0.2) return GREY;
 		int key = (int)hsl[0];
 		
 		Log.d(LOG_TAG, "colorKey: " + key);

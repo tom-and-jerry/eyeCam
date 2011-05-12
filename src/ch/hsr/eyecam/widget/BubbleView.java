@@ -95,7 +95,7 @@ public class BubbleView extends FrameLayout {
 	}
 
 	public void updateView() {
-		measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+		onMeasure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 	}
 	/**
 	 * Sets the arrow style as defined in the ARROW_X constants. The view will
