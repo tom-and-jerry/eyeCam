@@ -1,5 +1,6 @@
 package ch.hsr.eyecam.view;
 
+import ch.hsr.eyecam.EyeCamActivity;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
@@ -156,5 +157,10 @@ public class ColorView extends View implements PreviewCallback {
 	public void setEffect(int effect) {
 		if (mPartialEnabled) ColorTransform.setPartialEffect(effect);
 		else ColorTransform.setEffect(effect);
+		if(!EyeCamActivity.IS_PREVIEWING){
+			Log.d(LOG_TAG,"Effect on Previewimage");
+			ColorTransform.transformImageToBitmap(mDataBuffer, mPreviewWidth, mPreviewHeight, mBitmap);
+			invalidate();
+		}
 	}
 }

@@ -5,7 +5,9 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
@@ -71,6 +73,8 @@ public class ControlBar extends LinearLayout {
 			inflateMenu(mSettingsMenu);			
 		}
 	};
+	
+	
 
 	private final static String LOG_TAG = "ch.hsr.eyecam.view.ControlBar";
 	
@@ -91,12 +95,12 @@ public class ControlBar extends LinearLayout {
 		mAnimationRight = AnimationUtils.loadAnimation(
 				context.getApplicationContext()
 				,R.anim.control_to_right_lanscape);
-		
 	}
 	
 	public void enableOnClickListeners(){
 		findViewById(R.id.imageButton_Pause).setOnClickListener(mOnClickPlayPause);
 		findViewById(R.id.imageButton_Light).setOnClickListener(mOnClickLight);
+		if(findViewById(R.id.placeHolder)==null)Log.d(LOG_TAG, "AAAAAAAAAA");
 		mFilterMenu = initMenu(R.id.imageButton_Filter,R.layout.filter_menu,mOnClickFilter);
 		mSettingsMenu = initMenu(R.id.imageButton_Settings,R.layout.settings_menu,mOnClickSettings);
 	}

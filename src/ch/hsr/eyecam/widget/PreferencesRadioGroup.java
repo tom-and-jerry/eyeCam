@@ -56,6 +56,8 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 	private boolean hasKey(int ResId, int resDefaultValu) {
 		return resDefaultValu == NO_KEY	&& mTypedArray.getString(ResId) == null;
 	}
+	
+	
 
 	@Override
 	protected void onFinishInflate() {
@@ -72,7 +74,7 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 			button = (PreferencesRadioButton)getChildAt(i);
 			Log.d(LOG_TAG, "button: " + button.getText() + " containing value: " + button.getValue());
 			if (button.getValue() == value) {
-				button.toggle();
+				button.performClick();
 				Log.d(LOG_TAG, "successfully set value on: " + button.getText());
 				return;
 			}
@@ -87,7 +89,7 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 		
 		SharedPreferences.Editor editor = mSharedPreferences.edit();
 		editor.putInt(mKey, button.getValue());
-		if(!editor.commit()) Log.d(LOG_TAG,"Preferences couldn't been committed!");
+		if(!editor.commit()) Log.d(LOG_TAG,"Preferences "+mKey+ " couldn't been committed!");
 	}
 	
 	private class Seperator extends TextView{
