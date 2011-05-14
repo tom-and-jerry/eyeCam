@@ -135,6 +135,12 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect
 JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setPartialEffect
   (JNIEnv * env, jclass cl, jint effect){
 	Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect(env,cl,effect);
+
+	if (	effect == COLOR_EFFECT_NONE ||
+				effect == COLOR_EFFECT_SIMULATE ||
+				effect == COLOR_EFFECT_DALTONIZE)
+			return;
+
 	partialEffectPtr = effectPtr;
 	effectPtr = &partialEffect;
 }

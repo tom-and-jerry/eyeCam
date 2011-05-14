@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
@@ -43,7 +44,6 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 				R.styleable.PreferencesRadioGroup_defaultValue, 0);
 		
 		if(mEnableSeperator)addView(new Seperator(context,mTitle));
-		setOnCheckedChangeListener(this);
 	}
 	
 	private String getString(int ResId, int resDefaultValue){
@@ -66,6 +66,8 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 	}
 	
 	private void initCheckedValue() {
+		setOnCheckedChangeListener(this);
+		
 		PreferencesRadioButton button;
 		int value = mSharedPreferences.getInt(mKey, mDefaultValue);
 		Log.d(LOG_TAG, "trying to set value: " + value);
@@ -90,6 +92,9 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 		SharedPreferences.Editor editor = mSharedPreferences.edit();
 		editor.putInt(mKey, button.getValue());
 		if(!editor.commit()) Log.d(LOG_TAG,"Preferences "+mKey+ " couldn't been committed!");
+		
+		ViewGroup vg = (ViewGroup) getParent();
+		if (vg != null) vg.invalidate();
 	}
 	
 	private class Seperator extends TextView{
