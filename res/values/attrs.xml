@@ -3,5 +3,17 @@
 	<declare-styleable name="StateImageButton">
 		<attr name="imgResTrue" format="reference" />
 		<attr name="imgResFalse" format="reference"/>
+		<attr name="imgResDisabled" format="reference"/>
+	</declare-styleable>
+	
+	<declare-styleable name="PreferencesRadioGroup">
+		<attr name="defaultValue" format="integer" />
+		<attr name="key" format="string"/>
+		<attr name="title" format="reference"/>
+		<attr name="enableSeperator" format="boolean" />
+	</declare-styleable>
+	
+	<declare-styleable name="PreferencesRadioButton">
+		<attr name="intValue" format="integer" />
 	</declare-styleable>
 </resources>

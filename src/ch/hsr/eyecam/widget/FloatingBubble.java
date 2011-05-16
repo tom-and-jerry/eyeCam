@@ -1,7 +1,8 @@
-package ch.hsr.eyecam.view;
+package ch.hsr.eyecam.widget;
 
 import ch.hsr.eyecam.Orientation;
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -33,6 +34,7 @@ public class FloatingBubble extends PopupWindow {
 		initContentView(context);
 		setAnimationStyle(android.R.style.Animation_Dialog);
 		
+		setTouchable(false);
 		setClippingEnabled(false);
 		setBackgroundDrawable(null);
 		setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
@@ -59,22 +61,23 @@ public class FloatingBubble extends PopupWindow {
 		dismiss();
 		
 		mTextView.setText(res);
+		mBubbleView.updateView();
 		int transX = 0;
 		int transY = 0;
 		int offset = 0;
 		
 		switch (mOrientation){
 		case LANDSCAPE_LEFT:
-			transX = mBubbleView.getWidth() /2;
-			transY = mBubbleView.getHeight() + offset;
+			transX = mBubbleView.getMeasuredWidth() /2;
+			transY = mBubbleView.getMeasuredHeight() + offset;
 			break;
 		case LANDSCAPE_RIGHT:
-			transX = mBubbleView.getWidth() /2;
+			transX = mBubbleView.getMeasuredWidth() /2;
 			transY = -offset;
 			break;
 		case PORTRAIT:
-			transX = mBubbleView.getHeight() + offset;
-			transY = mBubbleView.getWidth() /2;
+			transX = mBubbleView.getMeasuredWidth() + offset;
+			transY = mBubbleView.getMeasuredHeight() /2;
 			break;
 		}
 		
@@ -93,5 +96,14 @@ public class FloatingBubble extends PopupWindow {
 		if (isShowing()) dismiss();
 		mOrientation = orientation;
 		mBubbleView.setOrientation(orientation);
+	}
+
+	/**
+	 * 
+	 * @param size in pt
+	 */
+	public void setTextSize(int size) {
+		mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PT, size);
+		mBubbleView.updateView();
 	}
 }

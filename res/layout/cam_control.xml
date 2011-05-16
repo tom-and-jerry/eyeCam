@@ -5,66 +5,45 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
     <LinearLayout 
-    	android:id="@+id/linearLayout1" 
+    	android:id="@+id/placeHolder" 
     	android:layout_width="wrap_content" 
     	android:layout_height="match_parent" 
     	android:layout_weight="5" />
     
     <ch.hsr.eyecam.view.ControlBar 
-    	android:id="@+id/conrolBar" 
+    	android:id="@+id/controlBar" 
     	android:layout_width="wrap_content" 
     	android:layout_height="match_parent" 
     	android:orientation="vertical"
     	android:gravity="center"
     	android:background="@drawable/ic_menu_bar">
     	
-        <ImageButton 
+        <ImageButton
+        	style="@style/ImageButton" 
         	android:id="@+id/imageButton_Settings" 
-        	android:layout_width="match_parent" 
-        	android:layout_height="match_parent"
-        	android:background="@null" 
-        	android:layout_weight="1" 
-    		android:gravity="center"
         	android:src="@drawable/ic_menu_settings" />
         	
-        <ImageButton 
-        	android:id="@+id/imageButton_none" 
-        	android:layout_width="match_parent" 
-        	android:layout_height="match_parent"
-        	android:background="@null" 
-        	android:layout_weight="1" 
-    		android:gravity="center"
-        	android:src="@drawable/ic_menu_sad" />
+        <ImageButton
+        	style="@style/ImageButton"
+        	android:id="@+id/imageButton_none"
+        	android:src="@drawable/ic_menu_none" />
         
-        <ch.hsr.eyecam.view.StateImageButton  
-        	android:id="@+id/imageButton_Pause" 
-        	android:layout_width="match_parent" 
-        	android:layout_height="match_parent"
-        	android:background="@null" 
-        	android:layout_weight="1"
-    		android:scaleType="fitCenter"
+        <ch.hsr.eyecam.widget.StateImageButton  
+        	style="@style/ImageButton.Center" 
+        	android:id="@+id/imageButton_Pause"
         	eyecam:imgResTrue="@drawable/ic_menu_play"
-        	eyecam:imgResFalse="@drawable/ic_menu_pause"
-        	/>
+        	eyecam:imgResFalse="@drawable/ic_menu_pause"/>
         
-        <ch.hsr.eyecam.view.StateImageButton 
+        <ch.hsr.eyecam.widget.StateImageButton
+        	style="@style/ImageButton" 
         	android:id="@+id/imageButton_Light" 
-        	android:layout_width="match_parent" 
-        	android:layout_height="match_parent"
-        	android:background="@null" 
-        	android:layout_weight="1" 
-    		android:gravity="center"
         	eyecam:imgResFalse="@drawable/ic_menu_light_off"
-        	eyecam:imgResTrue="@drawable/ic_menu_light_on"/>
-        	
+        	eyecam:imgResTrue="@drawable/ic_menu_light_on"
+        	eyecam:imgResDisabled="@drawable/ic_menu_light_disabled"/>
         
-        <ImageButton 
+        <ImageButton
+        	style="@style/ImageButton" 
         	android:id="@+id/imageButton_Filter" 
-        	android:layout_width="match_parent" 
-        	android:layout_height="match_parent"
-        	android:background="@null" 
-        	android:layout_weight="1" 
-    		android:gravity="center"
         	android:src="@drawable/ic_menu_filter" />
     </ch.hsr.eyecam.view.ControlBar>
 </LinearLayout>

@@ -1,7 +1,8 @@
-package ch.hsr.eyecam.view;
+package ch.hsr.eyecam.widget;
 
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import ch.hsr.eyecam.Orientation;
@@ -25,11 +26,10 @@ import ch.hsr.eyecam.R;
  */
 public class BubbleView extends FrameLayout {
 
-	private Orientation mOrientation;
 	private Matrix mRotationMatrix;
 	private View mContentView;
 	private FrameLayout mFrame;
-	private Matrix mFrameMatrix;
+	private Orientation mOrientation;
 	
 	/**
 	 * Constant for defining a central placed arrow of the bubble. The 
@@ -52,6 +52,12 @@ public class BubbleView extends FrameLayout {
 	 * @see #setArrowStyle(int)
 	 */
 	public static final int ARROW_RIGHT = R.drawable.popup_arrow_right;
+	/**
+	 * Constant for defining a bubble without any arrow. 
+	 * 
+	 * @see #setArrowStyle(int)
+	 */
+	public static final int ARROW_NONE = R.drawable.popup_arrow_none;
 	
 	public BubbleView(View contentView) {
 		super(contentView.getContext());
@@ -85,8 +91,12 @@ public class BubbleView extends FrameLayout {
 	 */
 	public void setOrientation(Orientation orientation){
 		mOrientation = orientation;
+		updateView();
 	}
 
+	public void updateView() {
+		onMeasure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+	}
 	/**
 	 * Sets the arrow style as defined in the ARROW_X constants. The view will
 	 * not be redrawn if the bubble is already showing. 
@@ -99,17 +109,6 @@ public class BubbleView extends FrameLayout {
 	 */
 	public void setArrowStyle(int arrowstyle){
 		mFrame.setBackgroundResource(arrowstyle);
-	}
-	
-	/**
-	 * This method is used to specify whether only the content of the bubble should
-	 * be rotated instead of the whole bubble (including the arrow).
-	 * 
-	 * @param contentRotation. false if you want to rotate the whole bubble.
-	 */
-	public void setOnlyContentRotation(boolean contentRotation){
-		if (contentRotation) mFrameMatrix = new Matrix(mRotationMatrix);
-		else mFrameMatrix = null;
 	}
 	
 	/**
@@ -132,13 +131,10 @@ public class BubbleView extends FrameLayout {
 
 	private void updateMatrix() {
 		mRotationMatrix.reset();
-		
 		float width = getWidth();
 		float height = getHeight();
 		
 		switch(mOrientation){
-		case LANDSCAPE_LEFT:
-			break;
 		case LANDSCAPE_RIGHT:
 			mRotationMatrix.setRotate(180, width/2.0f, height/2.0f);
 			break;
@@ -147,6 +143,8 @@ public class BubbleView extends FrameLayout {
 			mRotationMatrix.postTranslate(0.0f, height);
 			break;
 		}
+		
+		invalidate();
 	}
 	
 	/**
@@ -160,14 +158,43 @@ public class BubbleView extends FrameLayout {
 	 */
 	@Override
 	public void onDraw(Canvas canvas) {
-		if (mFrameMatrix == null) {
-			canvas.setMatrix(mRotationMatrix);
-			super.onDraw(canvas);
-		} else {
-			canvas.setMatrix(mFrameMatrix);
-			super.onDraw(canvas);
-			canvas.setMatrix(mRotationMatrix);
-			mContentView.draw(canvas);
+		canvas.setMatrix(mRotationMatrix);
+		super.onDraw(canvas);
+	}
+	
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent event) {
+		switch (mOrientation){
+		case LANDSCAPE_RIGHT:
+			return true;
+		case PORTRAIT:
+			return true;
+		default:
+			return false;
 		}
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		float resultingX = event.getX();
+		float resultingY = event.getY();
+		
+		switch(mOrientation){
+		case PORTRAIT:
+			resultingX = invert(event.getY(),getHeight());
+			resultingY = event.getX();
+			break;
+		case LANDSCAPE_RIGHT:
+			resultingX = invert(event.getX(),getWidth());
+			resultingY = invert(event.getY(),getHeight());
+			break;
+		} 
+
+		event.setLocation(resultingX, resultingY);
+		return mContentView.dispatchTouchEvent(event);
+	}
+	
+	private float invert(float value, float maxvalue){
+		return maxvalue - value;
 	}
 }

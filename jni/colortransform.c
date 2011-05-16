@@ -29,7 +29,7 @@ typedef enum colortransform_Effects {
 	COLOR_EFFECT_SIMULATE = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_SIMULATE,
 	COLOR_EFFECT_FALSE_COLORS = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_FALSE_COLORS,
 	COLOR_EFFECT_INTENSIFY_DIFFERENCE = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_INTENSIFY_DIFFERENCE,
-	COLOR_EFFECT_BLACK = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_BLACK,
+	COLOR_EFFECT_DALTONIZE = ch_hsr_eyecam_colormodel_ColorTransform_COLOR_EFFECT_DALTONIZE,
 } colortransform_Effects;
 
 /**
@@ -55,9 +55,9 @@ void effectNone(int* y, int* u, int* v, int* r, int* g, int* b){
 
 void effectSimulate(int* y, int* u, int* v, int* r, int* g, int* b){
 	int yMax = 65536 * *y;
-	*r = (yMax + 92250 * *v);
-	*g = (4*(yMax - 46990 * *v))/5;
-	*b = (yMax);
+	*r = (yMax - 20099 * *u - 31341 * *v);
+	*g = (yMax - 20099 * *u - 31341 * *v);
+	*b = (yMax + 116690 * *u + 558 * *v);
 }
 
 void effectIntesify(int* y, int* u, int* v, int* r, int* g, int* b){
@@ -73,20 +73,36 @@ void effectFalseColors(int* y, int* u, int* v, int* r, int* g, int* b){
 	*b = (yMax + 116596 * *v);
 }
 
-void effectBlack(int* y, int* u, int* v, int* r, int* g, int* b){
-	*r = 0;
-	*g = 0;
-	*b = 0;
+void effectDaltonize(int* y, int* u, int* v, int* r, int* g, int* b){
+	int rSim, gSim, bSim;
+	int rDiff,gDiff,bDiff;
+
+	effectNone(y,u,v,r,g,b);
+	effectSimulate(y,u,v,&rSim,&gSim,&bSim);
+	rDiff = *r - rSim;
+	gDiff = *g - gSim;
+	bDiff = *b - bSim;
+
+	*g = *g + (7*rDiff)/10 + gDiff;
+	*b = *b + (7*rDiff)/10 + bDiff;
 }
 
 void (*effectPtr)(int*,int*,int*,int*,int*,int*) = &effectNone;
 void (*partialEffectPtr)(int*,int*,int*,int*,int*,int*) = &effectNone;
 
 void partialEffect(int* y, int* u, int* v, int* r, int* g, int* b){
-	effectNone(y,u,v,r,g,b);
+	static int THRESHOLD = 70;
+	int rSim, gSim, bSim;
+	int rDiff,gDiff,bDiff;
 
-	int deltaE = 3*SQR(*u)+SQR(*v);
-	if (deltaE > 3200){
+	effectNone(y,u,v,r,g,b);
+	effectSimulate(y,u,v,&rSim,&gSim,&bSim);
+	rDiff = *r - rSim; rDiff >>= 16;
+	gDiff = *g - gSim; gDiff >>= 16;
+	bDiff = *b - bSim; bDiff >>= 16;
+
+	int deltaE = 2*SQR(rDiff)+4*SQR(gDiff)+3*SQR(bDiff);
+	if (deltaE > THRESHOLD){
 		partialEffectPtr(y,u,v,r,g,b);
 	}
 }
@@ -110,8 +126,8 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect
 	case COLOR_EFFECT_FALSE_COLORS:
 		effectPtr = &effectFalseColors;
 		break;
-	case COLOR_EFFECT_BLACK:
-		effectPtr = &effectBlack;
+	case COLOR_EFFECT_DALTONIZE:
+		effectPtr = &effectDaltonize;
 		break;
 	}
 }
@@ -119,6 +135,12 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect
 JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setPartialEffect
   (JNIEnv * env, jclass cl, jint effect){
 	Java_ch_hsr_eyecam_colormodel_ColorTransform_setEffect(env,cl,effect);
+
+	if (	effect == COLOR_EFFECT_NONE ||
+				effect == COLOR_EFFECT_SIMULATE ||
+				effect == COLOR_EFFECT_DALTONIZE)
+			return;
+
 	partialEffectPtr = effectPtr;
 	effectPtr = &partialEffect;
 }
@@ -169,7 +191,7 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformIma
  * |............................|  | height
  * |............................|  |
  * |____________________________|  v
- * |u0,1|v0,1|u2,3|v2,3|........|  ^
+ * |v0,1|u0,1|v2,3|u2,3|........|  ^
  * |............................|  | height/2
  * |____________________________|  v
  *
@@ -179,7 +201,7 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformIma
  * of the RGB colorspace  and converts them to the RGB565 format.
  * Each pixel in the RGB565 format looks like the following:
  *  _______________________________________________
- * |B4,B3,B2,B1,B0|G5,G4,G3,G2,G1,G0|R4,R3,R2,R1,R0|
+ * |R4,R3,R2,R1,R0|G5,G4,G3,G2,G1,G0|B4,B3,B2,B1,B0|
  *  -----------------------------------------------
  *  15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0  Bitnumber
  *
@@ -202,8 +224,8 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *bu
       for (j = 0; j < width; j++)
       {
         nY = *(pY + i * width + j);
-        nU = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2));
-        nV = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2) + 1);
+        nU = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2) + 1);
+        nV = *(pUV + (i / 2) * width + bytes_per_pixel * (j / 2));
 
         nU -= 128;
         nV -= 128;
@@ -216,9 +238,9 @@ void transformYuv2Rgb(uint8_t *data, int32_t width, int32_t height, uint16_t *bu
         if (nG < 0) nG = 0; else if (nG > 16777215) nG = 16777215;
         if (nB < 0) nB = 0; else if (nB > 16777215) nB = 16777215;
 
-        buffer[offset++] = 	((nB >> 8) & 0xf800) |
+        buffer[offset++] = 	((nR >> 8) & 0xf800) |
 							((nG >> 13) & 0x07e0) |
-							((nR >> 19) & 0x001f);
+							((nB >> 19) & 0x001f);
       }
    }
 }

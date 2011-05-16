@@ -4,13 +4,13 @@ import ch.hsr.eyecam.EyeCamActivity;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
+import ch.hsr.eyecam.widget.FloatingBubble;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -28,16 +28,17 @@ import android.view.View;
  */
 public class ColorView extends View implements PreviewCallback {
 	private Bitmap mBitmap;
-	private Handler mActivityHandler;
+	private int mPreviewHeight;
+	private int mPreviewWidth;
+	private boolean mPartialEnabled;
 	private byte[] mDataBuffer;
+	
 	private ColorRecognizer mColorRecognizer;
 	private FloatingBubble mPopup;
-	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			//TODO: handle devices with sub-pixel accuracy
 			if (event.getAction() == MotionEvent.ACTION_DOWN){
 				int x = (int)event.getX();
 				int y = (int)event.getY();
@@ -46,9 +47,9 @@ public class ColorView extends View implements PreviewCallback {
 				if (y < 0) y = 0;
 				
 				int rgb = mBitmap.getPixel(x, y);
-				int r = (rgb & 0xf800) >> 11;
-				int g = (rgb & 0x07e0) >> 5;
-				int b = (rgb & 0x001f);
+				int r = (rgb & 0xff0000) >> 16;
+				int g = (rgb & 0x00ff00) >> 8;
+				int b = (rgb & 0x0000ff);
 				Log.d(LOG_TAG, "RGB Values from Screen: r: " + r + " g: " + g + " b: " + b);
 				showColorAt(mColorRecognizer.getColorAt(x, y), x, y);
 				return true;
@@ -56,38 +57,19 @@ public class ColorView extends View implements PreviewCallback {
 			return false;
 		}
 	};
-	private int mPreviewHeight;
-	private int mPreviewWidth;
+	
+	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 	
 	public ColorView(Context context) {
-		this(context,null);
-
+		super(context);
+		initPopup();
+		mPartialEnabled = false;
 	}
 
 	public ColorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		
 		initPopup();
-		setOnTouchListener(mOnTouchListener);
-	}
-
-	/**
-	 * onLayout() is used as a callback for when to create the bitmap and 
-	 * when to start the Camera preview.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-     *		android/view/View.html#onLayout(boolean, int, int, int, int)">
-     * 		android.view.View#onLayout(boolean, int, int, int, int)</a>
-	 */
-	@Override
-	protected void onLayout(boolean changed, int left, int top, int right,
-			int bottom) {
-		super.onLayout(changed, left, top, right, bottom);
-		if (mBitmap == null && getWidth() > 0) {
-			initBitmap();
-			
-			mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_START_PREVIEW);
-		}
+		mPartialEnabled = false;
 	}
 
 	private void initBitmap() {
@@ -129,20 +111,6 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	/**
-	 * This method sets the activity handler used to send messages
-	 * for starting and stopping the Camera preview since ColorView
-	 * doesn't and shouldn't know about the Camera instance itself.
-	 * 
-	 * @param handler the activity handler used for message passing.
-	 * @see <a href="http://developer.android.com/reference/
-	 *		android/os/Handler.html">
-	 * 		android.os.Handler</a>
-	 */
-	public void setActivityHandler(Handler handler) {
-		mActivityHandler = handler;
-	}
-
-	/**
 	 * This method is used to set the data buffer used for the camera
 	 * preview.
 	 * 
@@ -155,9 +123,45 @@ public class ColorView extends View implements PreviewCallback {
 		mPreviewHeight = height;
 		mPreviewWidth = width;
 		mColorRecognizer = new ColorRecognizer(mDataBuffer, mPreviewWidth, mPreviewHeight);
+		initBitmap();
 	}
 
 	public void setOrientation(Orientation orientation) {
 		mPopup.setOrientation(orientation);
+	}
+
+	public void enablePopup(boolean showPopup) {
+		if(showPopup) setOnTouchListener(mOnTouchListener);
+		else {
+			setOnTouchListener(null);
+			mPopup.dismiss();
+		}
+	}
+
+	public void dismissPopup() {
+		mPopup.dismiss();
+	}
+
+	/**
+	 * 
+	 * @param size in pt
+	 */
+	public void setPopupTextSize(int size) {
+		mPopup.dismiss();
+		mPopup.setTextSize(size);
+	}
+	
+	public void enablePartialEffects(boolean partialEnabled){
+		mPartialEnabled = partialEnabled;
+	}
+
+	public void setEffect(int effect) {
+		if (mPartialEnabled) ColorTransform.setPartialEffect(effect);
+		else ColorTransform.setEffect(effect);
+		if(!EyeCamActivity.IS_PREVIEWING){
+			Log.d(LOG_TAG,"Effect on Previewimage");
+			ColorTransform.transformImageToBitmap(mDataBuffer, mPreviewWidth, mPreviewHeight, mBitmap);
+			invalidate();
+		}
 	}
 }
