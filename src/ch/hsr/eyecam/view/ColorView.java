@@ -147,6 +147,7 @@ public class ColorView extends View implements PreviewCallback {
 	 * @param size in pt
 	 */
 	public void setPopupTextSize(int size) {
+		mPopup.dismiss();
 		mPopup.setTextSize(size);
 	}
 	

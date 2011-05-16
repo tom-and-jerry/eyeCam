@@ -3,7 +3,7 @@
     <string name="app_name">eyeCam</string>
     
     <string name="color_black">black</string>
-    <string name="color_grey">grey</string>
+    <string name="color_grey">gray</string>
     <string name="color_white">white</string>
     <string name="color_red">red</string>
     <string name="color_brown">brown</string>
@@ -17,17 +17,17 @@
     <string name="color_unknown">unknown</string>
     
     <string name="title_filter">Filter</string>
-	<string name="filter_none">none</string>
-	<string name="filter_simulate">simulation</string>
+	<string name="filter_none">no filter</string>
+	<string name="filter_simulate">colorblind simulation</string>
 	<string name="filter_false_colors">false colors</string>
 	<string name="filter_intensify">intensify color difference</string>
 	<string name="filter_daltonize">Daltonize</string>
 	
-	<string name="setting_partial_title">Partial</string>
-	<string name="setting_partial_enable">on</string>
-	<string name="setting_partial_disable">off</string>
+	<string name="setting_partial_title">Partial Filter Effect</string>
+	<string name="setting_partial_enable">use partial filters, whenever possible</string>
+	<string name="setting_partial_disable">never use partial filters</string>
 
-	<string name="setting_textsize_title">Text size</string>
+	<string name="setting_textsize_title">Popup Text size</string>
 	<string name="setting_menusize_title">Menu size</string>
 	<string name="setting_size_small">small</string>
 	<string name="setting_size_medium">medium</string>

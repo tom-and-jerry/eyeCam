@@ -39,6 +39,10 @@ import ch.hsr.eyecam.view.ControlBar;
 public class EyeCamActivity extends Activity {
 	private PowerManager.WakeLock mWakeLock;
 	private OrientationEventListener mOrientationEventListener;
+	private String mFilterKey;
+	private String mMenuSizeKey;
+	private String mTextSizeKey;
+	private String mPartialKey;
 	private Camera mCamera;
 	private byte[] mCallBackBuffer;
 	
@@ -116,11 +120,20 @@ public class EyeCamActivity extends Activity {
 		
 		initOrientationEventListener();
 		registerPreferenceChangeListener();
+		initSavedPreferences();
 		mOrientationEventListener.enable();
 		
 		findViewById(R.id.placeHolder).setOnTouchListener(mOnTouchListener);
 	}
 
+
+	private void initSavedPreferences() {
+		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mFilterKey);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mMenuSizeKey);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mPartialKey);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mTextSizeKey);
+	}
 
 	private void initOrientationEventListener() {
 		mOrientationEventListener = new OrientationEventListener(this, 
@@ -152,12 +165,12 @@ public class EyeCamActivity extends Activity {
 	}
 
 	private void registerPreferenceChangeListener(){
+		mFilterKey = getResources().getString(R.string.filter_key);
+		mMenuSizeKey = getResources().getString(R.string.menu_size_key);
+		mTextSizeKey = getResources().getString(R.string.text_size_key);
+		mPartialKey = getResources().getString(R.string.partial_key);
+		
 		mPrefFilter = new OnSharedPreferenceChangeListener(){
-			String mFilterKey = getResources().getString(R.string.filter_key);
-			String mMenuSizeKey = getResources().getString(R.string.menu_size_key);
-			String mTextSizeKey = getResources().getString(R.string.text_size_key);
-			String mPartialKey = getResources().getString(R.string.partial_key);
-			
 			private int mDefFilter = getResources().getInteger(R.integer.filter_none);
 			private int mDefTextSize = getResources().getInteger(R.integer.text_size_medium);
 			private int mDefMenuSize = getResources().getInteger(R.integer.menu_size_medium);
@@ -167,7 +180,6 @@ public class EyeCamActivity extends Activity {
 			@Override
 			public void onSharedPreferenceChanged(SharedPreferences shPref, String key) {
 				Log.d(LOG_TAG, "Preferences changed for key: " + key);
-				
 				
 				if(key.equals(mFilterKey)){
 					mColorView.setEffect(shPref.getInt(key, mDefFilter));

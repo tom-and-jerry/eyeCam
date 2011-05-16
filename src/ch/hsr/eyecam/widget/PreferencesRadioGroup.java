@@ -67,7 +67,7 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 	
 	private void initCheckedValue() {
 		setOnCheckedChangeListener(this);
-		
+
 		PreferencesRadioButton button;
 		int value = mSharedPreferences.getInt(mKey, mDefaultValue);
 		Log.d(LOG_TAG, "trying to set value: " + value);
