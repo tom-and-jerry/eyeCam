@@ -92,8 +92,13 @@ public class MenuBubble extends PopupWindow{
 	}
 	
 	public void setContentOrientation(Orientation orientation){
+		boolean wasShowing = isShowing();
+		dismiss();
 		mBubbleView.setOrientation(orientation);
-		if (isShowing()) mBubbleView.updateView();
+		if (wasShowing) {
+			mBubbleView.updateView();
+			show();
+		}
 	}
 	
 	public void show(){

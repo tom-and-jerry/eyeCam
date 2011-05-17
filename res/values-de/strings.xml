@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">eyeCam</string>
+    
+    <string name="color_black">Schwarz</string>
+    <string name="color_grey">Grau</string>
+    <string name="color_white">Weiss</string>
+    <string name="color_red">Rot</string>
+    <string name="color_brown">Braun</string>
+    <string name="color_purple">Violet</string>
+    <string name="color_orange">Orange</string>
+    <string name="color_yellow">Gelb</string>
+    <string name="color_green">Grün</string>
+    <string name="color_blue">Blau</string>
+    <string name="color_turquoise">Türkis</string>
+    <string name="color_unknown">Unbekannt</string>
+    
+    <string name="title_filter">Filter</string>
+	<string name="filter_none">Kein Filter</string>
+	<string name="filter_simulate">Simulation Farbenblindheit</string>
+	<string name="filter_false_colors">Falsche Farben</string>
+	<string name="filter_intensify">Farbunterschiede hervorheben</string>
+	<string name="filter_daltonize">Daltonize</string>
+	
+	<string name="setting_partial_title">Teilweise Filter Effekte</string>
+	<string name="setting_partial_enable">benutze teilweise Filter, wenn möglich</string>
+	<string name="setting_partial_disable">benutze keine teilweise Filter</string>
+
+	<string name="setting_textsize_title">Farberkennungs Textgrösse</string>
+	<string name="setting_menusize_title">Menu Grösse</string>
+	<string name="setting_size_small">Klein</string>
+	<string name="setting_size_medium">Mittel</string>
+	<string name="setting_size_large">Gross</string>
+	
+	<string name="setting_no_title">Kein Titel</string>
+	<string name="setting_no_key">Kein Schlüssel</string>
+</resources>

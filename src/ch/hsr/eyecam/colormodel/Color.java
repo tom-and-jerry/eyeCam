@@ -17,7 +17,6 @@ public class Color {
 	public static final int BROWN = R.string.color_brown;
 	public static final int PURPLE = R.string.color_purple;
 	public static final int TURQUOISE = R.string.color_turquoise;
-	public static final int PINK = R.string.color_pink;
 	public static final int RED = R.string.color_red;
 	public static final int YELLOW = R.string.color_yellow;
 	public static final int UNKNOWN = R.string.color_unknown;
@@ -78,22 +77,30 @@ public class Color {
 	public static int hslToColor(float[] hsl){
 		if (hsl[2] < 0.2) return BLACK;
 		else if (hsl[2] > 0.8) return WHITE;
-		
 		if (hsl[1] < 0.2) return GREY;
-		int key = (int)hsl[0];
 		
+		int color = UNKNOWN;
+		int key = (int)hsl[0];
 		Log.d(LOG_TAG, "colorKey: " + key);
 		for (Integer colorKey : sColorMap.keySet()){
-			if (key < colorKey) return sColorMap.get(colorKey).intValue();
+			if (key < colorKey) {
+				color = sColorMap.get(colorKey).intValue();
+				break;
+			}
 		}
 		
-		return UNKNOWN;
+		if (color == RED){
+			if (hsl[1] >= 0.2 && hsl[1] < 0.35) color = BROWN;
+		} else if (color == ORANGE){
+			if (hsl[1] >= 0.2 && hsl[1] < 0.65) color = BROWN;
+		}
+		return color;
 	}
 	
 	static {
 		sColorMap = new TreeMap<Integer, Integer>();
 		
-		sColorMap.put(new Integer(30),
+		sColorMap.put(new Integer(20),
 				new Integer(RED));
 		sColorMap.put(new Integer(45), 
 				new Integer(ORANGE));
@@ -101,10 +108,10 @@ public class Color {
 				new Integer(YELLOW));
 		sColorMap.put(new Integer(150), 
 				new Integer(GREEN));
-		sColorMap.put(new Integer(270), 
-				new Integer(BLUE));
-		sColorMap.put(new Integer(210), 
+		sColorMap.put(new Integer(200), 
 				new Integer(TURQUOISE));
+		sColorMap.put(new Integer(265), 
+				new Integer(BLUE));
 		sColorMap.put(new Integer(330), 
 				new Integer(PURPLE));
 		sColorMap.put(new Integer(360), 

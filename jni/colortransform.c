@@ -91,7 +91,7 @@ void (*effectPtr)(int*,int*,int*,int*,int*,int*) = &effectNone;
 void (*partialEffectPtr)(int*,int*,int*,int*,int*,int*) = &effectNone;
 
 void partialEffect(int* y, int* u, int* v, int* r, int* g, int* b){
-	static int THRESHOLD = 70;
+	static int THRESHOLD = SQR(50);
 	int rSim, gSim, bSim;
 	int rDiff,gDiff,bDiff;
 
@@ -101,7 +101,7 @@ void partialEffect(int* y, int* u, int* v, int* r, int* g, int* b){
 	gDiff = *g - gSim; gDiff >>= 16;
 	bDiff = *b - bSim; bDiff >>= 16;
 
-	int deltaE = 2*SQR(rDiff)+4*SQR(gDiff)+3*SQR(bDiff);
+	int deltaE = 2*SQR(rDiff)+4*SQR(gDiff);
 	if (deltaE > THRESHOLD){
 		partialEffectPtr(y,u,v,r,g,b);
 	}

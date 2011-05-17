@@ -71,8 +71,6 @@ public class ControlBar extends LinearLayout {
 			inflateMenu(mSettingsMenu);			
 		}
 	};
-	
-	
 
 	private final static String LOG_TAG = "ch.hsr.eyecam.view.ControlBar";
 	
@@ -98,7 +96,6 @@ public class ControlBar extends LinearLayout {
 	public void enableOnClickListeners(){
 		findViewById(R.id.imageButton_Pause).setOnClickListener(mOnClickPlayPause);
 		findViewById(R.id.imageButton_Light).setOnClickListener(mOnClickLight);
-		if(findViewById(R.id.placeHolder)==null)Log.d(LOG_TAG, "AAAAAAAAAA");
 		mFilterMenu = initMenu(R.id.imageButton_Filter,R.layout.filter_menu,mOnClickFilter);
 		mSettingsMenu = initMenu(R.id.imageButton_Settings,R.layout.settings_menu,mOnClickSettings);
 	}
@@ -178,10 +175,10 @@ public class ControlBar extends LinearLayout {
 	}
 
 
-	public void setCamIsPreviewing() {
+	public void setCamIsPreviewing(boolean isPreviewing) {
 		StateImageButton pause = (StateImageButton)findViewById(R.id.imageButton_Pause);
 		pause.setOnClickListener(null);
-		pause.setChecked(false);
+		pause.setChecked(!isPreviewing);
 		pause.setOnClickListener(mOnClickPlayPause);
 	}
 

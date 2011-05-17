@@ -45,6 +45,7 @@ public class EyeCamActivity extends Activity {
 	private String mPartialKey;
 	private Camera mCamera;
 	private byte[] mCallBackBuffer;
+	public boolean mCamIsPreviewing;
 	
 	private ColorView mColorView;
 	private ControlBar mControlBar;
@@ -68,17 +69,21 @@ public class EyeCamActivity extends Activity {
 				break;
 			}
 		}
-
 	};
-	
+
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {	
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			mControlBar.dismissMenu();
+			if (mControlBar.isMenuShowing()) mControlBar.dismissMenu();
+			else {
+				stopCameraPreview();
+				mControlBar.setCamIsPreviewing(false);
+			}
 			return false;
 		}
 	};
-		
+	
+	private OnSharedPreferenceChangeListener mPrefFilter;
 	private final DisplayMetrics mMetrics = new DisplayMetrics();
 	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
 	
@@ -86,9 +91,8 @@ public class EyeCamActivity extends Activity {
 	public final static int CAMERA_STOP_PREVIEW = 1;
 	public final static int CAMERA_LIGHT_OFF = 2;
 	public final static int CAMERA_LIGHT_ON = 3;
-	public static boolean IS_PREVIEWING = true;
+	
 	public final static String PREF_FILE_NAME = "ch.hsr.eyecam.preferences";
-	private OnSharedPreferenceChangeListener mPrefFilter;
 	
 	private void setCameraLight(String cameraFlashMode) {
 		Parameters parameters = mCamera.getParameters();
@@ -107,12 +111,13 @@ public class EyeCamActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		findViewById(R.id.placeHolder).setOnTouchListener(mOnTouchListener);
 		mColorView = (ColorView) findViewById(R.id.cameraSurface);
 		mControlBar = (ControlBar) findViewById(R.id.controlBar);
 		mControlBar.setActivityHandler(mHandler);
 		mControlBar.enableOnClickListeners();
 		mControlBar.rotate(Orientation.UNKNOW);
-		
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -122,17 +127,6 @@ public class EyeCamActivity extends Activity {
 		registerPreferenceChangeListener();
 		initSavedPreferences();
 		mOrientationEventListener.enable();
-		
-		findViewById(R.id.placeHolder).setOnTouchListener(mOnTouchListener);
-	}
-
-
-	private void initSavedPreferences() {
-		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mFilterKey);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mMenuSizeKey);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mPartialKey);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mTextSizeKey);
 	}
 
 	private void initOrientationEventListener() {
@@ -183,6 +177,7 @@ public class EyeCamActivity extends Activity {
 				
 				if(key.equals(mFilterKey)){
 					mColorView.setEffect(shPref.getInt(key, mDefFilter));
+					if (!mCamIsPreviewing) mColorView.refreshBitmap();
 				} else if(key.equals(mTextSizeKey)){
 					mColorView.setPopupTextSize(shPref.getInt(key, mDefTextSize));
 				} else if(key.equals(mMenuSizeKey)){
@@ -192,6 +187,7 @@ public class EyeCamActivity extends Activity {
 						mColorView.enablePartialEffects(true);
 					else mColorView.enablePartialEffects(false);
 					mColorView.setEffect(shPref.getInt(mFilterKey, mDefFilter));
+					if (!mCamIsPreviewing) mColorView.refreshBitmap();
 				}
 			}
 			
@@ -200,7 +196,14 @@ public class EyeCamActivity extends Activity {
 		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
 		shPref.registerOnSharedPreferenceChangeListener(mPrefFilter);
 	}
-
+	
+	private void initSavedPreferences() {
+		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mFilterKey);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mMenuSizeKey);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mPartialKey);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mTextSizeKey);
+	}
 
 	/** 
 	 * Called after onCreate() and onStart().
@@ -236,7 +239,7 @@ public class EyeCamActivity extends Activity {
 		mColorView.setDataBuffer(mCallBackBuffer, optSize.width, optSize.height);
 		mCamera.setParameters(parameters);
 		startCameraPreview();
-		mControlBar.setCamIsPreviewing();
+		mControlBar.setCamIsPreviewing(true);
 	}
 
 	private Size getOptimalSize(List<Size> sizeList){
@@ -271,8 +274,9 @@ public class EyeCamActivity extends Activity {
 		mCamera.addCallbackBuffer(mCallBackBuffer);
 		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
 		mCamera.startPreview();
+		mCamIsPreviewing = true;
+		
 		mColorView.enablePopup(false);
-		IS_PREVIEWING = true;
 	}
 
 	/** 
@@ -300,8 +304,9 @@ public class EyeCamActivity extends Activity {
 	private void stopCameraPreview() {
 		mCamera.setPreviewCallbackWithBuffer(null);
 		mCamera.stopPreview();
+		mCamIsPreviewing = false;
+		
 		mColorView.enablePopup(true);
-		IS_PREVIEWING = false;
 	}
 
 	/** 
