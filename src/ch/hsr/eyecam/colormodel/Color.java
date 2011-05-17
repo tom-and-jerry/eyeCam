@@ -7,6 +7,20 @@ import android.util.Log;
 
 import ch.hsr.eyecam.R;
 
+/**
+ * The Color class defines methods converting color data to the 
+ * integer of the resource ID of the string representation of the
+ * color.Currently conversions from the YUV, RGB and HSL color spaces 
+ * are supported.
+ * 
+ * The actual work of color recognition is done in the HSL color space
+ * primarily through the hue value. Since we also wanted to recognize
+ * black, grey, white and brown, some logic had to be implemented using
+ * hue and saturation (or a combination of them).
+ * 
+ * @author Dominik Spengler
+ *
+ */
 public class Color {
 	public static final int BLACK = R.string.color_black;
 	public static final int GREY = R.string.color_grey;
@@ -26,10 +40,15 @@ public class Color {
 	
 	/**
 	 * Converts the color represented in YUV color space to the
-	 * string representation of the color. It does this by using
-	 * a sorted map using 
+	 * string representation of the color. 
 	 * 
-	 * @param 	yuv
+	 * The YUV values we get from the camera are in the range [0,255].
+	 * Because color-maps of YUV color space usually show ranges [-128,127]
+	 * or equivalent for UV planes you need to take care when supplying 
+	 * data to this method. An input of 0 for UV values will be interpreted
+	 * as -128 (or -0.5) as shown in typical color-maps. 
+	 * 
+	 * @param 	yuv values as delivered by the camera
 	 * @return 	the resource id of the String representation of the
 	 * 			color.
 	 */
@@ -53,6 +72,14 @@ public class Color {
 		return rgbToColor(rgb);
 	}
 	
+	/**
+	 * Converts the color represented in RGB color space to the
+	 * string representation of the color. 
+	 * 
+	 * @param 	rgb. int array of RGB values each in the range [0,255]
+	 * @return 	the resource id of the String representation of the
+	 * 			color.
+	 */
 	public static int rgbToColor(int[] rgb){
 		float[] hsl = new float[3];
 		int r = rgb[0];
@@ -74,6 +101,18 @@ public class Color {
 		return hslToColor(hsl);
 	}
 	
+	/**
+	 * Converts the color represented in HSL color space to the
+	 * string representation of the color. 
+	 * 
+	 * The hue value represents the angular dimension of the color ranging
+	 * from 0 to 360 degrees, whereas saturation and lightness are in 
+	 * the range [0,1].
+	 * 
+	 * @param 	hsl. float array of HSL values.
+	 * @return 	the resource id of the String representation of the
+	 * 			color.
+	 */
 	public static int hslToColor(float[] hsl){
 		if (hsl[2] < 0.2) return BLACK;
 		else if (hsl[2] > 0.8) return WHITE;

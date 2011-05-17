@@ -45,7 +45,7 @@ public class EyeCamActivity extends Activity {
 	private String mPartialKey;
 	private Camera mCamera;
 	private byte[] mCallBackBuffer;
-	public boolean mCamIsPreviewing;
+	private boolean mCamIsPreviewing;
 	
 	private ColorView mColorView;
 	private ControlBar mControlBar;
@@ -85,7 +85,6 @@ public class EyeCamActivity extends Activity {
 	
 	private OnSharedPreferenceChangeListener mPrefFilter;
 	private final DisplayMetrics mMetrics = new DisplayMetrics();
-	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
 	
 	public final static int CAMERA_START_PREVIEW = 0;
 	public final static int CAMERA_STOP_PREVIEW = 1;
@@ -93,6 +92,7 @@ public class EyeCamActivity extends Activity {
 	public final static int CAMERA_LIGHT_ON = 3;
 	
 	public final static String PREF_FILE_NAME = "ch.hsr.eyecam.preferences";
+	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
 	
 	private void setCameraLight(String cameraFlashMode) {
 		Parameters parameters = mCamera.getParameters();
@@ -101,6 +101,8 @@ public class EyeCamActivity extends Activity {
 	}
 
 	/** 
+	 * {@inheritDoc}
+	 * 
 	 * Called when the activity is first created.
 	 * 
 	 * @see <a href="http://developer.android.com/reference/
@@ -206,6 +208,8 @@ public class EyeCamActivity extends Activity {
 	}
 
 	/** 
+	 * {@inheritDoc}
+	 * 
 	 * Called after onCreate() and onStart().
 	 * 
 	 * @see <a href="http://developer.android.com/reference/
@@ -280,6 +284,8 @@ public class EyeCamActivity extends Activity {
 	}
 
 	/** 
+	 * {@inheritDoc}
+	 * 
 	 * Called whenever the Activity will be sent to the background.
 	 * 
 	 * @see <a href="http://developer.android.com/reference/
@@ -310,6 +316,8 @@ public class EyeCamActivity extends Activity {
 	}
 
 	/** 
+	 * {@inheritDoc}
+	 * 
 	 * Called whenever the activity will be shut down.
 	 * 
 	 * @see <a href="http://developer.android.com/reference/
@@ -333,6 +341,8 @@ public class EyeCamActivity extends Activity {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 * 
 	 * By overwriting this hook, the activity blocks search requests.
 	 * 
 	 * @see <a href="http://developer.android.com/reference/
@@ -344,6 +354,16 @@ public class EyeCamActivity extends Activity {
 		return false;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * This method is overwritten in order to dismiss the menu if
+	 * it is showing.
+	 * 
+	 * @see <a href="http://developer.android.com/reference/
+	 * 			android/app/Activity.html#onKeyDown(int, android.view.KeyEvent)">
+	 * 			android.app.Activity#onKeyDown(int, android.view.KeyEvent)</a>
+	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (mControlBar.isMenuShowing()){
