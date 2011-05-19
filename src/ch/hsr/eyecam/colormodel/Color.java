@@ -76,7 +76,7 @@ public class Color {
 	 * Converts the color represented in RGB color space to the
 	 * string representation of the color. 
 	 * 
-	 * @param 	rgb. int array of RGB values each in the range [0,255]
+	 * @param 	rgb int array of RGB values each in the range [0,255]
 	 * @return 	the resource id of the String representation of the
 	 * 			color.
 	 */
@@ -109,7 +109,7 @@ public class Color {
 	 * from 0 to 360 degrees, whereas saturation and lightness are in 
 	 * the range [0,1].
 	 * 
-	 * @param 	hsl. float array of HSL values.
+	 * @param 	hsl float array of HSL values.
 	 * @return 	the resource id of the String representation of the
 	 * 			color.
 	 */

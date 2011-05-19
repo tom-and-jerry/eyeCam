@@ -32,9 +32,7 @@ import ch.hsr.eyecam.view.ControlBar;
  * life cycle of the application itself.
  * 
  * @author Dominik Spengler, Patrice Mueller
- * @see <a href="http://developer.android.com/reference/
- * 			android/app/Activity.html">
- * 			android.app.Activity</a>
+ * @see Activity
  */
 public class EyeCamActivity extends Activity {
 	private PowerManager.WakeLock mWakeLock;
@@ -91,7 +89,6 @@ public class EyeCamActivity extends Activity {
 	public final static int CAMERA_LIGHT_OFF = 2;
 	public final static int CAMERA_LIGHT_ON = 3;
 	
-	public final static String PREF_FILE_NAME = "ch.hsr.eyecam.preferences";
 	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
 	
 	private void setCameraLight(String cameraFlashMode) {
@@ -104,13 +101,9 @@ public class EyeCamActivity extends Activity {
 	 * {@inheritDoc}
 	 * 
 	 * Called when the activity is first created.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#ActivityLifecycle">
-	 * 			android.app.Activity#ActivityLifecycle</a>
 	 */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
@@ -211,10 +204,6 @@ public class EyeCamActivity extends Activity {
 	 * {@inheritDoc}
 	 * 
 	 * Called after onCreate() and onStart().
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#ActivityLifecycle">
-	 * 			android.app.Activity#ActivityLifecycle</a>
 	 */
 	@Override
 	protected void onResume() {
@@ -287,10 +276,6 @@ public class EyeCamActivity extends Activity {
 	 * {@inheritDoc}
 	 * 
 	 * Called whenever the Activity will be sent to the background.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#ActivityLifecycle">
-	 * 			android.app.Activity#ActivityLifecycle</a>
 	 */
 	@Override
 	protected void onPause() {
@@ -319,10 +304,6 @@ public class EyeCamActivity extends Activity {
 	 * {@inheritDoc}
 	 * 
 	 * Called whenever the activity will be shut down.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#ActivityLifecycle">
-	 * 			android.app.Activity#ActivityLifecycle</a>
 	 */
 	@Override
 	protected void onDestroy() {
@@ -343,11 +324,7 @@ public class EyeCamActivity extends Activity {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * By overwriting this hook, the activity blocks search requests.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#onSearchRequested()">
-	 * 			android.app.Activity#onSearchRequested()</a>
+	 * By returning false, the activity blocks search requests.
 	 */
 	@Override
 	public boolean onSearchRequested(){
@@ -359,10 +336,6 @@ public class EyeCamActivity extends Activity {
 	 * 
 	 * This method is overwritten in order to dismiss the menu if
 	 * it is showing.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#onKeyDown(int, android.view.KeyEvent)">
-	 * 			android.app.Activity#onKeyDown(int, android.view.KeyEvent)</a>
 	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

@@ -79,7 +79,7 @@ public class ColorTransform {
 	 * 
 	 * @param data the source data in yuv420sp
 	 * @param width of the source data
-	 * @param heigth of the source data
+	 * @param height of the source data
 	 * @param bitmap to write the data to
 	 */
 	public static native void transformImageToBitmap(byte[] data, int width,
@@ -91,7 +91,7 @@ public class ColorTransform {
 	 * 
 	 * @param data the source data in yuv420sp
 	 * @param width of the source data
-	 * @param heigth of the source data
+	 * @param height of the source data
 	 * @param buffer to write the data to
 	 */
 	public static native void transformImageToBuffer(byte[] data, int width,

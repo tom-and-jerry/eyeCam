@@ -1,5 +1,7 @@
 package ch.hsr.eyecam.colormodel;
 
+import android.hardware.Camera;
+
 /**
  * The ColorRecognizer class is a convenience class for interaction
  * with the Color class. You need to instantiate it with a byte buffer
@@ -24,9 +26,7 @@ public class ColorRecognizer {
 	 * addCallbackBuffer() method of the Camera since there are no 
 	 * getters and setters for the buffer.
 	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/hardware/Camera.html#addCallbackBuffer(byte[])">
-	 * 			android.hardware.Camera.html#addCallbackBuffer(byte[])</a>
+	 * @see Camera#addCallbackBuffer(byte[])
 	 * 
 	 * @param buffer holding the camera preview data.
 	 * @param width of the preview buffer.
