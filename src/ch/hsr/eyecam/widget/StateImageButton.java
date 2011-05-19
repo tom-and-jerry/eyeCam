@@ -104,11 +104,19 @@ public class StateImageButton extends ImageButton implements Checkable{
 		mImgResDisabled = resId;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isChecked() {
 		return mState;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * We added the imagechange.
+	 */
 	@Override
 	public void setChecked(boolean checked) {
 		if(!isEnabled())return;
@@ -126,12 +134,23 @@ public class StateImageButton extends ImageButton implements Checkable{
 		setChecked(!isChecked());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * We overrided this method just to add a toggle action before perfomClick.
+	 */
 	@Override
 	public boolean performClick() {
 		toggle();
 		return super.performClick();
 	}
 	
+	/**
+	 * Manage all OnClickListener and image changes wich have to be done by 
+	 * statechange.
+	 * 
+	 * @param enabled
+	 */
 	public void setEnabled(boolean enabled) {
 		if(!enabled) {
 			setImageResource(mImgResDisabled);
@@ -147,10 +166,18 @@ public class StateImageButton extends ImageButton implements Checkable{
 		return mEnabled;
 	}
 	
+	/**
+	 * Set your OnClickListener which will be called when the button is disabled
+	 * but still show for the user.
+	 * @param onClickDisabled
+	 */
 	public void setOnDisabledClickListener(OnClickListener onClickDisabled){
 		mOnClickDisabled = onClickDisabled;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setOnClickListener(OnClickListener l) {
 		mOnClickListener = l;

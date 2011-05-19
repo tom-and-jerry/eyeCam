@@ -16,7 +16,17 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import ch.hsr.eyecam.R;
 
-
+/**
+ * This class extends from android.widget.RadioGroup and add the functionality
+ * to add a TextView as a separator and to load the preferences of the your
+ * preferences-file. 
+ * 
+ * @author Patrice Mueller
+ *	
+ * @see <a href="http://developer.android.com/reference/
+ * 			android/widget/RadioGroup.html">
+ * 				android.widget.RadioGroup</a>
+ */
 public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChangeListener{
 	String mTitle,mKey;
 	TypedArray mTypedArray;
@@ -43,7 +53,7 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 		mDefaultValue = mTypedArray.getInteger(
 				R.styleable.PreferencesRadioGroup_defaultValue, 0);
 		
-		if(mEnableSeperator)addView(new Seperator(context,mTitle));
+		if(mEnableSeperator)addView(new Separator(context,mTitle));
 	}
 	
 	private String getString(int ResId, int resDefaultValue){
@@ -58,7 +68,11 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 	}
 	
 	
-
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Add the values of the prefren1ces-file
+	 */
 	@Override
 	protected void onFinishInflate() {
 		initCheckedValue();
@@ -82,7 +96,12 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 			}
 		}
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 *	Write the changed preferences to the file and date the ui up.
+	 */
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		PreferencesRadioButton button = (PreferencesRadioButton)findViewById(checkedId);
@@ -97,13 +116,13 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 		if (vg != null) vg.invalidate();
 	}
 	
-	private class Seperator extends TextView{
+	private class Separator extends TextView{
 		
-		public Seperator(Context context) {
+		public Separator(Context context) {
 			super(context);
 		}
 		
-		public Seperator (Context context, String Title){
+		public Separator (Context context, String Title){
 			this(context);
 			
 			setText(Title);
