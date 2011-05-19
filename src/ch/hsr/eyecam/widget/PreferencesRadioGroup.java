@@ -114,7 +114,7 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 		if (vg != null) vg.invalidate();
 	}
 	
-	private class Separator extends TextView{
+	private static class Separator extends TextView{
 		
 		public Separator(Context context) {
 			super(context);

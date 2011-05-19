@@ -171,7 +171,6 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformIma
 	jbyte* 				jdata = (*env)->GetByteArrayElements(env, jarray, &isCopy);
 	uint8_t* 			data = (uint8_t*) jdata;
 	jbyte* 				jbuffer = (*env)->GetByteArrayElements(env, buffer, &isCopy);
-	uint16_t* 			pixels = (uint16_t*) jbuffer;
 
     transformYuv2Rgb(data, (int32_t) width, (int32_t) height, buffer);
 
