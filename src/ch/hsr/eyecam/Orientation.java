@@ -3,7 +3,7 @@ package ch.hsr.eyecam;
 import android.view.OrientationEventListener;
 
 /**
- * This enum represents the orientation relative to the user. So you 
+ * This enumeration represents the orientation relative to the user. So you 
  * don't have to think about that the fact that the application is forced in 
  * to landscape.
  * 
@@ -43,6 +43,10 @@ public enum Orientation {
 		this.orientationInDegrees = orientation;
 	}
 	
+	/**
+	 * 
+	 * @return Returns the integer value of the specified orientation
+	 */
 	public int getDegress(){
 		return orientationInDegrees;
 	}

@@ -12,9 +12,7 @@ import ch.hsr.eyecam.R;
  * 
  * @author Patrice Mueller
  *
- * @see <a href="http://developer.android.com/reference/
- * 			android/widget/RadioButton.html">
- * 				android.widget.RadioButton</a>
+ * @see RadioButton
  */
 public class PreferencesRadioButton extends RadioButton {
 	private int mValue;
