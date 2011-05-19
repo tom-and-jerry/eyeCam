@@ -16,12 +16,17 @@ import ch.hsr.eyecam.widget.MenuBubble;
 import ch.hsr.eyecam.widget.StateImageButton;
 
 /**
- * A class extending android.widget.LinearLayout so that the class can
- * control the animation of the children.
+ * This class contains all control items like the play/paus or the 
+ * settingsbutton. 
+ * 
+ * It is recommended to add new feature like lightbutton or things like that
+ * in this Control-Bar. So that the design of the communication between the
+ * contorl-items an the activit-class is consistent.
+ * 
  *  
  * @author Patrice Mueller
  * @see <a href="http://developer.android.com/reference/
- * 			android/vwidget/LinearLayout.html">
+ * 			android/widget/LinearLayout.html">
  * 			android.widget.LinearLayout</a>
  */
 
@@ -93,6 +98,14 @@ public class ControlBar extends LinearLayout {
 				,R.anim.control_to_right_lanscape);
 	}
 	
+	/**
+	 * You can only add a OnClickListener to a Object when it has passed the
+	 * initialization process.
+	 * 
+	 * So you will need to call this method at first after you had build the
+	 * ControlBar-Object, to enable all OnlickListeners for the children of the
+	 * ContorlBar-Object.
+	 */
 	public void enableOnClickListeners(){
 		findViewById(R.id.imageButton_Pause).setOnClickListener(mOnClickPlayPause);
 		findViewById(R.id.imageButton_Light).setOnClickListener(mOnClickLight);
@@ -115,6 +128,9 @@ public class ControlBar extends LinearLayout {
 		else menu.show();
 	}
 	
+	/**
+	 * @return Return true if any child-menu is showing otherwise false.
+	 */
 	public boolean isMenuShowing() {
 		return mFilterMenu.isShowing() | mSettingsMenu.isShowing();
 	}
@@ -124,6 +140,12 @@ public class ControlBar extends LinearLayout {
 			getChildAt(i).startAnimation(animation);
 	}
 	
+	/**
+	 * Rotate all children of the ContorlBar to the given orientation, with
+	 * animation.
+	 * 	
+	 * @param orientation
+	 */
 	public void rotate(Orientation orientation){
 		mFilterMenu.setContentOrientation(orientation);
 		mSettingsMenu.setContentOrientation(orientation);
@@ -164,24 +186,39 @@ public class ControlBar extends LinearLayout {
 	public void setActivityHandler(Handler handler) {
 		mActivityHandler = handler;
 	}
-
-	public void enableLight(boolean b) {
-		((StateImageButton)findViewById(R.id.imageButton_Light)).setEnabled(b);
+	
+	/**
+	 * This method is indirection to hold the communication-design clean.
+	 *  
+	 * @param isEnabled
+	 */
+	public void enableLightButton(boolean isEnabled) {
+		((StateImageButton)findViewById(R.id.imageButton_Light))
+			.setEnabled(isEnabled);
 	}
 
-	public void dismissMenu() {
+	/**
+	 * Managed all child menus of the ControlBar
+	 */
+	public void dismissAllChildMenu() {
 		mFilterMenu.dismiss();
 		mSettingsMenu.dismiss();
 	}
 
-
-	public void setCamIsPreviewing(boolean isPreviewing) {
+	/**
+	 * Manage the OnClickListener change of the CamStatButton
+	 */
+	public void setCamStateButton(boolean isPreviewing) {
 		StateImageButton pause = (StateImageButton)findViewById(R.id.imageButton_Pause);
 		pause.setOnClickListener(null);
 		pause.setChecked(!isPreviewing);
 		pause.setOnClickListener(mOnClickPlayPause);
 	}
 
+	/**
+	 * All child menu will update with the given size.
+	 * @param size
+	 */
 	public void setMenuSize(int size) {
 		mFilterMenu.setSize(size, size);
 		mSettingsMenu.setSize(size, size);

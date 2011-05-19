@@ -72,10 +72,10 @@ public class EyeCamActivity extends Activity {
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {	
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			if (mControlBar.isMenuShowing()) mControlBar.dismissMenu();
+			if (mControlBar.isMenuShowing()) mControlBar.dismissAllChildMenu();
 			else {
 				stopCameraPreview();
-				mControlBar.setCamIsPreviewing(false);
+				mControlBar.setCamStateButton(false);
 			}
 			return false;
 		}
@@ -142,11 +142,15 @@ public class EyeCamActivity extends Activity {
 			private Orientation getCurrentOrientation(int orientationInput){
 				int orientation = orientationInput;
 				orientation = orientation % 360;
+				int boundary_portrait = 45;
+				int boundary_landscapeRight = 135;
+				int boundary_reversePortrait = 225;
+				int boundary_landsacpeLeft= 315;
 				
-				if (orientation < (0 * 90) + 45) return Orientation.PORTRAIT;
-				if (orientation < (1 * 90) + 45) return Orientation.LANDSCAPE_RIGHT;
-				if (orientation < (2 * 90) + 45) return Orientation.PORTRAIT;
-				if (orientation < (3 * 90) + 45) return Orientation.LANDSCAPE_LEFT;
+				if (orientation < boundary_portrait) return Orientation.PORTRAIT;
+				if (orientation < boundary_landscapeRight) return Orientation.LANDSCAPE_RIGHT;
+				if (orientation < boundary_reversePortrait) return Orientation.PORTRAIT;
+				if (orientation < boundary_landsacpeLeft) return Orientation.LANDSCAPE_LEFT;
 				
 				return Orientation.PORTRAIT;
 			}
@@ -232,11 +236,11 @@ public class EyeCamActivity extends Activity {
 		mColorView.setDataBuffer(mCallBackBuffer, optSize.width, optSize.height);
 		mCamera.setParameters(parameters);
 		startCameraPreview();
-		mControlBar.setCamIsPreviewing(true);
+		mControlBar.setCamStateButton(true);
 	}
 
 	private Size getOptimalSize(List<Size> sizeList){
-		if(isNull(sizeList)) return null;
+		if(sizeList == null) return null;
 		
 		double targetRatio = (double) mMetrics.widthPixels / mMetrics.heightPixels;
 		int targetHeight = mMetrics.heightPixels;
@@ -257,10 +261,10 @@ public class EyeCamActivity extends Activity {
 
 	private void disableFlashIfUnsupported(Camera.Parameters parameters) {
 		if(parameters.getSupportedFlashModes() == null){
-			mControlBar.enableLight(false);
+			mControlBar.enableLightButton(false);
 		}
 		else if(parameters.getSupportedFlashModes().contains(Camera.Parameters.FLASH_MODE_TORCH))
-			mControlBar.enableLight(true);
+			mControlBar.enableLightButton(true);
 	}
 
 	private void startCameraPreview() {
@@ -286,7 +290,7 @@ public class EyeCamActivity extends Activity {
 	}
 	
 	private void releaseCamera(){
-		if(isNull(mCamera)) return;
+		if(mCamera==null) return;
 		stopCameraPreview();
 		mCamera.release();
 		mCamera = null;
@@ -309,16 +313,8 @@ public class EyeCamActivity extends Activity {
 	protected void onDestroy() {
 		mOrientationEventListener.disable();
 		mColorView.dismissPopup();
-		mControlBar.dismissMenu();
+		mControlBar.dismissAllChildMenu();
 		super.onDestroy();
-	}
-
-	private boolean isNotNull(Object anyObject) {
-		return anyObject != null;
-	}
-	
-	private boolean isNull(Object anyObject){
-		return !isNotNull(anyObject);
 	}
 
 	/**
@@ -340,7 +336,7 @@ public class EyeCamActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (mControlBar.isMenuShowing()){
-			mControlBar.dismissMenu();
+			mControlBar.dismissAllChildMenu();
 			return true;
 		}
 		
