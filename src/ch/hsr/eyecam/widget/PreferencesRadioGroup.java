@@ -7,13 +7,13 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.R;
 
 /**
@@ -84,14 +84,14 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 
 		PreferencesRadioButton button;
 		int value = mSharedPreferences.getInt(mKey, mDefaultValue);
-		Log.d(LOG_TAG, "trying to set value: " + value);
+		Debug.msg(LOG_TAG, "trying to set value: " + value);
 		for (int i = 0; i < getChildCount(); i++){
 			if (mEnableSeperator && i == 0) continue;
 			button = (PreferencesRadioButton)getChildAt(i);
-			Log.d(LOG_TAG, "button: " + button.getText() + " containing value: " + button.getValue());
+			Debug.msg(LOG_TAG, "button: " + button.getText() + " containing value: " + button.getValue());
 			if (button.getValue() == value) {
 				button.performClick();
-				Log.d(LOG_TAG, "successfully set value on: " + button.getText());
+				Debug.msg(LOG_TAG, "successfully set value on: " + button.getText());
 				return;
 			}
 		}
@@ -106,11 +106,11 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		PreferencesRadioButton button = (PreferencesRadioButton)findViewById(checkedId);
 		if (button == null) return;
-		Log.d(LOG_TAG, "Preference changed, key: "+mKey+" to: "+button.getValue());
+		Debug.msg(LOG_TAG, "Preference changed, key: "+mKey+" to: "+button.getValue());
 		
 		SharedPreferences.Editor editor = mSharedPreferences.edit();
 		editor.putInt(mKey, button.getValue());
-		if(!editor.commit()) Log.d(LOG_TAG,"Preferences "+mKey+ " couldn't been committed!");
+		if(!editor.commit()) Debug.msg(LOG_TAG,"Preferences "+mKey+ " couldn't been committed!");
 		
 		ViewGroup vg = (ViewGroup) getParent();
 		if (vg != null) vg.invalidate();

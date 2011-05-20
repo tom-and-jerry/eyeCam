@@ -17,7 +17,6 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -142,7 +141,7 @@ public class EyeCamActivity extends Activity {
 					mOrientationCurrent = orientation;
 					mControlBar.rotate(mOrientationCurrent);
 					mColorView.setOrientation(mOrientationCurrent);
-					Log.d(LOG_TAG, "Orientation: "+mOrientationCurrent);
+					Debug.msg(LOG_TAG, "Orientation: "+mOrientationCurrent);
 				}			
 			}
 			
@@ -179,7 +178,7 @@ public class EyeCamActivity extends Activity {
 			
 			@Override
 			public void onSharedPreferenceChanged(SharedPreferences shPref, String key) {
-				Log.d(LOG_TAG, "Preferences changed for key: " + key);
+				Debug.msg(LOG_TAG, "Preferences changed for key: " + key);
 				
 				if(key.equals(mFilterKey)){
 					mColorView.setEffect(shPref.getInt(key, mDefFilter));
@@ -234,11 +233,11 @@ public class EyeCamActivity extends Activity {
 		
 		Size optSize = getOptimalSize(parameters.getSupportedPreviewSizes());
 		for (Size s : parameters.getSupportedPreviewSizes()){
-			Log.d(LOG_TAG, "Supported - H:" + s.height + "W:" + s.width);
+			Debug.msg(LOG_TAG, "Supported - H:" + s.height + "W:" + s.width);
 		}
 		parameters.setPreviewSize(optSize.width, optSize.height);
-		Log.d(LOG_TAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
-		Log.d(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" 
+		Debug.msg(LOG_TAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
+		Debug.msg(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" 
 				+mMetrics.widthPixels);
 		
 		disableFlashIfUnsupported(parameters);

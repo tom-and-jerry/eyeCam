@@ -1,5 +1,6 @@
 package ch.hsr.eyecam.view;
 
+import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
@@ -11,7 +12,6 @@ import android.graphics.Canvas;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -49,7 +49,7 @@ public class ColorView extends View implements PreviewCallback {
 				int r = (rgb & 0xff0000) >> 16;
 				int g = (rgb & 0x00ff00) >> 8;
 				int b = (rgb & 0x0000ff);
-				Log.d(LOG_TAG, "RGB Values from Screen: r: " + r + " g: " + g + " b: " + b);
+				Debug.msg(LOG_TAG, "RGB Values from Screen: r: " + r + " g: " + g + " b: " + b);
 				showColorAt(mColorRecognizer.getColorAt(x, y), x, y);
 				return true;
 			}
@@ -74,7 +74,7 @@ public class ColorView extends View implements PreviewCallback {
 	private void initBitmap() {
 		mBitmap = Bitmap.createBitmap(mPreviewWidth, mPreviewHeight,
 				Bitmap.Config.RGB_565);
-		Log.d(LOG_TAG, "Bitmap size: W: " + mPreviewWidth + " H: "
+		Debug.msg(LOG_TAG, "Bitmap size: W: " + mPreviewWidth + " H: "
 				+ mPreviewHeight);
 	}
 
@@ -85,7 +85,7 @@ public class ColorView extends View implements PreviewCallback {
 	private void showColorAt(int color, int x, int y){
 		mPopup.dismiss();
 		mPopup.showStringResAt(color, x, y);
-		Log.d(LOG_TAG, "Popup Location on Screen: x: " + x + " y: " + y);
+		Debug.msg(LOG_TAG, "Popup Location on Screen: x: " + x + " y: " + y);
 	}
 
 	@Override
@@ -160,7 +160,7 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	public void refreshBitmap() {
-		Log.d(LOG_TAG,"Effect on Previewimage");
+		Debug.msg(LOG_TAG,"Effect on Previewimage");
 		ColorTransform.transformImageToBitmap(mDataBuffer, mPreviewWidth, mPreviewHeight, mBitmap);
 		invalidate();
 	}

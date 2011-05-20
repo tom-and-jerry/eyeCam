@@ -3,12 +3,12 @@ package ch.hsr.eyecam.view;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.EyeCamActivity;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.R;
@@ -168,7 +168,7 @@ public class ControlBar extends LinearLayout {
 			rotateChildViews(mAnimationPortraitLeft);
 		}
 		
-		Log.d(LOG_TAG, "Turn to "+orientation);					
+		Debug.msg(LOG_TAG, "Turn to "+orientation);					
 		mLastKnowOrientation = orientation;
 	}
 	

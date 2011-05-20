@@ -3,8 +3,8 @@ package ch.hsr.eyecam.colormodel;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import android.util.Log;
 
+import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.R;
 
 /**
@@ -60,14 +60,14 @@ public class Color {
 		int v = (yuv[2]<0) ? yuv[2]+256 : yuv[2];
 		v -= 128;
 		
-		Log.d(LOG_TAG , "YUV Values from Buffer: y: " + y + " u: " + u + " v: " + v);
+		Debug.msg(LOG_TAG , "YUV Values from Buffer: y: " + y + " u: " + u + " v: " + v);
 		rgb[0] = (int) (y + 1.13983*v);
 		if (rgb[0] < 0) rgb[0] = 0; else if (rgb[0] > 255) rgb[0] = 255;
 		rgb[1] = (int) (y - 0.39465*u - 0.58060*v);
 		if (rgb[1] < 0) rgb[1] = 0; else if (rgb[1] > 255) rgb[1] = 255;
 		rgb[2] = (int) (y + 2.03211*u);
 		if (rgb[2] < 0) rgb[2] = 0; else if (rgb[2] > 255) rgb[2] = 255;
-		Log.d(LOG_TAG , "converted RGB Values: r: " + rgb[0] + " g: " + rgb[1] + " b: " + rgb[2]);
+		Debug.msg(LOG_TAG , "converted RGB Values: r: " + rgb[0] + " g: " + rgb[1] + " b: " + rgb[2]);
 		
 		return rgbToColor(rgb);
 	}
@@ -97,7 +97,7 @@ public class Color {
 		else if (max == b) hsl[0] = 60*(((r-g)/chroma)+4);
 		
 		if (chroma != 0) hsl[1] = chroma/(255.0f*(1-Math.abs(2*luma-1)));
-		Log.d(LOG_TAG , "converted hsl Values: h: " + hsl[0] + " s: " + hsl[1] + " l: " + hsl[2]);
+		Debug.msg(LOG_TAG , "converted hsl Values: h: " + hsl[0] + " s: " + hsl[1] + " l: " + hsl[2]);
 		return hslToColor(hsl);
 	}
 	
@@ -120,7 +120,7 @@ public class Color {
 		
 		int color = UNKNOWN;
 		int key = (int)hsl[0];
-		Log.d(LOG_TAG, "colorKey: " + key);
+		Debug.msg(LOG_TAG, "colorKey: " + key);
 		for (Integer colorKey : sColorMap.keySet()){
 			if (key < colorKey) {
 				color = sColorMap.get(colorKey).intValue();

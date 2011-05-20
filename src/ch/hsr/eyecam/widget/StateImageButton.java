@@ -3,9 +3,9 @@ package ch.hsr.eyecam.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.Checkable;
 import android.widget.ImageButton;
+import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.R;
 
 /**
@@ -121,7 +121,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 	public void setChecked(boolean checked) {
 		if(!isEnabled())return;
 		mState = checked;
-		Log.d(LOG_TAG, "State has changed! From:"+mState +" To: "+mState);
+		Debug.msg(LOG_TAG, "State has changed! From:"+mState +" To: "+mState);
 		setImage();
 	}
 
