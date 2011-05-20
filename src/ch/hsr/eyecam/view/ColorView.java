@@ -4,6 +4,7 @@ import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
+import ch.hsr.eyecam.widget.BubbleView;
 import ch.hsr.eyecam.widget.FloatingBubble;
 
 import android.content.Context;
@@ -20,10 +21,11 @@ import android.view.View;
  * the bitmap that is used to write the transformed preview frames
  * into.
  * 
+ * ColorView also provide methods for interaction with the ColorTransform,
+ * ColorRecognizer and FloatingBubble classes.
+ * 
  * @author Dominik Spengler
- * @see <a href="http://developer.android.com/reference/
- * 			android/view/View.html">
- * 			android.view.View</a>
+ * 
  */
 public class ColorView extends View implements PreviewCallback {
 	private Bitmap mBitmap;
@@ -88,6 +90,12 @@ public class ColorView extends View implements PreviewCallback {
 		Debug.msg(LOG_TAG, "Popup Location on Screen: x: " + x + " y: " + y);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Redraws the Bitmap containing the transformed picture on each
+	 * call.
+	 */
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
@@ -95,12 +103,11 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	/**
-	 * Callback provided by android.hardware.Camera.PreviewCallback
-	 * Interface. This is where the transformation calls happen.
+	 * {@inheritDoc}
 	 * 
-	 * @see <a href="http://developer.android.com/reference/
-     *		android/hardware/Camera.PreviewCallback.html">
-     * 		android.hardware.Camera.PreviewCallback</a>
+	 * This is where the transformation calls happen.
+	 * 
+	 * @see PreviewCallback
 	 */
 	@Override
 	public void onPreviewFrame(byte[] data, Camera cam) {
@@ -125,10 +132,23 @@ public class ColorView extends View implements PreviewCallback {
 		initBitmap();
 	}
 
+	/**
+	 * This method is used to set the orientation of the Popup. Since our
+	 * application manages screen orientation changes itself, this method
+	 * needs to be called manually on each orientation change.
+	 * 
+	 * @see BubbleView#setOrientation(Orientation)
+	 * @param orientation of the popup to be displayed in.
+	 */
 	public void setOrientation(Orientation orientation) {
 		mPopup.setOrientation(orientation);
 	}
 
+	/**
+	 * Enable or disable the "on touch" Popup used to recognize colors.
+	 * 
+	 * @param showPopup true if the popup should be enabled, false otherwise.
+	 */
 	public void enablePopup(boolean showPopup) {
 		if(showPopup) setOnTouchListener(mOnTouchListener);
 		else {
@@ -137,12 +157,18 @@ public class ColorView extends View implements PreviewCallback {
 		}
 	}
 
+	/**
+	 * If the Popup is showing, it will be dismissed. Nothing happens if 
+	 * the Popup is not showing.
+	 */
 	public void dismissPopup() {
 		mPopup.dismiss();
 	}
 
 	/**
+	 * Sets the size of the text displayed in the Popup.
 	 * 
+	 * @see FloatingBubble#setTextSize(int)
 	 * @param size in pt
 	 */
 	public void setPopupTextSize(int size) {
@@ -150,15 +176,41 @@ public class ColorView extends View implements PreviewCallback {
 		mPopup.setTextSize(size);
 	}
 	
+	/**
+	 * Enables or disables partial effects. After calling this method 
+	 * you can set the effects using {@link #setEffect(int)}.
+	 * 
+	 * Please note that calling this method will not update the current
+	 * effect. You will need to call {@link #setEffect(int)} manually.
+	 * 
+	 * @see ColorTransform#setPartialEffect(int)
+	 * 
+	 * @param partialEnabled true if enabled, false otherwise.
+	 */
 	public void enablePartialEffects(boolean partialEnabled){
 		mPartialEnabled = partialEnabled;
 	}
 
+	/**
+	 * Sets the transformation effect being used for the camera preview.
+	 * 
+	 * @see ColorTransform#COLOR_EFFECT_DALTONIZE
+	 * @see ColorTransform#COLOR_EFFECT_FALSE_COLORS
+	 * @see ColorTransform#COLOR_EFFECT_INTENSIFY_DIFFERENCE
+	 * @see ColorTransform#COLOR_EFFECT_NONE
+	 * @see ColorTransform#COLOR_EFFECT_SIMULATE
+	 * 
+	 * @param effect to be set.
+	 */
 	public void setEffect(int effect) {
 		if (mPartialEnabled) ColorTransform.setPartialEffect(effect);
 		else ColorTransform.setEffect(effect);
 	}
 
+	/**
+	 * Manually refresh the Bitmap for example when setting a new effect
+	 * when the camera is not previewing.
+	 */
 	public void refreshBitmap() {
 		Debug.msg(LOG_TAG,"Effect on Previewimage");
 		ColorTransform.transformImageToBitmap(mDataBuffer, mPreviewWidth, mPreviewHeight, mBitmap);

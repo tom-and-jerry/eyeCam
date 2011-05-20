@@ -76,7 +76,7 @@ public class Color {
 	 * Converts the color represented in RGB color space to the
 	 * string representation of the color. 
 	 * 
-	 * @param 	rgb. int array of RGB values each in the range [0,255]
+	 * @param 	rgb int array of RGB values each in the range [0,255]
 	 * @return 	the resource id of the String representation of the
 	 * 			color.
 	 */
@@ -109,7 +109,7 @@ public class Color {
 	 * from 0 to 360 degrees, whereas saturation and lightness are in 
 	 * the range [0,1].
 	 * 
-	 * @param 	hsl. float array of HSL values.
+	 * @param 	hsl float array of HSL values.
 	 * @return 	the resource id of the String representation of the
 	 * 			color.
 	 */
@@ -139,21 +139,21 @@ public class Color {
 	static {
 		sColorMap = new TreeMap<Integer, Integer>();
 		
-		sColorMap.put(new Integer(20),
-				new Integer(RED));
-		sColorMap.put(new Integer(45), 
-				new Integer(ORANGE));
-		sColorMap.put(new Integer(70), 
-				new Integer(YELLOW));
-		sColorMap.put(new Integer(150), 
-				new Integer(GREEN));
-		sColorMap.put(new Integer(200), 
-				new Integer(TURQUOISE));
-		sColorMap.put(new Integer(265), 
-				new Integer(BLUE));
-		sColorMap.put(new Integer(330), 
-				new Integer(PURPLE));
-		sColorMap.put(new Integer(360), 
-				new Integer(RED));
+		sColorMap.put(Integer.valueOf(20),
+				Integer.valueOf(RED));
+		sColorMap.put(Integer.valueOf(45), 
+				Integer.valueOf(ORANGE));
+		sColorMap.put(Integer.valueOf(70), 
+				Integer.valueOf(YELLOW));
+		sColorMap.put(Integer.valueOf(150), 
+				Integer.valueOf(GREEN));
+		sColorMap.put(Integer.valueOf(200), 
+				Integer.valueOf(TURQUOISE));
+		sColorMap.put(Integer.valueOf(265), 
+				Integer.valueOf(BLUE));
+		sColorMap.put(Integer.valueOf(330), 
+				Integer.valueOf(PURPLE));
+		sColorMap.put(Integer.valueOf(360), 
+				Integer.valueOf(RED));
 	}
 }

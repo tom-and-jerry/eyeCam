@@ -17,12 +17,7 @@ import ch.hsr.eyecam.R;
  * The default State is false.
  * 
  * @author Patrice Mueller
- * @see <a href="http://developer.android.com/reference/
- * 		android/widget/ImageButton.html">android.widget.ImageButton</a>
-
- * 		<a href="http://developer.android.com/reference/
- * 		android/widget/ToggleButton.html">android.widget.ToggleButton</a>
- * 
+ * @see ImageButton
  */
 public class StateImageButton extends ImageButton implements Checkable{
 
@@ -115,7 +110,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * We added the imagechange.
+	 * We added the image change.
 	 */
 	@Override
 	public void setChecked(boolean checked) {
@@ -137,7 +132,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * We overrided this method just to add a toggle action before perfomClick.
+	 * We overwrote this method just to add a toggle action before perfomClick.
 	 */
 	@Override
 	public boolean performClick() {
@@ -146,8 +141,8 @@ public class StateImageButton extends ImageButton implements Checkable{
 	}
 	
 	/**
-	 * Manage all OnClickListener and image changes wich have to be done by 
-	 * statechange.
+	 * Manage all OnClickListener and image changes which have to be done when 
+	 * the state is changed.
 	 * 
 	 * @param enabled
 	 */

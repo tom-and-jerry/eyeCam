@@ -23,9 +23,7 @@ import ch.hsr.eyecam.R;
  * 
  * @author Patrice Mueller
  *	
- * @see <a href="http://developer.android.com/reference/
- * 			android/widget/RadioGroup.html">
- * 				android.widget.RadioGroup</a>
+ * @see RadioGroup
  */
 public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChangeListener{
 	String mTitle,mKey;
@@ -71,7 +69,7 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Add the values of the prefren1ces-file
+	 * Add the values of the preferences-file
 	 */
 	@Override
 	protected void onFinishInflate() {
@@ -100,7 +98,7 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 	/**
 	 * {@inheritDoc}
 	 * 
-	 *	Write the changed preferences to the file and date the ui up.
+	 *	Write the changed preferences to the file and update the user interface.
 	 */
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -116,7 +114,7 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 		if (vg != null) vg.invalidate();
 	}
 	
-	private class Separator extends TextView{
+	private static class Separator extends TextView{
 		
 		public Separator(Context context) {
 			super(context);

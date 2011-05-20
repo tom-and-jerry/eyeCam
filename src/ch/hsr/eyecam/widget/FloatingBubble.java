@@ -17,9 +17,7 @@ import android.widget.TextView;
  * @author Dominik Spengler
  * 
  * @see BubbleView
- * @see <a href="http://developer.android.com/reference/
- *		android/widget/PopupWindow.html">
- * 		android.widget.PopupWindow</a>
+ * @see PopupWindow
  */
 public class FloatingBubble extends PopupWindow {
 	private View mViewParent;
@@ -53,9 +51,9 @@ public class FloatingBubble extends PopupWindow {
 	 * This method shows a bubble with an arbitrary string resource at any 
 	 * given location on the screen.
 	 * 
-	 * @param res. The String resource to be shown in the bubble.
-	 * @param x. The x position on the screen.
-	 * @param y. The y position on the screen.
+	 * @param res The String resource to be shown in the bubble.
+	 * @param x The x position on the screen.
+	 * @param y The y position on the screen.
 	 */
 	public void showStringResAt(int res, int x, int y) {
 		dismiss();
@@ -99,7 +97,10 @@ public class FloatingBubble extends PopupWindow {
 	}
 
 	/**
+	 * Sets the text size of the string shown in the bubble. The size value
+	 * will be interpreted as screen dependent points.
 	 * 
+	 * @see TypedValue#COMPLEX_UNIT_PT
 	 * @param size in pt
 	 */
 	public void setTextSize(int size) {
