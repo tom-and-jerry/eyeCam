@@ -9,6 +9,15 @@ import android.view.View.OnFocusChangeListener;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 
+/**
+ * This class provides the functionality of showing a menu bubble above the 
+ * anchor specified in the constructor.
+ * 
+ * @author Dominik Spengler
+ * 
+ * @see BubbleView
+ * @see PopupWindow
+ */
 public class MenuBubble extends PopupWindow{
 	
 	private View mAnchorView;
@@ -21,6 +30,11 @@ public class MenuBubble extends PopupWindow{
 	private int mHeight;
 	private static int OFFSET = 20;
 
+	/**
+	 * Simple constructor to initialize a MenuBubble with the given anchor.
+	 * 
+	 * @param anchor of the Bubble to be shown above.
+	 */
 	public MenuBubble(View anchor) {
 		super(anchor.getContext());
 		mAnchorView = anchor;
@@ -33,11 +47,23 @@ public class MenuBubble extends PopupWindow{
 		setHeight(200);
 	}
 	
+	/**
+	 * Simple constructor to initialize a MenuBubble with the given anchor
+	 * and the given content.
+	 * 
+	 * @param anchor of the Bubble to be shown above.
+	 * @param contentView of the Bubble.
+	 */
 	public MenuBubble(View anchor, View contentView) {
 		this(anchor);
 		setContentView(contentView);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * The content view will get wrapped in a ScrollView.
+	 */
 	@Override
 	public void setContentView(View contentView) {
 		mContentView = contentView;
@@ -62,6 +88,11 @@ public class MenuBubble extends PopupWindow{
 	}
 
 	/**
+	 * Sets the size of the bubble in device dependent points. If the bubble is
+	 * showing when setting the size, it will be dismissed and re-shown. This is
+	 * done to ensure the correct measurement of the content view.
+	 * 
+	 * @see TypedValue#COMPLEX_UNIT_PT
 	 * 
 	 * @param width in pt
 	 * @param height in pt
@@ -79,18 +110,32 @@ public class MenuBubble extends PopupWindow{
 		if (wasShowing) show();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setHeight(int height) {
 		mHeight= height;
 		super.setHeight(height);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setWidth(int width) {
 		mWidth = width;
 		super.setWidth(width);
 	}
 	
+	/**
+	 * Sets the new orientation of the content view. If the bubble is showing
+	 * when setting the orientation, it will be dismissed and re-shown. This is
+	 * done to ensure the correct measurement of the content view.
+	 * 
+	 * @see BubbleView#setOrientation(Orientation)
+	 * @param orientation of the content to be shown in.
+	 */
 	public void setContentOrientation(Orientation orientation){
 		boolean wasShowing = isShowing();
 		dismiss();
@@ -101,6 +146,9 @@ public class MenuBubble extends PopupWindow{
 		}
 	}
 	
+	/**
+	 * Shows the menu bubble above the anchor.
+	 */
 	public void show(){
 		mAnchorView.getLocationOnScreen(mLocation);
 		showAtLocation(mAnchorView, Gravity.NO_GRAVITY, 
