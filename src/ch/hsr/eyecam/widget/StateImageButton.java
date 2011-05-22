@@ -3,9 +3,9 @@ package ch.hsr.eyecam.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.Checkable;
 import android.widget.ImageButton;
+import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.R;
 
 /**
@@ -17,12 +17,7 @@ import ch.hsr.eyecam.R;
  * The default State is false.
  * 
  * @author Patrice Mueller
- * @see <a href="http://developer.android.com/reference/
- * 		android/widget/ImageButton.html">android.widget.ImageButton</a>
-
- * 		<a href="http://developer.android.com/reference/
- * 		android/widget/ToggleButton.html">android.widget.ToggleButton</a>
- * 
+ * @see ImageButton
  */
 public class StateImageButton extends ImageButton implements Checkable{
 
@@ -104,16 +99,24 @@ public class StateImageButton extends ImageButton implements Checkable{
 		mImgResDisabled = resId;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isChecked() {
 		return mState;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * We added the image change.
+	 */
 	@Override
 	public void setChecked(boolean checked) {
 		if(!isEnabled())return;
 		mState = checked;
-		Log.d(LOG_TAG, "State has changed! From:"+mState +" To: "+mState);
+		Debug.msg(LOG_TAG, "State has changed! From:"+mState +" To: "+mState);
 		setImage();
 	}
 
@@ -126,12 +129,23 @@ public class StateImageButton extends ImageButton implements Checkable{
 		setChecked(!isChecked());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * We overwrote this method just to add a toggle action before perfomClick.
+	 */
 	@Override
 	public boolean performClick() {
 		toggle();
 		return super.performClick();
 	}
 	
+	/**
+	 * Manage all OnClickListener and image changes which have to be done when 
+	 * the state is changed.
+	 * 
+	 * @param enabled
+	 */
 	public void setEnabled(boolean enabled) {
 		if(!enabled) {
 			setImageResource(mImgResDisabled);
@@ -147,10 +161,18 @@ public class StateImageButton extends ImageButton implements Checkable{
 		return mEnabled;
 	}
 	
+	/**
+	 * Set your OnClickListener which will be called when the button is disabled
+	 * but still show for the user.
+	 * @param onClickDisabled
+	 */
 	public void setOnDisabledClickListener(OnClickListener onClickDisabled){
 		mOnClickDisabled = onClickDisabled;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setOnClickListener(OnClickListener l) {
 		mOnClickListener = l;

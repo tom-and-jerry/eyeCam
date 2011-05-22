@@ -17,7 +17,6 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -32,9 +31,7 @@ import ch.hsr.eyecam.view.ControlBar;
  * life cycle of the application itself.
  * 
  * @author Dominik Spengler, Patrice Mueller
- * @see <a href="http://developer.android.com/reference/
- * 			android/app/Activity.html">
- * 			android.app.Activity</a>
+ * @see Activity
  */
 public class EyeCamActivity extends Activity {
 	private PowerManager.WakeLock mWakeLock;
@@ -45,6 +42,7 @@ public class EyeCamActivity extends Activity {
 	private String mPartialKey;
 	private Camera mCamera;
 	private byte[] mCallBackBuffer;
+	private boolean mCamIsPreviewing;
 	
 	private ColorView mColorView;
 	private ControlBar mControlBar;
@@ -68,27 +66,29 @@ public class EyeCamActivity extends Activity {
 				break;
 			}
 		}
-
 	};
-	
+
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {	
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			mControlBar.dismissMenu();
+			if (mControlBar.isMenuShowing()) mControlBar.dismissAllChildMenu();
+			else {
+				stopCameraPreview();
+				mControlBar.setCamStateButton(false);
+			}
 			return false;
 		}
 	};
-		
+	
+	private OnSharedPreferenceChangeListener mPrefFilter;
 	private final DisplayMetrics mMetrics = new DisplayMetrics();
-	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
 	
 	public final static int CAMERA_START_PREVIEW = 0;
 	public final static int CAMERA_STOP_PREVIEW = 1;
 	public final static int CAMERA_LIGHT_OFF = 2;
 	public final static int CAMERA_LIGHT_ON = 3;
-	public static boolean IS_PREVIEWING = true;
-	public final static String PREF_FILE_NAME = "ch.hsr.eyecam.preferences";
-	private OnSharedPreferenceChangeListener mPrefFilter;
+	
+	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
 	
 	private void setCameraLight(String cameraFlashMode) {
 		Parameters parameters = mCamera.getParameters();
@@ -97,22 +97,21 @@ public class EyeCamActivity extends Activity {
 	}
 
 	/** 
-	 * Called when the activity is first created.
+	 * {@inheritDoc}
 	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#ActivityLifecycle">
-	 * 			android.app.Activity#ActivityLifecycle</a>
+	 * Called when the activity is first created.
 	 */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		findViewById(R.id.placeHolder).setOnTouchListener(mOnTouchListener);
 		mColorView = (ColorView) findViewById(R.id.cameraSurface);
 		mControlBar = (ControlBar) findViewById(R.id.controlBar);
 		mControlBar.setActivityHandler(mHandler);
 		mControlBar.enableOnClickListeners();
 		mControlBar.rotate(Orientation.UNKNOW);
-		
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -122,17 +121,6 @@ public class EyeCamActivity extends Activity {
 		registerPreferenceChangeListener();
 		initSavedPreferences();
 		mOrientationEventListener.enable();
-		
-		findViewById(R.id.placeHolder).setOnTouchListener(mOnTouchListener);
-	}
-
-
-	private void initSavedPreferences() {
-		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mFilterKey);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mMenuSizeKey);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mPartialKey);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mTextSizeKey);
 	}
 
 	private void initOrientationEventListener() {
@@ -146,18 +134,22 @@ public class EyeCamActivity extends Activity {
 					mOrientationCurrent = orientation;
 					mControlBar.rotate(mOrientationCurrent);
 					mColorView.setOrientation(mOrientationCurrent);
-					Log.d(LOG_TAG, "Orientation: "+mOrientationCurrent);
+					Debug.msg(LOG_TAG, "Orientation: "+mOrientationCurrent);
 				}			
 			}
 			
 			private Orientation getCurrentOrientation(int orientationInput){
 				int orientation = orientationInput;
 				orientation = orientation % 360;
+				int boundary_portrait = 45;
+				int boundary_landscapeRight = 135;
+				int boundary_reversePortrait = 225;
+				int boundary_landsacpeLeft= 315;
 				
-				if (orientation < (0 * 90) + 45) return Orientation.PORTRAIT;
-				if (orientation < (1 * 90) + 45) return Orientation.LANDSCAPE_RIGHT;
-				if (orientation < (2 * 90) + 45) return Orientation.PORTRAIT;
-				if (orientation < (3 * 90) + 45) return Orientation.LANDSCAPE_LEFT;
+				if (orientation < boundary_portrait) return Orientation.PORTRAIT;
+				if (orientation < boundary_landscapeRight) return Orientation.LANDSCAPE_RIGHT;
+				if (orientation < boundary_reversePortrait) return Orientation.PORTRAIT;
+				if (orientation < boundary_landsacpeLeft) return Orientation.LANDSCAPE_LEFT;
 				
 				return Orientation.PORTRAIT;
 			}
@@ -179,10 +171,11 @@ public class EyeCamActivity extends Activity {
 			
 			@Override
 			public void onSharedPreferenceChanged(SharedPreferences shPref, String key) {
-				Log.d(LOG_TAG, "Preferences changed for key: " + key);
+				Debug.msg(LOG_TAG, "Preferences changed for key: " + key);
 				
 				if(key.equals(mFilterKey)){
 					mColorView.setEffect(shPref.getInt(key, mDefFilter));
+					if (!mCamIsPreviewing) mColorView.refreshBitmap();
 				} else if(key.equals(mTextSizeKey)){
 					mColorView.setPopupTextSize(shPref.getInt(key, mDefTextSize));
 				} else if(key.equals(mMenuSizeKey)){
@@ -192,6 +185,7 @@ public class EyeCamActivity extends Activity {
 						mColorView.enablePartialEffects(true);
 					else mColorView.enablePartialEffects(false);
 					mColorView.setEffect(shPref.getInt(mFilterKey, mDefFilter));
+					if (!mCamIsPreviewing) mColorView.refreshBitmap();
 				}
 			}
 			
@@ -200,14 +194,19 @@ public class EyeCamActivity extends Activity {
 		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
 		shPref.registerOnSharedPreferenceChangeListener(mPrefFilter);
 	}
-
+	
+	private void initSavedPreferences() {
+		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mFilterKey);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mMenuSizeKey);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mPartialKey);
+		mPrefFilter.onSharedPreferenceChanged(shPref, mTextSizeKey);
+	}
 
 	/** 
-	 * Called after onCreate() and onStart().
+	 * {@inheritDoc}
 	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#ActivityLifecycle">
-	 * 			android.app.Activity#ActivityLifecycle</a>
+	 * Called after onCreate() and onStart().
 	 */
 	@Override
 	protected void onResume() {
@@ -223,11 +222,11 @@ public class EyeCamActivity extends Activity {
 		
 		Size optSize = getOptimalSize(parameters.getSupportedPreviewSizes());
 		for (Size s : parameters.getSupportedPreviewSizes()){
-			Log.d(LOG_TAG, "Supported - H:" + s.height + "W:" + s.width);
+			Debug.msg(LOG_TAG, "Supported - H:" + s.height + "W:" + s.width);
 		}
 		parameters.setPreviewSize(optSize.width, optSize.height);
-		Log.d(LOG_TAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
-		Log.d(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" 
+		Debug.msg(LOG_TAG, "Chosen - H:" +optSize.height + "W:" +optSize.width);
+		Debug.msg(LOG_TAG, "Screen - H:" +mMetrics.heightPixels + "W:" 
 				+mMetrics.widthPixels);
 		
 		disableFlashIfUnsupported(parameters);
@@ -236,11 +235,11 @@ public class EyeCamActivity extends Activity {
 		mColorView.setDataBuffer(mCallBackBuffer, optSize.width, optSize.height);
 		mCamera.setParameters(parameters);
 		startCameraPreview();
-		mControlBar.setCamIsPreviewing();
+		mControlBar.setCamStateButton(true);
 	}
 
 	private Size getOptimalSize(List<Size> sizeList){
-		if(isNull(sizeList)) return null;
+		if(sizeList == null) return null;
 		
 		double targetRatio = (double) mMetrics.widthPixels / mMetrics.heightPixels;
 		int targetHeight = mMetrics.heightPixels;
@@ -261,26 +260,25 @@ public class EyeCamActivity extends Activity {
 
 	private void disableFlashIfUnsupported(Camera.Parameters parameters) {
 		if(parameters.getSupportedFlashModes() == null){
-			mControlBar.enableLight(false);
+			mControlBar.enableLightButton(false);
 		}
 		else if(parameters.getSupportedFlashModes().contains(Camera.Parameters.FLASH_MODE_TORCH))
-			mControlBar.enableLight(true);
+			mControlBar.enableLightButton(true);
 	}
 
 	private void startCameraPreview() {
 		mCamera.addCallbackBuffer(mCallBackBuffer);
 		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
 		mCamera.startPreview();
+		mCamIsPreviewing = true;
+		
 		mColorView.enablePopup(false);
-		IS_PREVIEWING = true;
 	}
 
 	/** 
-	 * Called whenever the Activity will be sent to the background.
+	 * {@inheritDoc}
 	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#ActivityLifecycle">
-	 * 			android.app.Activity#ActivityLifecycle</a>
+	 * Called whenever the Activity will be sent to the background.
 	 */
 	@Override
 	protected void onPause() {
@@ -291,7 +289,7 @@ public class EyeCamActivity extends Activity {
 	}
 	
 	private void releaseCamera(){
-		if(isNull(mCamera)) return;
+		if(mCamera==null) return;
 		stopCameraPreview();
 		mCamera.release();
 		mCamera = null;
@@ -300,49 +298,44 @@ public class EyeCamActivity extends Activity {
 	private void stopCameraPreview() {
 		mCamera.setPreviewCallbackWithBuffer(null);
 		mCamera.stopPreview();
+		mCamIsPreviewing = false;
+		
 		mColorView.enablePopup(true);
-		IS_PREVIEWING = false;
 	}
 
 	/** 
-	 * Called whenever the activity will be shut down.
+	 * {@inheritDoc}
 	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#ActivityLifecycle">
-	 * 			android.app.Activity#ActivityLifecycle</a>
+	 * Called whenever the activity will be shut down.
 	 */
 	@Override
 	protected void onDestroy() {
 		mOrientationEventListener.disable();
 		mColorView.dismissPopup();
-		mControlBar.dismissMenu();
+		mControlBar.dismissAllChildMenu();
 		super.onDestroy();
 	}
 
-	private boolean isNotNull(Object anyObject) {
-		return anyObject != null;
-	}
-	
-	private boolean isNull(Object anyObject){
-		return !isNotNull(anyObject);
-	}
-
 	/**
-	 * By overwriting this hook, the activity blocks search requests.
+	 * {@inheritDoc}
 	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/app/Activity.html#onSearchRequested()">
-	 * 			android.app.Activity#onSearchRequested()</a>
+	 * By returning false, the activity blocks search requests.
 	 */
 	@Override
 	public boolean onSearchRequested(){
 		return false;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * This method is overwritten in order to dismiss the menu if
+	 * it is showing.
+	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (mControlBar.isMenuShowing()){
-			mControlBar.dismissMenu();
+			mControlBar.dismissAllChildMenu();
 			return true;
 		}
 		

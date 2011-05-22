@@ -18,8 +18,8 @@ import ch.hsr.eyecam.R;
  * The orientation awareness is achieved by rotating the whole canvas according
  * to the orientation of the device.
  * 
- * Please note, that this class will only work correctly if you force your 
- * Activity to be started in Landscape mode.
+ * Please note, that this class will probably only work correctly if you force 
+ * your Activity to be started in Landscape mode.
  * 
  * @author Dominik Spengler
  *
@@ -73,6 +73,7 @@ public class BubbleView extends FrameLayout {
 		mFrame.setBackgroundResource(ARROW_CENTER);
 		setOrientation(Orientation.PORTRAIT);
 	}
+	
 	/**
 	 * This method sets the orientation of the View independently of the
 	 * screen orientation of Android (hence independently of the orientation
@@ -85,18 +86,22 @@ public class BubbleView extends FrameLayout {
 	 * @param orientation you wish the bubble to be shown in.
 	 * 
 	 * @see Orientation
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/view/View.html#onMeasure(int,int)">
-	 * 			android.view.View#onMeasure(int,int)</a>
+	 * @see #onMeasure(int, int)
 	 */
 	public void setOrientation(Orientation orientation){
 		mOrientation = orientation;
 		updateView();
 	}
 
+	/**
+	 * Updates the BubbleView by forcing it to re-measure.
+	 * 
+	 * @see #onMeasure(int, int)
+	 */
 	public void updateView() {
 		onMeasure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 	}
+	
 	/**
 	 * Sets the arrow style as defined in the ARROW_X constants. The view will
 	 * not be redrawn if the bubble is already showing. 
@@ -112,12 +117,10 @@ public class BubbleView extends FrameLayout {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
 	 * onMeasure() had to be overwritten in order to provide the correct View 
 	 * measurement when in Portrait mode.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/view/View.html#onMeasure(int,int)">
-	 * 			android.view.View#onMeasure(int,int)</a>
 	 */
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -148,20 +151,26 @@ public class BubbleView extends FrameLayout {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * 
 	 * As for custom Views usual, the onDraw() method was overwritten. This is 
 	 * where the rotation is applied to the canvas in order to correctly display
 	 * the bubble according to the orientation set in {@link #setOrientation(Orientation)}.
-	 * 
-	 * @see <a href="http://developer.android.com/reference/
-	 * 			android/view/View.html#onDraw(android.graphics.Canvas)">
-	 * 			android.view.View#onDraw(Canvas)</a>
 	 */
 	@Override
-	public void onDraw(Canvas canvas) {
+	protected void onDraw(Canvas canvas) {
 		canvas.setMatrix(mRotationMatrix);
 		super.onDraw(canvas);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Used to correctly map the touch input according to the orientation 
+	 * the view is in.
+	 * 
+	 * @see #setOrientation(Orientation)
+	 */
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent event) {
 		switch (mOrientation){
@@ -174,6 +183,9 @@ public class BubbleView extends FrameLayout {
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		float resultingX = event.getX();
