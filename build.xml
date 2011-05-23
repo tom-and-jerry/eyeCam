@@ -54,7 +54,7 @@
 	
     <target name="-pre-build">
     <!-- Copy the configuration file, replacing tokens in the file. -->
-		<copy file="${debug.conifg.source.dir}/${debug.config.javafile}.java" 
+		<copy file="${debug.config.source.dir}/${debug.config.javafile}.java" 
 			todir="${source.dir}/${debug.config.destination.dir}" 
 			overwrite="true" encoding="utf-8">
 			<filterset>
