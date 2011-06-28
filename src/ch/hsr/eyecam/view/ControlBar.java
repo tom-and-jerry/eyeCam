@@ -81,6 +81,7 @@ public class ControlBar extends LinearLayout {
 	
 	public ControlBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		if(isInEditMode())return;
 		mAnimationPortraitLeft = AnimationUtils.loadAnimation(
 				context.getApplicationContext()
 				,R.anim.control_to_left_portrait);
