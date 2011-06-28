@@ -22,6 +22,7 @@
 	<string name="filter_intensify">Farbunterschiede hervorheben</string>
 	<string name="filter_daltonize">Daltonize</string>
 	
+	<string name="settings_menu_title">Einstellungen</string>
 	<string name="setting_partial_title">Teilweise Filter Effekte</string>
 	<string name="setting_partial_enable">benutze teilweise Filter, wenn möglich</string>
 	<string name="setting_partial_disable">benutze keine teilweise Filter</string>

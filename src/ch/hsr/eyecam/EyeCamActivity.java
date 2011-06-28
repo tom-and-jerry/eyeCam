@@ -18,6 +18,7 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -121,6 +122,12 @@ public class EyeCamActivity extends Activity {
 		registerPreferenceChangeListener();
 		initSavedPreferences();
 		mOrientationEventListener.enable();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.settings_menu, menu);
+		return true;
 	}
 
 	private void initOrientationEventListener() {
