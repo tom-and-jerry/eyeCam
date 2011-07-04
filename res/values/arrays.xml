@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="text_and_menu_size">
+		<item>small</item>
+		<item>medium</item>
+		<item>large</item>
+	</string-array>   
+	
+	<string-array name="text_size_values">
+		<item>5</item>
+		<item>7</item>
+		<item>9</item>
+	</string-array>
+	
+	<string-array name="menu_size_values">
+		<item>70</item>
+		<item>90</item>
+		<item>110</item>
+	</string-array>
+</resources>

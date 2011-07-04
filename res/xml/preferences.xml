@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+ 	<CheckBoxPreference
+  		android:key="@string/setting_key_partial"
+  		android:title="@string/setting_partial_title"
+        android:summary="@string/setting_partail_summary" />
+ 
+	<ListPreference 
+	  	android:key="@string/setting_textsize_key"
+	  	android:title="@string/setting_textsize_title"
+	  	android:entries="@array/text_and_menu_size"
+	  	android:entryValues="@array/text_size_values"
+	  	android:summary="@string/setting_textSize_summary" />
+	  	
+	 <ListPreference 
+	  	android:key="@string/setting_menusize_key"
+	  	android:title="@string/setting_menusize_title"
+	  	android:entries="@array/text_and_menu_size"
+	  	android:entryValues="@array/menu_size_values"
+	  	android:summary="@string/setting_menuSize_summary" />
+	  
+	 
+</PreferenceScreen>

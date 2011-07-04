@@ -26,12 +26,15 @@
 	<string name="setting_partial_title">Teilweise Filter Effekte</string>
 	<string name="setting_partial_enable">benutze teilweise Filter, wenn möglich</string>
 	<string name="setting_partial_disable">benutze keine teilweise Filter</string>
+	<string name="setting_partail_summary">TODO!!!! Partail Zusammenfassung</string>
 
 	<string name="setting_textsize_title">Farberkennungs Textgrösse</string>
 	<string name="setting_menusize_title">Menu Grösse</string>
 	<string name="setting_size_small">Klein</string>
 	<string name="setting_size_medium">Mittel</string>
 	<string name="setting_size_large">Gross</string>
+	<string name="setting_textSize_summary">TODO!!!! Textgrösse Zusammenfassung</string>
+	<string name="setting_menuSize_summary">TODO!!!! Menugrösse Zusammenfassung</string>
 	
 	<string name="setting_no_title">Kein Titel</string>
 	<string name="setting_no_key">Kein Schlüssel</string>

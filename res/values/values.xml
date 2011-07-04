@@ -8,8 +8,6 @@
 	<integer name="filter_daltonize">4</integer>
 	
 	<string name="partial_key">key_partial</string>
-	<integer name="partial_off">0</integer>
-	<integer name="partial_on">1</integer>
 	
 	<string name="menu_size_key">key_menusize</string>
 	<integer name="menu_size_small">70</integer>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera;
@@ -19,6 +20,7 @@ import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -130,6 +132,14 @@ public class EyeCamActivity extends Activity {
 		return true;
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId() == R.id.settings_menu){
+			startActivity(new Intent(this, Preferences.class));
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 	private void initOrientationEventListener() {
 		mOrientationEventListener = new OrientationEventListener(this, 
 				SensorManager.SENSOR_DELAY_NORMAL) {
@@ -165,32 +175,30 @@ public class EyeCamActivity extends Activity {
 
 	private void registerPreferenceChangeListener(){
 		mFilterKey = getResources().getString(R.string.filter_key);
-		mMenuSizeKey = getResources().getString(R.string.menu_size_key);
-		mTextSizeKey = getResources().getString(R.string.text_size_key);
-		mPartialKey = getResources().getString(R.string.partial_key);
+		mMenuSizeKey = getResources().getString(R.string.setting_menusize_key);
+		mTextSizeKey = getResources().getString(R.string.setting_textsize_key);
+		mPartialKey = getResources().getString(R.string.setting_key_partial);
 		
 		mPrefFilter = new OnSharedPreferenceChangeListener(){
+			private int mediumSize = 1;
 			private int mDefFilter = getResources().getInteger(R.integer.filter_none);
-			private int mDefTextSize = getResources().getInteger(R.integer.text_size_medium);
-			private int mDefMenuSize = getResources().getInteger(R.integer.menu_size_medium);
-			private int mPartialOff = getResources().getInteger(R.integer.partial_off);
-			private int mPartialOn = getResources().getInteger(R.integer.partial_on);
+			private String mDefTextSize = getResources().getStringArray(R.array.text_size_values)[mediumSize];
+			private String mDefMenuSize = getResources().getStringArray(R.array.menu_size_values)[mediumSize];
 			
 			@Override
 			public void onSharedPreferenceChanged(SharedPreferences shPref, String key) {
 				Debug.msg(LOG_TAG, "Preferences changed for key: " + key);
-				
 				if(key.equals(mFilterKey)){
 					mColorView.setEffect(shPref.getInt(key, mDefFilter));
 					if (!mCamIsPreviewing) mColorView.refreshBitmap();
 				} else if(key.equals(mTextSizeKey)){
-					mColorView.setPopupTextSize(shPref.getInt(key, mDefTextSize));
+					int value = Integer.parseInt(shPref.getString(key, mDefTextSize));
+					mColorView.setPopupTextSize(value);
 				} else if(key.equals(mMenuSizeKey)){
-					mControlBar.setMenuSize(shPref.getInt(key, mDefMenuSize));
+					int value = Integer.parseInt(shPref.getString(key, mDefMenuSize));
+					mControlBar.setMenuSize(value);
 				} else if(key.equals(mPartialKey)){
-					if (shPref.getInt(key, mPartialOff) == mPartialOn)
-						mColorView.enablePartialEffects(true);
-					else mColorView.enablePartialEffects(false);
+					mColorView.enablePartialEffects(shPref.getBoolean(key, false));
 					mColorView.setEffect(shPref.getInt(mFilterKey, mDefFilter));
 					if (!mCamIsPreviewing) mColorView.refreshBitmap();
 				}

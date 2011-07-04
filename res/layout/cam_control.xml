@@ -37,9 +37,10 @@
         	android:src="@drawable/ic_menu_settings" 
         	android:visibility="gone"/> 
         	
-        <ImageButton
+        <ch.hsr.eyecam.widget.StateImageButton
         	style="@style/ImageButton"
-        	android:id="@+id/imageButton_Filter" 
-        	android:src="@drawable/ic_menu_filter" />
+        	android:id="@+id/imageButton_Filter"
+        	eyecam:imgResTrue="@drawable/ic_menu_wizard"
+        	eyecam:imgResFalse="@drawable/ic_menu_wizard_no" />
     </ch.hsr.eyecam.view.ControlBar>
 </LinearLayout>

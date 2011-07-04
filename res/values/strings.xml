@@ -26,13 +26,20 @@
 	<string name="setting_partial_title">Partial Filter Effect</string>
 	<string name="setting_partial_enable">use partial filters, whenever possible</string>
 	<string name="setting_partial_disable">never use partial filters</string>
+	<string name="setting_partail_summary">TODO!!!! partial summary</string>
 
 	<string name="setting_textsize_title">Popup Text size</string>
 	<string name="setting_menusize_title">Menu size</string>
 	<string name="setting_size_small">small</string>
 	<string name="setting_size_medium">medium</string>
 	<string name="setting_size_large">large</string>
+	<string name="setting_textSize_summary">TODO!!!! text size summary</string>
+	<string name="setting_menuSize_summary">TODO!!!! menu size summary</string>
 	
 	<string name="setting_no_title">no title</string>
 	<string name="setting_no_key">no key</string>
+	<string name="key_partial">key_partial</string>
+	<string name="setting_key_partial">setting_key_partial</string>
+	<string name="setting_textsize_key">setting_textsize_key</string>
+	<string name="setting_menusize_key">setting_menusize_key</string>
 </resources>

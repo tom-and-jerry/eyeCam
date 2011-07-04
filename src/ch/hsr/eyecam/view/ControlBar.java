@@ -1,7 +1,9 @@
 package ch.hsr.eyecam.view;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,8 +65,19 @@ public class ControlBar extends LinearLayout {
 	private OnClickListener mOnClickFilter = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			mSettingsMenu.dismiss();
-			inflateMenu(mFilterMenu);
+			Context appContex = getContext().getApplicationContext();
+			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(appContex);
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+			if(((StateImageButton)v).isChecked())
+				editor.putInt(getResources().getString(R.string.filter_key)
+						, getResources().getInteger(R.integer.filter_false_colors));
+			else
+			editor.putInt(getResources().getString(R.string.filter_key)
+					, getResources().getInteger(R.integer.filter_daltonize));
+			
+			editor.commit();
+			/*mSettingsMenu.dismiss();
+			inflateMenu(mFilterMenu);*/
 		}		
 	};
 	
