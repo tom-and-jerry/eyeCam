@@ -18,7 +18,6 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -40,9 +39,12 @@ public class EyeCamActivity extends Activity {
 	private PowerManager.WakeLock mWakeLock;
 	private OrientationEventListener mOrientationEventListener;
 	private String mFilterKey;
-	private String mMenuSizeKey;
 	private String mTextSizeKey;
 	private String mPartialKey;
+	private String mPrimaryFilterKey;
+	private String mSecondaryFilterKey;
+	private int mPrimaryFilter;
+	private int mSecondaryFilter;
 	private Camera mCamera;
 	private byte[] mCallBackBuffer;
 	private boolean mCamIsPreviewing;
@@ -67,6 +69,14 @@ public class EyeCamActivity extends Activity {
 			case CAMERA_LIGHT_ON:
 				setCameraLight(Camera.Parameters.FLASH_MODE_TORCH);
 				break;
+			case PRIMARY_FILTER_ON:
+				Debug.msg(LOG_TAG, "PrimaryFilter is running....");
+				mColorView.setEffect(mPrimaryFilter);
+				break;
+			case SECONDARY_FILTER_ON:
+				Debug.msg(LOG_TAG, "Secondary Filter is running....");
+				mColorView.setEffect(mSecondaryFilter);
+				break;
 			}
 		}
 	};
@@ -74,11 +84,8 @@ public class EyeCamActivity extends Activity {
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {	
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			if (mControlBar.isMenuShowing()) mControlBar.dismissAllChildMenu();
-			else {
-				stopCameraPreview();
-				mControlBar.setCamStateButton(false);
-			}
+			stopCameraPreview();
+			mControlBar.setCamStateButton(false);
 			return false;
 		}
 	};
@@ -90,6 +97,8 @@ public class EyeCamActivity extends Activity {
 	public final static int CAMERA_STOP_PREVIEW = 1;
 	public final static int CAMERA_LIGHT_OFF = 2;
 	public final static int CAMERA_LIGHT_ON = 3;
+	public final static int PRIMARY_FILTER_ON = 4;
+	public final static int SECONDARY_FILTER_ON = 5;
 	
 	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
 	
@@ -175,33 +184,39 @@ public class EyeCamActivity extends Activity {
 
 	private void registerPreferenceChangeListener(){
 		mFilterKey = getResources().getString(R.string.filter_key);
-		mMenuSizeKey = getResources().getString(R.string.setting_menusize_key);
+		
+		mPrimaryFilterKey = getResources().getString(R.string.setting_primary_filter_key);
+		mSecondaryFilterKey = getResources().getString(R.string.setting_secondary_filter_key);
+		
 		mTextSizeKey = getResources().getString(R.string.setting_textsize_key);
 		mPartialKey = getResources().getString(R.string.setting_key_partial);
 		
 		mPrefFilter = new OnSharedPreferenceChangeListener(){
-			private int mediumSize = 1;
-			private int mDefFilter = getResources().getInteger(R.integer.filter_none);
-			private String mDefTextSize = getResources().getStringArray(R.array.text_size_values)[mediumSize];
-			private String mDefMenuSize = getResources().getStringArray(R.array.menu_size_values)[mediumSize];
+			private String mDefFilter = getResources().getString(R.string.filter_daltonize_value);
+			private String mDefTextSize = getResources().getString(R.string.text_size_medium);
 			
 			@Override
 			public void onSharedPreferenceChanged(SharedPreferences shPref, String key) {
 				Debug.msg(LOG_TAG, "Preferences changed for key: " + key);
-				if(key.equals(mFilterKey)){
-					mColorView.setEffect(shPref.getInt(key, mDefFilter));
+				if(key.equals(mPrimaryFilterKey)){
+					mPrimaryFilter = getIntPrefernce(shPref,key,mDefFilter);
+					mColorView.setEffect(mPrimaryFilter);
+					if (!mCamIsPreviewing) mColorView.refreshBitmap();
+				}else if(key.equals(mSecondaryFilterKey)){
+					mSecondaryFilter = getIntPrefernce(shPref,key,mDefFilter);
+					mColorView.setEffect(mSecondaryFilter);
 					if (!mCamIsPreviewing) mColorView.refreshBitmap();
 				} else if(key.equals(mTextSizeKey)){
-					int value = Integer.parseInt(shPref.getString(key, mDefTextSize));
-					mColorView.setPopupTextSize(value);
-				} else if(key.equals(mMenuSizeKey)){
-					int value = Integer.parseInt(shPref.getString(key, mDefMenuSize));
-					mControlBar.setMenuSize(value);
+					mColorView.setPopupTextSize(getIntPrefernce(shPref,key, mDefTextSize));
 				} else if(key.equals(mPartialKey)){
 					mColorView.enablePartialEffects(shPref.getBoolean(key, false));
-					mColorView.setEffect(shPref.getInt(mFilterKey, mDefFilter));
+					mColorView.setEffect(getIntPrefernce(shPref,mFilterKey,mDefFilter));
 					if (!mCamIsPreviewing) mColorView.refreshBitmap();
 				}
+			}
+			
+			private int getIntPrefernce(SharedPreferences shPref, String key, String defaultValue ){
+				return Integer.parseInt(shPref.getString(key, mDefFilter));
 			}
 			
 		};
@@ -211,9 +226,9 @@ public class EyeCamActivity extends Activity {
 	}
 	
 	private void initSavedPreferences() {
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
 		mPrefFilter.onSharedPreferenceChanged(shPref, mFilterKey);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mMenuSizeKey);
 		mPrefFilter.onSharedPreferenceChanged(shPref, mPartialKey);
 		mPrefFilter.onSharedPreferenceChanged(shPref, mTextSizeKey);
 	}
@@ -227,6 +242,7 @@ public class EyeCamActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		initCamera();
+		mControlBar.setInitState();
 		mWakeLock.acquire();
 		mOrientationEventListener.enable();
 	}
@@ -327,7 +343,6 @@ public class EyeCamActivity extends Activity {
 	protected void onDestroy() {
 		mOrientationEventListener.disable();
 		mColorView.dismissPopup();
-		mControlBar.dismissAllChildMenu();
 		super.onDestroy();
 	}
 
@@ -341,19 +356,4 @@ public class EyeCamActivity extends Activity {
 		return false;
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * This method is overwritten in order to dismiss the menu if
-	 * it is showing.
-	 */
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (mControlBar.isMenuShowing()){
-			mControlBar.dismissAllChildMenu();
-			return true;
-		}
-		
-		return super.onKeyDown(keyCode, event);
-	}
 }

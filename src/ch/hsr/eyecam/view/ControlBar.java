@@ -1,11 +1,8 @@
 package ch.hsr.eyecam.view;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -37,7 +34,6 @@ public class ControlBar extends LinearLayout {
 					,mAnimationLeft ,mAnimationRight;
 	private Handler mActivityHandler;	
 	private Orientation mLastKnowOrientation;
-	private MenuBubble mFilterMenu, mSettingsMenu;
 	
 	private OnClickListener mOnClickPlayPause = new OnClickListener() {
 		@Override
@@ -65,30 +61,14 @@ public class ControlBar extends LinearLayout {
 	private OnClickListener mOnClickFilter = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Context appContex = getContext().getApplicationContext();
-			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(appContex);
-			SharedPreferences.Editor editor = sharedPreferences.edit();
+			Debug.msg(LOG_TAG, "Wurde gedrueck!!!!!!!");
 			if(((StateImageButton)v).isChecked())
-				editor.putInt(getResources().getString(R.string.filter_key)
-						, getResources().getInteger(R.integer.filter_false_colors));
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.SECONDARY_FILTER_ON);
 			else
-			editor.putInt(getResources().getString(R.string.filter_key)
-					, getResources().getInteger(R.integer.filter_daltonize));
-			
-			editor.commit();
-			/*mSettingsMenu.dismiss();
-			inflateMenu(mFilterMenu);*/
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.PRIMARY_FILTER_ON);
 		}		
 	};
 	
-	private OnClickListener mOnClickSettings = new OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-			mFilterMenu.dismiss();
-			inflateMenu(mSettingsMenu);			
-		}
-	};
 
 	private final static String LOG_TAG = "ch.hsr.eyecam.view.ControlBar";
 	
@@ -123,31 +103,14 @@ public class ControlBar extends LinearLayout {
 	public void enableOnClickListeners(){
 		findViewById(R.id.imageButton_Pause).setOnClickListener(mOnClickPlayPause);
 		findViewById(R.id.imageButton_Light).setOnClickListener(mOnClickLight);
-		mFilterMenu = initMenu(R.id.imageButton_Filter,R.layout.filter_menu,mOnClickFilter);
-		mSettingsMenu = initMenu(R.id.imageButton_Settings,R.layout.settings_menu,mOnClickSettings);
+		findViewById(R.id.imageButton_Filter).setOnClickListener(mOnClickFilter);
 	}
 	
-	private MenuBubble initMenu(int resIdAnchorButton,int resIdMenu, 
-			OnClickListener onClickListenr) {
-		LayoutInflater inflater = (LayoutInflater) getContext()
-			.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View contentView = inflater.inflate(resIdMenu, null);
-		View anchor = findViewById(resIdAnchorButton);
-		anchor.setOnClickListener(onClickListenr);
-		return new MenuBubble(anchor, contentView);
-	}
-
 	protected void inflateMenu(MenuBubble menu) {
 		if (menu.isShowing()) menu.dismiss();
 		else menu.show();
 	}
 	
-	/**
-	 * @return Return true if any child-menu is showing otherwise false.
-	 */
-	public boolean isMenuShowing() {
-		return mFilterMenu.isShowing() | mSettingsMenu.isShowing();
-	}
 	
 	private void rotateChildViews(Animation animation){
 		for(int i=0;i < getChildCount(); ++i)
@@ -161,8 +124,6 @@ public class ControlBar extends LinearLayout {
 	 * @param orientation
 	 */
 	public void rotate(Orientation orientation){
-		mFilterMenu.setContentOrientation(orientation);
-		mSettingsMenu.setContentOrientation(orientation);
 		
 		if(mLastKnowOrientation == Orientation.LANDSCAPE_LEFT
 			&& orientation == Orientation.PORTRAIT)
@@ -212,14 +173,6 @@ public class ControlBar extends LinearLayout {
 	}
 
 	/**
-	 * Managed all child menus of the ControlBar
-	 */
-	public void dismissAllChildMenu() {
-		mFilterMenu.dismiss();
-		mSettingsMenu.dismiss();
-	}
-
-	/**
 	 * Manage the OnClickListener change of the CamStatButton
 	 */
 	public void setCamStateButton(boolean isPreviewing) {
@@ -229,13 +182,8 @@ public class ControlBar extends LinearLayout {
 		pause.setOnClickListener(mOnClickPlayPause);
 	}
 
-	/**
-	 * All child menu will update with the given size.
-	 * @param size
-	 */
-	public void setMenuSize(int size) {
-		mFilterMenu.setSize(size, size);
-		mSettingsMenu.setSize(size, size);
+	public void setInitState() {
+		((StateImageButton)findViewById(R.id.imageButton_Filter)).setEnabled(false);		
 	}
 
 }

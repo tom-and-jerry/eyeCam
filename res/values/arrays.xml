@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string-array name="text_and_menu_size">
-		<item>small</item>
-		<item>medium</item>
-		<item>large</item>
+	<string-array name="text_size">
+		<item>@string/setting_size_small</item>
+		<item>@string/setting_size_medium</item>
+		<item>@string/setting_size_large</item>
 	</string-array>   
 	
 	<string-array name="text_size_values">
-		<item>5</item>
-		<item>7</item>
-		<item>9</item>
+		<item>@string/text_size_small</item>
+		<item>@string/text_size_medium</item>
+		<item>@string/text_size_large</item>
 	</string-array>
 	
-	<string-array name="menu_size_values">
-		<item>70</item>
-		<item>90</item>
-		<item>110</item>
+	<string-array name="filter_name">
+		<item>@string/filter_none</item>
+	    <item>@string/filter_simulate</item>
+	    <item>@string/filter_false_colors</item>
+		<item>@string/filter_intensify</item>
+		<item>@string/filter_daltonize</item>
 	</string-array>
+	
+	<string-array name="filter_values">
+		<item>@string/filter_none_value</item>
+	    <item>@string/filter_simulate_value</item>
+	    <item>@string/filter_false_colors_value</item>
+		<item>@string/filter_intensify_value</item>
+		<item>@string/filter_daltonize_value</item>
+	</string-array>
+	
 </resources>

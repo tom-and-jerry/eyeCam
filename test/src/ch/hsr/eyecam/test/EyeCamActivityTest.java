@@ -1,7 +1,9 @@
 package ch.hsr.eyecam.test;
 
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 import ch.hsr.eyecam.EyeCamActivity;
 
@@ -42,6 +44,7 @@ public class EyeCamActivityTest extends
 				mActivityInfo.configChanges | ActivityInfo.CONFIG_KEYBOARD_HIDDEN,
 				mActivityInfo.configChanges);
 	}
+	
 
 	@Override
 	protected void tearDown() throws Exception {

@@ -7,18 +7,23 @@
 	<integer name="filter_intensify">3</integer>
 	<integer name="filter_daltonize">4</integer>
 	
-	<string name="partial_key">key_partial</string>
+	<string name="filter_none_value">0</string>
+	<string name="filter_simulate_value">1</string>
+	<string name="filter_false_colors_value">2</string>
+	<string name="filter_intensify_value">3</string>
+	<string name="filter_daltonize_value">4</string>
 	
-	<string name="menu_size_key">key_menusize</string>
-	<integer name="menu_size_small">70</integer>
-	<integer name="menu_size_medium">90</integer>
-	<integer name="menu_size_large">110</integer>
+	
+	<string name="partial_key">key_partial</string>
 
 	<string name="text_size_key">key_textsize</string>
 	<dimen name="text_size_small_pt">5pt</dimen>
 	<integer name="text_size_small">5</integer>
+	<string name="text_size_small">5</string>
 	<dimen name="text_size_medium_pt">7pt</dimen>
 	<integer name="text_size_medium">7</integer>
+	<string name="text_size_medium">7</string>
 	<dimen name="text_size_large_pt">9pt</dimen>
 	<integer name="text_size_large">9</integer>
+	<string name="text_size_large">9</string>
 </resources>

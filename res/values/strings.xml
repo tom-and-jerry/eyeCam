@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">eyeCam</string>
     
+    
+    <!-- Color's -->
     <string name="color_black">black</string>
     <string name="color_grey">gray</string>
     <string name="color_white">white</string>
@@ -15,6 +17,7 @@
     <string name="color_turquoise">turquoise</string>
     <string name="color_unknown">unknown</string>
     
+    <!-- Filter's -->
     <string name="title_filter">Filter</string>
 	<string name="filter_none">no filter</string>
 	<string name="filter_simulate">colorblind simulation</string>
@@ -24,17 +27,16 @@
 	
 	<string name="settings_menu_title">Settings</string>
 	<string name="setting_partial_title">Partial Filter Effect</string>
-	<string name="setting_partial_enable">use partial filters, whenever possible</string>
+    <string name="setting_partial_enable">use partial filters, whenever possible</string>
 	<string name="setting_partial_disable">never use partial filters</string>
 	<string name="setting_partail_summary">If it is checked, the algorithm will use partial filters, whenever it is possible</string>
 
-	<string name="setting_textsize_title">Popup Text size</string>
-	<string name="setting_menusize_title">Menu size</string>
-	<string name="setting_size_small">small</string>
+    <string name="setting_size_small">small</string>
 	<string name="setting_size_medium">medium</string>
 	<string name="setting_size_large">large</string>
+
+	<string name="setting_textsize_title">Popup Text size</string>
 	<string name="setting_textSize_summary">Change the text size of the color recognition popup</string>
-	<string name="setting_menuSize_summary">Change the display size of the menu</string>
 	
 	<string name="setting_no_title">no title</string>
 	<string name="setting_no_key">no key</string>
@@ -42,4 +44,12 @@
 	<string name="setting_key_partial">setting_key_partial</string>
 	<string name="setting_textsize_key">setting_textsize_key</string>
 	<string name="setting_menusize_key">setting_menusize_key</string>
+	<string name="setting_secondary_filter_key">setting_secondary_filter_key</string>
+	<string name="setting_primary_filter_key">setting_primary_filter_key</string>
+	<string name="magic_button_title">Magic Button</string>
+	<string name="setting_filter_key">settings_filter_key</string>
+	<string name="setting_primary_filter_title">Primary Filter</string>
+	<string name="setting_primary_filter_summary">That the filter will be loaded by default when the App is launched</string>
+	<string name="setting_secondary_filter_title">Secondary Filter</string>
+	<string name="setting_secondary_filter_suammary">That the filter will be loaded when you click on the magic wand button</string>
 </resources>
