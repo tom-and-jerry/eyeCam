@@ -53,7 +53,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 		
 		TypedArray typedArrayAttr = context.obtainStyledAttributes(attrs
 				,R.styleable.StateImageButton);
-	
+		
 		mImgResTrue = typedArrayAttr.getResourceId(
 				R.styleable.StateImageButton_imgResTrue, R.drawable.ic_menu_sad);
 		mImgResFalse = typedArrayAttr.getResourceId(
@@ -115,8 +115,8 @@ public class StateImageButton extends ImageButton implements Checkable{
 	@Override
 	public void setChecked(boolean checked) {
 		if(!isEnabled())return;
+		Debug.msg(LOG_TAG, "State has changed! From:"+mState +" To: "+checked);
 		mState = checked;
-		Debug.msg(LOG_TAG, "State has changed! From:"+mState +" To: "+mState);
 		setImage();
 	}
 

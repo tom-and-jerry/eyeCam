@@ -1,5 +1,6 @@
 package ch.hsr.eyecam;
 
+import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
@@ -12,6 +13,8 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -48,10 +51,10 @@ public class EyeCamActivity extends Activity {
 	private Camera mCamera;
 	private byte[] mCallBackBuffer;
 	private boolean mCamIsPreviewing;
-	
 	private ColorView mColorView;
 	private ControlBar mControlBar;
 	private Orientation mOrientationCurrent =  Orientation.UNKNOW;
+	private LoadingCameraInBackground mLoadingCameraInBg;
 	
 	private Handler mHandler = new Handler(){
 		@Override
@@ -70,11 +73,11 @@ public class EyeCamActivity extends Activity {
 				setCameraLight(Camera.Parameters.FLASH_MODE_TORCH);
 				break;
 			case PRIMARY_FILTER_ON:
-				Debug.msg(LOG_TAG, "PrimaryFilter is running....");
+				Debug.msg(LOG_TAG, "PrimaryFilter is running...."+mPrimaryFilter);
 				mColorView.setEffect(mPrimaryFilter);
 				break;
 			case SECONDARY_FILTER_ON:
-				Debug.msg(LOG_TAG, "Secondary Filter is running....");
+				Debug.msg(LOG_TAG, "Secondary Filter is running...."+mSecondaryFilter);
 				mColorView.setEffect(mSecondaryFilter);
 				break;
 			}
@@ -89,6 +92,67 @@ public class EyeCamActivity extends Activity {
 			return false;
 		}
 	};
+	
+	private class LoadingCameraInBackground extends AsyncTask<Void, Void, Void>{
+		
+		@Override
+		protected void onPreExecute() {
+			mColorView.setVisibility(View.INVISIBLE);
+			findViewById(R.id.hsr_loading_screen).setVisibility(View.VISIBLE);
+		}
+
+		private void waitForCamera(int milliSek){
+			try {
+				synchronized (this) {
+					wait(milliSek);
+				}
+				return;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			Debug.msg(LOG_TAG, "starting opening camera...");
+			for(int tries= 0;tries <10;++tries){
+				try{
+					mCamera.reconnect();
+				}
+				catch (NullPointerException nullPointer){		
+					try{
+						mCamera = Camera.open();
+						Debug.msg(LOG_TAG, tries+" tries until now");
+						if(mCamera!=null) tries=10;
+					} catch (RuntimeException ex){
+						waitForCamera(500);
+						continue;
+					}
+				} catch (IOException ioEx) {
+					waitForCamera(500);
+					continue;
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onCancelled() {
+			Debug.msg(LOG_TAG, "canceling opening camera...");
+			while(mCamera == null);
+			releaseCamera(true);
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			Debug.msg(LOG_TAG, "finish opening camera...");
+			if(isCancelled())return;
+			configEnvByCameraParams();
+			mColorView.setVisibility(View.VISIBLE);
+			findViewById(R.id.hsr_loading_screen).setVisibility(View.INVISIBLE);
+		}
+	}
 	
 	private OnSharedPreferenceChangeListener mPrefFilter;
 	private final DisplayMetrics mMetrics = new DisplayMetrics();
@@ -132,6 +196,7 @@ public class EyeCamActivity extends Activity {
 		initOrientationEventListener();
 		registerPreferenceChangeListener();
 		initSavedPreferences();
+		Debug.msg(LOG_TAG, "PrimaryFilter: "+ mPrimaryFilter +" SecondaryFilter: "+mSecondaryFilter );
 		mOrientationEventListener.enable();
 	}
 	
@@ -233,22 +298,23 @@ public class EyeCamActivity extends Activity {
 		mPrefFilter.onSharedPreferenceChanged(shPref, mTextSizeKey);
 	}
 
-	/** 
+	/**
 	 * {@inheritDoc}
 	 * 
-	 * Called after onCreate() and onStart().
+	 * Called after onCreate() and onStart().l
 	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
-		initCamera();
+		mLoadingCameraInBg = new LoadingCameraInBackground();
+		mLoadingCameraInBg.execute();
 		mControlBar.setInitState();
 		mWakeLock.acquire();
 		mOrientationEventListener.enable();
 	}
 
-	private void initCamera() {
-		mCamera= Camera.open();
+	private void configEnvByCameraParams() {
+		Debug.msg(LOG_TAG, "start init camera Pref...");
 		Camera.Parameters parameters = mCamera.getParameters();	
 		
 		Size optSize = getOptimalSize(parameters.getSupportedPreviewSizes());
@@ -318,19 +384,23 @@ public class EyeCamActivity extends Activity {
 		mWakeLock.release();
 		mOrientationEventListener.disable();
 	}
-	
+
 	private void releaseCamera(){
 		if(mCamera==null) return;
 		stopCameraPreview();
 		mCamera.release();
 		mCamera = null;
 	}
+	
+	private void releaseCamera(boolean force){
+		if(force && mCamera != null) mCamera.unlock();
+		else releaseCamera();
+	}
 
 	private void stopCameraPreview() {
 		mCamera.setPreviewCallbackWithBuffer(null);
 		mCamera.stopPreview();
 		mCamIsPreviewing = false;
-		
 		mColorView.enablePopup(true);
 	}
 
@@ -354,6 +424,16 @@ public class EyeCamActivity extends Activity {
 	@Override
 	public boolean onSearchRequested(){
 		return false;
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if(mLoadingCameraInBg.getStatus() == Status.RUNNING){
+			mLoadingCameraInBg.cancel(true);
+			while(!mLoadingCameraInBg.isCancelled());
+			Debug.msg(LOG_TAG, "Finish!!!");
+		}
+		super.onBackPressed();
 	}
 	
 }

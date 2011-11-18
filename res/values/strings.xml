@@ -35,6 +35,9 @@
 	<string name="setting_size_medium">medium</string>
 	<string name="setting_size_large">large</string>
 
+	<string name="setting_menusize_title">Menu size</string>
+	<string name="setting_menuSize_summary">The sizes of the showing menu</string>
+
 	<string name="setting_textsize_title">Popup Text size</string>
 	<string name="setting_textSize_summary">Change the text size of the color recognition popup</string>
 	

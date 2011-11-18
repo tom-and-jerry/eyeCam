@@ -183,7 +183,7 @@ public class ControlBar extends LinearLayout {
 	}
 
 	public void setInitState() {
-		((StateImageButton)findViewById(R.id.imageButton_Filter)).setEnabled(false);		
+		//((StateImageButton)findViewById(R.id.imageButton_Filter)).setEnabled(false);
 	}
 
 }

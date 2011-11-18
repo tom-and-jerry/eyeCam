@@ -142,6 +142,9 @@
 	         the emulator. -->
 	<property name="adb.device.arg" value="" />
 
+	<!-- Unpress the warning  -->
+	<property name="build.sysclasspath" value="ignore" />
+
 	<property name="android.tools.dir" location="${sdk.dir}/tools" />
 	<property name="android.platform.tools.dir" location="${sdk.dir}/platform-tools" />
 	<!-- Name of the application package extracted from manifest file -->

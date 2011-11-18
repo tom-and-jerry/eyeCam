@@ -3,12 +3,16 @@
     
     <ch.hsr.eyecam.view.ColorView 
     	android:id="@+id/cameraSurface" 
+    	android:visibility="invisible"
     	android:layout_width="match_parent" 
-    	android:layout_height="match_parent">
-    </ch.hsr.eyecam.view.ColorView>
+    	android:layout_height="match_parent"/>
+    
+    <include
+    	android:id="@+id/hsr_loading_screen"
+    	layout="@layout/hsr_load_screen"/>
     
     <include 
-    	layout="@layout/cam_control"
-    	android:id="@+id/cam_control"/>
+    	android:id="@+id/cam_control"
+    	layout="@layout/cam_control"/>
 
 </merge>
