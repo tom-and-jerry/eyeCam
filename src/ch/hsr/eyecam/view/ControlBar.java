@@ -61,7 +61,6 @@ public class ControlBar extends LinearLayout {
 	private OnClickListener mOnClickFilter = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Debug.msg(LOG_TAG, "Wurde gedrueck!!!!!!!");
 			if(((StateImageButton)v).isChecked())
 				mActivityHandler.sendEmptyMessage(EyeCamActivity.SECONDARY_FILTER_ON);
 			else
@@ -182,8 +181,9 @@ public class ControlBar extends LinearLayout {
 		pause.setOnClickListener(mOnClickPlayPause);
 	}
 
-	public void setInitState() {
-		//((StateImageButton)findViewById(R.id.imageButton_Filter)).setEnabled(false);
+	public void iniState() {
+		StateImageButton sImageButton = (StateImageButton)findViewById(R.id.imageButton_Filter);
+		if(sImageButton.isChecked())mActivityHandler.sendEmptyMessage(EyeCamActivity.SECONDARY_FILTER_ON);
+		else mActivityHandler.sendEmptyMessage(EyeCamActivity.PRIMARY_FILTER_ON);
 	}
-
 }

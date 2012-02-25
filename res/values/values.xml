@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="filter_key">key_filter</string>
-	<integer name="filter_none">0</integer>
+	<!--  <integer name="filter_none">0</integer>
 	<integer name="filter_simulate">1</integer>
 	<integer name="filter_false_colors">2</integer>
 	<integer name="filter_intensify">3</integer>
-	<integer name="filter_daltonize">4</integer>
+	<integer name="filter_daltonize">4</integer>-->
 	
 	<string name="filter_none_value">0</string>
 	<string name="filter_simulate_value">1</string>
@@ -20,9 +20,11 @@
 	<dimen name="text_size_small_pt">5pt</dimen>
 	<integer name="text_size_small">5</integer>
 	<string name="text_size_small">5</string>
+	
 	<dimen name="text_size_medium_pt">7pt</dimen>
 	<integer name="text_size_medium">7</integer>
 	<string name="text_size_medium">7</string>
+	
 	<dimen name="text_size_large_pt">9pt</dimen>
 	<integer name="text_size_large">9</integer>
 	<string name="text_size_large">9</string>
