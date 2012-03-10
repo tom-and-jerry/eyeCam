@@ -111,9 +111,9 @@
 	    -->
 
 	<!-- Custom tasks -->
-	<taskdef name="aapt"
+	<!--<taskdef name="aapt"
 	        classname="com.android.ant.AaptExecLoopTask"
-	        classpathref="android.antlibs" />
+	        classpathref="android.antlibs" />-->
 
 	<taskdef name="aidl"
 	        classname="com.android.ant.AidlExecTask"

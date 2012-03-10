@@ -41,13 +41,9 @@ import ch.hsr.eyecam.view.ControlBar;
 public class EyeCamActivity extends Activity {
 	private PowerManager.WakeLock mWakeLock;
 	private OrientationEventListener mOrientationEventListener;
-	private String mFilterKey;
-	private String mTextSizeKey;
-	private String mPartialKey;
-	private String mPrimaryFilterKey;
-	private String mSecondaryFilterKey;
 	private int mPrimaryFilter;
 	private int mSecondaryFilter;
+	private boolean mPartialFilter;
 	private Camera mCamera;
 	private byte[] mCallBackBuffer;
 	private boolean mCamIsPreviewing;
@@ -74,11 +70,11 @@ public class EyeCamActivity extends Activity {
 				break;
 			case PRIMARY_FILTER_ON:
 				Debug.msg(LOG_TAG, "PrimaryFilter is running...."+mPrimaryFilter);
-				mColorView.setEffect(mPrimaryFilter);
+				setEffects(mPrimaryFilter);
 				break;
 			case SECONDARY_FILTER_ON:
 				Debug.msg(LOG_TAG, "Secondary Filter is running...."+mSecondaryFilter);
-				mColorView.setEffect(mSecondaryFilter);
+				setEffects(mSecondaryFilter);
 				break;
 			}
 		}
@@ -91,6 +87,13 @@ public class EyeCamActivity extends Activity {
 			mControlBar.setCamStateButton(false);
 			return false;
 		}
+	};
+	
+	private OnSharedPreferenceChangeListener mSharedPrefChangeListener = new OnSharedPreferenceChangeListener(){		
+		@Override
+		public void onSharedPreferenceChanged(SharedPreferences shPref, String key) {
+			setValues(shPref);			
+		}			
 	};
 	
 	private class LoadingCameraInBackground extends AsyncTask<Void, Void, Void>{
@@ -154,7 +157,6 @@ public class EyeCamActivity extends Activity {
 		}
 	}
 	
-	private OnSharedPreferenceChangeListener mPrefFilter;
 	private final DisplayMetrics mMetrics = new DisplayMetrics();
 	
 	public final static int CAMERA_START_PREVIEW = 0;
@@ -163,7 +165,7 @@ public class EyeCamActivity extends Activity {
 	public final static int CAMERA_LIGHT_ON = 3;
 	public final static int PRIMARY_FILTER_ON = 4;
 	public final static int SECONDARY_FILTER_ON = 5;
-	
+	public final static String PREFERENCE_FILE = "eyeCamPref";
 	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
 	
 	private void setCameraLight(String cameraFlashMode) {
@@ -194,9 +196,7 @@ public class EyeCamActivity extends Activity {
 		mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "eyeCam");
 		
 		initOrientationEventListener();
-		registerPreferenceChangeListener();
-		initSavedPreferences();
-		Debug.msg(LOG_TAG, "PrimaryFilter: "+ mPrimaryFilter +" SecondaryFilter: "+mSecondaryFilter );
+		
 		mOrientationEventListener.enable();
 	}
 	
@@ -214,6 +214,7 @@ public class EyeCamActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
 	private void initOrientationEventListener() {
 		mOrientationEventListener = new OrientationEventListener(this, 
 				SensorManager.SENSOR_DELAY_NORMAL) {
@@ -247,55 +248,41 @@ public class EyeCamActivity extends Activity {
 		};
 	}
 
-	private void registerPreferenceChangeListener(){
-		mFilterKey = getResources().getString(R.string.filter_key);
-		
-		mPrimaryFilterKey = getResources().getString(R.string.setting_primary_filter_key);
-		mSecondaryFilterKey = getResources().getString(R.string.setting_secondary_filter_key);
-		
-		mTextSizeKey = getResources().getString(R.string.setting_textsize_key);
-		mPartialKey = getResources().getString(R.string.setting_key_partial);
-		
-		mPrefFilter = new OnSharedPreferenceChangeListener(){
-			private String mDefFilter = getResources().getString(R.string.filter_daltonize_value);
-			private String mDefTextSize = getResources().getString(R.string.text_size_medium);
-			
-			@Override
-			public void onSharedPreferenceChanged(SharedPreferences shPref, String key) {
-				Debug.msg(LOG_TAG, "Preferences changed for key: " + key);
-				if(key.equals(mPrimaryFilterKey)){
-					mPrimaryFilter = getIntPrefernce(shPref,key,mDefFilter);
-					mColorView.setEffect(mPrimaryFilter);
-					if (!mCamIsPreviewing) mColorView.refreshBitmap();
-				}else if(key.equals(mSecondaryFilterKey)){
-					mSecondaryFilter = getIntPrefernce(shPref,key,mDefFilter);
-					mColorView.setEffect(mSecondaryFilter);
-					if (!mCamIsPreviewing) mColorView.refreshBitmap();
-				} else if(key.equals(mTextSizeKey)){
-					mColorView.setPopupTextSize(getIntPrefernce(shPref,key, mDefTextSize));
-				} else if(key.equals(mPartialKey)){
-					mColorView.enablePartialEffects(shPref.getBoolean(key, false));
-					mColorView.setEffect(getIntPrefernce(shPref,mFilterKey,mDefFilter));
-					if (!mCamIsPreviewing) mColorView.refreshBitmap();
-				}
-			}
-			
-			private int getIntPrefernce(SharedPreferences shPref, String key, String defaultValue ){
-				return Integer.parseInt(shPref.getString(key, mDefFilter));
-			}
-			
-		};
-		
-		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
-		shPref.registerOnSharedPreferenceChangeListener(mPrefFilter);
+	private void setEffects(int effect) {
+		setEffects(effect, mPartialFilter);
 	}
 	
+	private void setEffects(int effect, boolean partial){
+		mColorView.enablePartialEffects(partial);
+		mColorView.setEffect(effect);
+		if (!mCamIsPreviewing) mColorView.refreshBitmap();
+	}
+
 	private void initSavedPreferences() {
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(this);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mFilterKey);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mPartialKey);
-		mPrefFilter.onSharedPreferenceChanged(shPref, mTextSizeKey);
+		PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
+		SharedPreferences shPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		shPref.registerOnSharedPreferenceChangeListener(mSharedPrefChangeListener);
+		setValues(shPref);
+	}
+
+	private void setValues(SharedPreferences shPref) {
+		mPrimaryFilter = getIntSettingValue(shPref,R.string.setting_primary_filter_key,R.string.filter_daltonize_value);
+		mSecondaryFilter = getIntSettingValue(shPref, R.string.setting_secondary_filter_key, R.string.filter_false_colors_value);
+		mPartialFilter = getBooleanSettingValue(shPref, R.string.setting_key_partial, 0);
+	}
+
+	private int getIntSettingValue(SharedPreferences shPref, int resourcesOfTheKey, int defaultValue) {
+		String keyString = getResources().getString(resourcesOfTheKey);
+		String defaultSettingsValue = getResources().getString(defaultValue);
+		String settingValue = shPref.getString(keyString,defaultSettingsValue);
+		
+		return Integer.parseInt(settingValue);
+	}
+	
+	private boolean getBooleanSettingValue(SharedPreferences shPref, int resourcesOfTheKey, int defaultValue) {
+		String keyString = getResources().getString(resourcesOfTheKey);
+		return shPref.getBoolean(keyString, true);
+		
 	}
 
 	/**
@@ -308,7 +295,8 @@ public class EyeCamActivity extends Activity {
 		super.onResume();
 		mLoadingCameraInBg = new LoadingCameraInBackground();
 		mLoadingCameraInBg.execute();
-		mControlBar.setInitState();
+		initSavedPreferences();
+		mControlBar.iniState();
 		mWakeLock.acquire();
 		mOrientationEventListener.enable();
 	}

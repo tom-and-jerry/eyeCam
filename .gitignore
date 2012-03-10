@@ -7,3 +7,6 @@ obj/
 libs/
 jni/Debug/
 local.properties
+test/.classpath
+test/.settings
+test/.metadata

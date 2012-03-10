@@ -20,6 +20,7 @@
 		<item>@string/filter_daltonize</item>
 	</string-array>
 	
+	    
 	<string-array name="filter_values">
 		<item>@string/filter_none_value</item>
 	    <item>@string/filter_simulate_value</item>

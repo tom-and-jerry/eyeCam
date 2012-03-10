@@ -145,7 +145,7 @@ JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_setPartialEf
 	effectPtr = &partialEffect;
 }
 
-void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformImageToBitmap
+JNIEXPORT void JNICALL Java_ch_hsr_eyecam_colormodel_ColorTransform_transformImageToBitmap
   (JNIEnv * env, jclass cl, jbyteArray jarray, jint width, jint height, jobject bitmap){
 	int 				ret;
 	void* 				pixels;
