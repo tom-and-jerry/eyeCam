@@ -172,7 +172,7 @@ public class ControlBar extends LinearLayout {
 	}
 
 	/**
-	 * Manage the OnClickListener change of the CamStatButton
+	 * Manage the OnClickListener change of the CamStateButton
 	 */
 	public void setCamStateButton(boolean isPreviewing) {
 		StateImageButton pause = (StateImageButton)findViewById(R.id.imageButton_Pause);
@@ -181,9 +181,9 @@ public class ControlBar extends LinearLayout {
 		pause.setOnClickListener(mOnClickPlayPause);
 	}
 
-	public void iniState() {
-		StateImageButton sImageButton = (StateImageButton)findViewById(R.id.imageButton_Filter);
-		if(sImageButton.isChecked())mActivityHandler.sendEmptyMessage(EyeCamActivity.SECONDARY_FILTER_ON);
+	public void initState() {
+		StateImageButton lImageButton = (StateImageButton)findViewById(R.id.imageButton_Filter);
+		if(lImageButton.isChecked())mActivityHandler.sendEmptyMessage(EyeCamActivity.SECONDARY_FILTER_ON);
 		else mActivityHandler.sendEmptyMessage(EyeCamActivity.PRIMARY_FILTER_ON);
 	}
 }

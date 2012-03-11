@@ -1,6 +1,7 @@
 package ch.hsr.eyecam.view;
 
 import ch.hsr.eyecam.Debug;
+import ch.hsr.eyecam.EyeCamActivity;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
@@ -12,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,10 +38,13 @@ public class ColorView extends View implements PreviewCallback {
 	
 	private ColorRecognizer mColorRecognizer;
 	private FloatingBubble mPopup;
+	private Handler mActivityHandler;
 
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
+			mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
+			
 			if (event.getAction() == MotionEvent.ACTION_DOWN){
 				int x = (int)event.getX();
 				int y = (int)event.getY();
@@ -63,13 +68,18 @@ public class ColorView extends View implements PreviewCallback {
 	
 	public ColorView(Context context) {
 		super(context);
-		initPopup();
-		mPartialEnabled = false;
+		init();
 	}
 
 	public ColorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		initPopup();
+		init();
+	}
+
+	private void init() {
+		mPopup = new FloatingBubble(getContext(), this);
+		
+		setOnTouchListener(mOnTouchListener);
 		mPartialEnabled = false;
 	}
 
@@ -78,10 +88,6 @@ public class ColorView extends View implements PreviewCallback {
 				Bitmap.Config.RGB_565);
 		Debug.msg(LOG_TAG, "Bitmap size: W: " + mPreviewWidth + " H: "
 				+ mPreviewHeight);
-	}
-
-	private void initPopup() {
-		mPopup = new FloatingBubble(getContext(), this);
 	}
 
 	private void showColorAt(int color, int x, int y){
@@ -149,13 +155,11 @@ public class ColorView extends View implements PreviewCallback {
 	 * 
 	 * @param showPopup true if the popup should be enabled, false otherwise.
 	 */
-	public void enablePopup(boolean showPopup) {
-		if(showPopup) setOnTouchListener(mOnTouchListener);
-		else {
-			setOnTouchListener(null);
+	/*public void enablePopup(boolean showPopup) {
+		if(!showPopup) {
 			mPopup.dismiss();
 		}
-	}
+	}*/
 
 	/**
 	 * If the Popup is showing, it will be dismissed. Nothing happens if 
@@ -215,5 +219,9 @@ public class ColorView extends View implements PreviewCallback {
 		Debug.msg(LOG_TAG,"Effect on Previewimage");
 		ColorTransform.transformImageToBitmap(mDataBuffer, mPreviewWidth, mPreviewHeight, mBitmap);
 		invalidate();
+	}
+
+	public void setActivityHandler(Handler mHandler) {
+		mActivityHandler = mHandler;
 	}
 }
