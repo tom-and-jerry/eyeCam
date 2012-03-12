@@ -46,7 +46,7 @@ public class EyeCamActivity extends Activity {
 	private ColorView mColorView;
 	private ControlBar mControlBar;
 	private Orientation mOrientationCurrent = Orientation.UNKNOW;
-	private ShowLoadingScreenTask mShowLoadingScreen;
+	private ShowLoadingScreenTask mShowLoadingScreenTask;
 
 	private Handler mHandler = new Handler() {
 		@Override
@@ -57,6 +57,7 @@ public class EyeCamActivity extends Activity {
 				break;
 			case CAMERA_STOP_PREVIEW:
 				stopCameraPreview();
+				setCameraLight(Camera.Parameters.FLASH_MODE_OFF);
 				break;
 			case CAMERA_LIGHT_OFF:
 				setCameraLight(Camera.Parameters.FLASH_MODE_OFF);
@@ -82,10 +83,20 @@ public class EyeCamActivity extends Activity {
 		Parameters parameters = mCamera.getParameters();
 		parameters.setFlashMode(cameraFlashMode);
 		mCamera.setParameters(parameters);
+		
+		if (cameraFlashMode.equals(Camera.Parameters.FLASH_MODE_TORCH))
+			mControlBar.setButtonLight(true);
+		else
+			mControlBar.setButtonLight(false);
 	}
 
 	private void setEffects(int effect) {
 		setEffects(effect, mPartialFilter);
+		
+		if(effect == mPrimaryFilter)
+			mControlBar.setButtonFilter(true);
+		else
+			mControlBar.setButtonFilter(false);
 	}
 
 	private void setEffects(int effect, boolean partial) {
@@ -114,17 +125,16 @@ public class EyeCamActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			Debug.msg(LOG_TAG, "showing Loading Screen ...");
-			synchronized(this){
+			synchronized (this) {
 				try {
 					wait(500);
 				} catch (InterruptedException e) {
-					//do nothing. useless hack in order to show loading screen
+					// do nothing. useless hack in order to show loading screen
 				}
 			}
 			return null;
 		}
 
-		
 		@Override
 		protected void onPostExecute(Void result) {
 			Debug.msg(LOG_TAG, "finish opening camera...");
@@ -165,7 +175,7 @@ public class EyeCamActivity extends Activity {
 		mControlBar.setActivityHandler(mHandler);
 		mControlBar.enableOnClickListeners();
 		mControlBar.rotate(Orientation.UNKNOW);
-		
+
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -179,7 +189,7 @@ public class EyeCamActivity extends Activity {
 	private void initOrientationEventListener() {
 		mOrientationEventListener = new OrientationEventListener(this,
 				SensorManager.SENSOR_DELAY_NORMAL) {
-	
+
 			@Override
 			public void onOrientationChanged(int inputOrientation) {
 				Orientation orientation = getCurrentOrientation(inputOrientation);
@@ -190,7 +200,7 @@ public class EyeCamActivity extends Activity {
 					Debug.msg(LOG_TAG, "Orientation: " + mOrientationCurrent);
 				}
 			}
-	
+
 			private Orientation getCurrentOrientation(int orientationInput) {
 				int orientation = orientationInput;
 				orientation = orientation % 360;
@@ -198,7 +208,7 @@ public class EyeCamActivity extends Activity {
 				int boundary_landscapeRight = 135;
 				int boundary_reversePortrait = 225;
 				int boundary_landsacpeLeft = 315;
-	
+
 				if (orientation < boundary_portrait)
 					return Orientation.PORTRAIT;
 				if (orientation < boundary_landscapeRight)
@@ -207,7 +217,7 @@ public class EyeCamActivity extends Activity {
 					return Orientation.PORTRAIT;
 				if (orientation < boundary_landsacpeLeft)
 					return Orientation.LANDSCAPE_LEFT;
-	
+
 				return Orientation.PORTRAIT;
 			}
 		};
@@ -221,8 +231,8 @@ public class EyeCamActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mShowLoadingScreen = new ShowLoadingScreenTask();
-		mShowLoadingScreen.execute();
+		mShowLoadingScreenTask = new ShowLoadingScreenTask();
+		mShowLoadingScreenTask.execute();
 		openCamera();
 		configEnvByCameraParams();
 		initSavedPreferences();
@@ -231,7 +241,7 @@ public class EyeCamActivity extends Activity {
 		mOrientationEventListener.enable();
 		startCameraPreview();
 	}
-	
+
 	private void openCamera() {
 		mCamera = Camera.open();
 	}
@@ -261,7 +271,7 @@ public class EyeCamActivity extends Activity {
 		String keyString = getResources().getString(resourcesOfTheKey);
 		String defaultSettingsValue = getResources().getString(defaultValue);
 		String settingValue = shPref.getString(keyString, defaultSettingsValue);
-	
+
 		return Integer.parseInt(settingValue);
 	}
 
@@ -269,7 +279,7 @@ public class EyeCamActivity extends Activity {
 			int resourcesOfTheKey, int defaultValue) {
 		String keyString = getResources().getString(resourcesOfTheKey);
 		return shPref.getBoolean(keyString, true);
-	
+
 	}
 
 	private void configEnvByCameraParams() {
@@ -289,7 +299,8 @@ public class EyeCamActivity extends Activity {
 		disableFlashIfUnsupported(parameters);
 
 		mCallBackBuffer = new byte[optSize.width * optSize.height * 2];
-		mColorView.setDataBuffer(mCallBackBuffer, optSize.width, optSize.height);
+		mColorView
+				.setDataBuffer(mCallBackBuffer, optSize.width, optSize.height);
 		mCamera.setParameters(parameters);
 	}
 
@@ -346,25 +357,20 @@ public class EyeCamActivity extends Activity {
 	}
 
 	private void stopCameraPreview() {
-		if (!mCamIsPreviewing)
-			return;
-
 		mCamera.setPreviewCallbackWithBuffer(null);
 		mCamera.stopPreview();
 		mCamIsPreviewing = false;
-		mControlBar.setCamStateButton(false);
 
+		mControlBar.setButtonPlay(mCamIsPreviewing);
 	}
 
 	private void startCameraPreview() {
-		if (mCamIsPreviewing)
-			return;
-
 		mCamera.addCallbackBuffer(mCallBackBuffer);
 		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
 		mCamera.startPreview();
 		mCamIsPreviewing = true;
 
+		mControlBar.setButtonPlay(mCamIsPreviewing);
 		mColorView.dismissPopup();
 	}
 

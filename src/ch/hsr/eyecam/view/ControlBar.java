@@ -40,7 +40,6 @@ public class ControlBar extends LinearLayout {
 		public void onClick(View v) {
 			if(((StateImageButton)v).isChecked()){
 				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
-				((StateImageButton)findViewById(R.id.imageButton_Light)).setChecked(false);
 			}
 			else
 				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_START_PREVIEW);
@@ -52,9 +51,9 @@ public class ControlBar extends LinearLayout {
 		@Override
 		public void onClick(View v) {
 			if(((StateImageButton)v).isChecked())
-				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_LIGHT_ON);
-			else
 				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_LIGHT_OFF);
+			else
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_LIGHT_ON);
 		}
 	};
 	
@@ -67,6 +66,9 @@ public class ControlBar extends LinearLayout {
 				mActivityHandler.sendEmptyMessage(EyeCamActivity.PRIMARY_FILTER_ON);
 		}		
 	};
+	private StateImageButton mButtonPlayPause;
+	private StateImageButton mButtonLight;
+	private StateImageButton mButtonFilter;
 	
 
 	private final static String LOG_TAG = "ch.hsr.eyecam.view.ControlBar";
@@ -100,9 +102,17 @@ public class ControlBar extends LinearLayout {
 	 * ContorlBar-Object.
 	 */
 	public void enableOnClickListeners(){
-		findViewById(R.id.imageButton_Pause).setOnClickListener(mOnClickPlayPause);
-		findViewById(R.id.imageButton_Light).setOnClickListener(mOnClickLight);
-		findViewById(R.id.imageButton_Filter).setOnClickListener(mOnClickFilter);
+		mButtonPlayPause = (StateImageButton) findViewById(R.id.imageButton_Pause);
+		mButtonLight = (StateImageButton) findViewById(R.id.imageButton_Light);
+		mButtonFilter = (StateImageButton) findViewById(R.id.imageButton_Filter);
+		
+		mButtonPlayPause.setOnClickListener(mOnClickPlayPause);
+		mButtonLight.setOnClickListener(mOnClickLight);
+		mButtonFilter.setOnClickListener(mOnClickFilter);
+		
+		mButtonPlayPause.setImageChange(false);
+		mButtonLight.setImageChange(false);
+		mButtonFilter.setImageChange(false);
 	}
 	
 	protected void inflateMenu(MenuBubble menu) {
@@ -167,23 +177,41 @@ public class ControlBar extends LinearLayout {
 	 * @param isEnabled
 	 */
 	public void enableLightButton(boolean isEnabled) {
-		((StateImageButton)findViewById(R.id.imageButton_Light))
-			.setEnabled(isEnabled);
+		mButtonLight.setEnabled(isEnabled);
 	}
 
 	/**
-	 * Manage the OnClickListener change of the CamStateButton
+	 * Manage the image change of the play button
+	 *  
+	 * @param isPlaying
 	 */
-	public void setCamStateButton(boolean isPreviewing) {
-		StateImageButton pause = (StateImageButton)findViewById(R.id.imageButton_Pause);
-		pause.setOnClickListener(null);
-		pause.setChecked(!isPreviewing);
-		pause.setOnClickListener(mOnClickPlayPause);
+	public void setButtonPlay(boolean isPlaying) {
+		mButtonPlayPause.setChecked(isPlaying);
 	}
 
+	/**
+	 * Manage the image change of the filter button
+	 *  
+	 * @param isPrimaryFilter
+	 */
+	public void setButtonFilter(boolean isPrimaryFilter) {
+		mButtonFilter.setChecked(isPrimaryFilter);
+	}
+	
+	/**
+	 * Manage the image change of the light button
+	 *  
+	 * @param hasLight
+	 */
+	public void setButtonLight(boolean hasLight) {
+		mButtonLight.setChecked(hasLight);
+	}
+	
+	/**
+	 * Set the state according to the current filter in the preferences
+	 */
 	public void initState() {
-		StateImageButton lImageButton = (StateImageButton)findViewById(R.id.imageButton_Filter);
-		if(lImageButton.isChecked())mActivityHandler.sendEmptyMessage(EyeCamActivity.SECONDARY_FILTER_ON);
+		if(mButtonFilter.isChecked())mActivityHandler.sendEmptyMessage(EyeCamActivity.SECONDARY_FILTER_ON);
 		else mActivityHandler.sendEmptyMessage(EyeCamActivity.PRIMARY_FILTER_ON);
 	}
 }

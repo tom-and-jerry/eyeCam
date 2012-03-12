@@ -6,7 +6,7 @@
   android:layout_height="match_parent">
     <LinearLayout 
     	android:id="@+id/placeHolder" 
-    	android:layout_width="wrap_content" 
+    	android:layout_width="0dp" 
     	android:layout_height="match_parent" 
     	android:layout_weight="5" />
     
@@ -28,19 +28,13 @@
         <ch.hsr.eyecam.widget.StateImageButton  
         	style="@style/ImageButton.Center" 
         	android:id="@+id/imageButton_Pause"
-        	eyecam:imgResTrue="@drawable/ic_menu_play"
-        	eyecam:imgResFalse="@drawable/ic_menu_pause"/>
+        	eyecam:imgResTrue="@drawable/ic_menu_pause"
+        	eyecam:imgResFalse="@drawable/ic_menu_play"/>
         
-        <ImageButton
-        	style="@style/ImageButton"
-        	android:id="@+id/imageButton_Settings"
-        	android:src="@drawable/ic_menu_settings" 
-        	android:visibility="gone"/> 
-        	
         <ch.hsr.eyecam.widget.StateImageButton
         	style="@style/ImageButton"
         	android:id="@+id/imageButton_Filter"
-        	eyecam:imgResTrue="@drawable/ic_menu_wizard"
-        	eyecam:imgResFalse="@drawable/ic_menu_wizard_no" />
+        	eyecam:imgResTrue="@drawable/ic_menu_wizard_no"
+        	eyecam:imgResFalse="@drawable/ic_menu_wizard" />
     </ch.hsr.eyecam.view.ControlBar>
 </LinearLayout>
