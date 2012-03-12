@@ -7,6 +7,11 @@
     	android:layout_width="match_parent" 
     	android:layout_height="match_parent"/>
     
+    <ch.hsr.eyecam.view.SurfaceViewDummy
+    	android:id="@+id/cameraSurface_dummy" 
+    	android:layout_width="match_parent" 
+    	android:layout_height="match_parent"/>
+    
     <include
     	android:id="@+id/hsr_loading_screen"
     	layout="@layout/hsr_load_screen"/>

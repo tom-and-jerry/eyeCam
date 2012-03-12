@@ -1,5 +1,6 @@
 package ch.hsr.eyecam;
 
+import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
@@ -22,7 +23,10 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.OrientationEventListener;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
+import ch.hsr.eyecam.R.id;
 import ch.hsr.eyecam.view.ColorView;
 import ch.hsr.eyecam.view.ControlBar;
 
@@ -34,7 +38,7 @@ import ch.hsr.eyecam.view.ControlBar;
  * @author Dominik Spengler, Patrice Mueller
  * @see Activity
  */
-public class EyeCamActivity extends Activity {
+public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	private PowerManager.WakeLock mWakeLock;
 	private OrientationEventListener mOrientationEventListener;
 	private int mPrimaryFilter;
@@ -47,6 +51,8 @@ public class EyeCamActivity extends Activity {
 	private ControlBar mControlBar;
 	private Orientation mOrientationCurrent = Orientation.UNKNOW;
 	private ShowLoadingScreenTask mShowLoadingScreenTask;
+	private View mLoadingScreen;
+	private SurfaceView mSurfaceView;
 
 	private Handler mHandler = new Handler() {
 		@Override
@@ -127,7 +133,7 @@ public class EyeCamActivity extends Activity {
 			Debug.msg(LOG_TAG, "showing Loading Screen ...");
 			synchronized (this) {
 				try {
-					wait(500);
+					wait(800);
 				} catch (InterruptedException e) {
 					// do nothing. useless hack in order to show loading screen
 				}
@@ -147,7 +153,6 @@ public class EyeCamActivity extends Activity {
 	}
 
 	private final DisplayMetrics mMetrics = new DisplayMetrics();
-	private View mLoadingScreen;
 
 	public final static int CAMERA_START_PREVIEW = 0;
 	public final static int CAMERA_STOP_PREVIEW = 1;
@@ -175,6 +180,9 @@ public class EyeCamActivity extends Activity {
 		mControlBar.setActivityHandler(mHandler);
 		mControlBar.enableOnClickListeners();
 		mControlBar.rotate(Orientation.UNKNOW);
+		
+		mSurfaceView = (SurfaceView) findViewById(id.cameraSurface_dummy);
+		mSurfaceView.getHolder().addCallback(this);
 
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 
@@ -239,7 +247,7 @@ public class EyeCamActivity extends Activity {
 		mControlBar.initState();
 		mWakeLock.acquire();
 		mOrientationEventListener.enable();
-		startCameraPreview();
+//		startCameraPreview();
 	}
 
 	private void openCamera() {
@@ -316,7 +324,10 @@ public class EyeCamActivity extends Activity {
 		for (Size size : sizeList) {
 			int tmpDiffSize = (size.height - targetHeight)
 					+ (size.width - targetWidth);
-
+			
+			// do not get higher then 1000 pixel width since
+			// even Galaxy Nexus has problem handling it.
+			// TODO
 			if (tmpDiffSize < 0)
 				continue;
 			if (tmpDiffSize < diffSize) {
@@ -367,6 +378,7 @@ public class EyeCamActivity extends Activity {
 	}
 
 	private void startCameraPreview() {
+		makeSureCameraPreviewStarts();
 		mCamera.addCallbackBuffer(mCallBackBuffer);
 		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
 		mCamera.startPreview();
@@ -374,6 +386,23 @@ public class EyeCamActivity extends Activity {
 
 		mControlBar.setButtonPlay(mCamIsPreviewing);
 		mColorView.dismissPopup();
+	}
+
+	/**
+	 * Starting from ICS (and probably generally on Motorola devices
+	 * camera preview will not be started if there is no SurfaceHolder
+	 * attached due to security. In order to overcome this we have to
+	 * attach a dummy SurfaceHolder and make sure it does not get 
+	 * displayed.
+	 */
+	private void makeSureCameraPreviewStarts() {
+		try {
+			mCamera.setPreviewDisplay(mSurfaceView.getHolder());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**
@@ -411,6 +440,20 @@ public class EyeCamActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		startCameraPreview();
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
 	}
 
 }
