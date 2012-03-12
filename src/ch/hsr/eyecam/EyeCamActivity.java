@@ -83,7 +83,7 @@ public class EyeCamActivity extends Activity {
 		Parameters parameters = mCamera.getParameters();
 		parameters.setFlashMode(cameraFlashMode);
 		mCamera.setParameters(parameters);
-		
+
 		if (cameraFlashMode.equals(Camera.Parameters.FLASH_MODE_TORCH))
 			mControlBar.setButtonLight(true);
 		else
@@ -92,8 +92,8 @@ public class EyeCamActivity extends Activity {
 
 	private void setEffects(int effect) {
 		setEffects(effect, mPartialFilter);
-		
-		if(effect == mPrimaryFilter)
+
+		if (effect == mPrimaryFilter)
 			mControlBar.setButtonFilter(true);
 		else
 			mControlBar.setButtonFilter(false);
@@ -308,19 +308,21 @@ public class EyeCamActivity extends Activity {
 		if (sizeList == null)
 			return null;
 
-		double targetRatio = (double) mMetrics.widthPixels
-				/ mMetrics.heightPixels;
+		int targetWidth = mMetrics.widthPixels;
 		int targetHeight = mMetrics.heightPixels;
-		double diffRatio = Double.MAX_VALUE;
+		int diffSize = Integer.MAX_VALUE;
 		Size optSize = null;
 
 		for (Size size : sizeList) {
-			double tmpDiffRatio = (double) size.width / size.height;
-			if (Math.abs(targetRatio - tmpDiffRatio) < diffRatio) {
+			int tmpDiffSize = (size.height - targetHeight)
+					+ (size.width - targetWidth);
+
+			if (tmpDiffSize < 0)
+				continue;
+			if (tmpDiffSize < diffSize) {
 				optSize = size;
-				diffRatio = Math.abs(targetRatio - tmpDiffRatio)
-						+ Math.abs(size.height - targetHeight);
-				if (diffRatio == 0)
+				diffSize = tmpDiffSize;
+				if (diffSize == 0)
 					return optSize;
 			}
 		}
