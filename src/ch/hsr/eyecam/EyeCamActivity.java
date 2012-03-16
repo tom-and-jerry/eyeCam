@@ -152,8 +152,8 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 	}
 
-	private final DisplayMetrics mMetrics = new DisplayMetrics();
-
+	private final static DisplayMetrics mMetrics = new DisplayMetrics();
+	
 	public final static int CAMERA_START_PREVIEW = 0;
 	public final static int CAMERA_STOP_PREVIEW = 1;
 	public final static int CAMERA_LIGHT_OFF = 2;
@@ -239,19 +239,14 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		openCamera();
 		mShowLoadingScreenTask = new ShowLoadingScreenTask();
 		mShowLoadingScreenTask.execute();
-		openCamera();
 		configEnvByCameraParams();
 		initSavedPreferences();
 		mControlBar.initState();
 		mWakeLock.acquire();
 		mOrientationEventListener.enable();
-//		startCameraPreview();
-	}
-
-	private void openCamera() {
-		mCamera = Camera.open();
 	}
 
 	private void initSavedPreferences() {
@@ -318,21 +313,29 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 		int targetWidth = mMetrics.widthPixels;
 		int targetHeight = mMetrics.heightPixels;
-		int diffSize = Integer.MAX_VALUE;
+		double targetRatio = (double) targetWidth / targetHeight;
+		double diffSize = Double.MAX_VALUE;
+		
+		// do not get higher then 1000 pixel width since
+		// even Galaxy Nexus has problem handling it.
+		int upperWidthBound = 1000;
+		int lowerWidthBound = targetWidth/2;
+		
 		Size optSize = null;
 
 		for (Size size : sizeList) {
-			int tmpDiffSize = (size.height - targetHeight)
-					+ (size.width - targetWidth);
-			
-			// do not get higher then 1000 pixel width since
-			// even Galaxy Nexus has problem handling it.
-			// TODO
-			if (tmpDiffSize < 0)
+			if (size.width > upperWidthBound || size.width < lowerWidthBound)
 				continue;
-			if (tmpDiffSize < diffSize) {
+			
+			double tmpRatio = (double) size.width / size.height;
+			double tmpDiff = tmpRatio * (size.height + size.width) -
+					targetRatio * (targetHeight + targetWidth);
+			tmpDiff = Math.abs(tmpDiff);
+			
+			
+			if (tmpDiff < diffSize) {
 				optSize = size;
-				diffSize = tmpDiffSize;
+				diffSize = tmpDiff;
 				if (diffSize == 0)
 					return optSize;
 			}
@@ -356,9 +359,12 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		releaseCamera();
 		mWakeLock.release();
 		mOrientationEventListener.disable();
+	}
+
+	private void openCamera() {
+		mCamera = Camera.open();
 	}
 
 	private void releaseCamera() {
@@ -378,7 +384,6 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	private void startCameraPreview() {
-		makeSureCameraPreviewStarts();
 		mCamera.addCallbackBuffer(mCallBackBuffer);
 		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
 		mCamera.startPreview();
@@ -450,10 +455,12 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		makeSureCameraPreviewStarts();
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
+		releaseCamera();
 	}
 
 }

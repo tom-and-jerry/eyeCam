@@ -15,6 +15,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -30,6 +31,8 @@ import android.view.View;
  * 
  */
 public class ColorView extends View implements PreviewCallback {
+	private final static DisplayMetrics mMetrics = new DisplayMetrics();
+
 	private Bitmap mBitmap;
 	private int mPreviewHeight;
 	private int mPreviewWidth;
@@ -39,6 +42,8 @@ public class ColorView extends View implements PreviewCallback {
 	private ColorRecognizer mColorRecognizer;
 	private FloatingBubble mPopup;
 	private Handler mActivityHandler;
+	private boolean mIsScaled = false;
+	private float mScaleFactor;
 
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {
 		@Override
@@ -63,7 +68,7 @@ public class ColorView extends View implements PreviewCallback {
 			return false;
 		}
 	};
-	
+
 	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 	
 	public ColorView(Context context) {
@@ -88,6 +93,15 @@ public class ColorView extends View implements PreviewCallback {
 				Bitmap.Config.RGB_565);
 		Debug.msg(LOG_TAG, "Bitmap size: W: " + mPreviewWidth + " H: "
 				+ mPreviewHeight);
+		scaleBitmapToFillScreen();
+	}
+
+	private void scaleBitmapToFillScreen() {
+		if (mPreviewHeight < mMetrics.heightPixels){
+			mIsScaled = true;
+			mScaleFactor = (float) mMetrics.heightPixels / mPreviewHeight;
+			Debug.msg(LOG_TAG, "Scaling enabled with factor: " + mScaleFactor);
+		}
 	}
 
 	private void showColorAt(int color, int x, int y){
@@ -106,6 +120,7 @@ public class ColorView extends View implements PreviewCallback {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		canvas.drawBitmap(mBitmap, 0, 0, null);
+		if(mIsScaled) canvas.scale(mScaleFactor, mScaleFactor);
 	}
 
 	/**
