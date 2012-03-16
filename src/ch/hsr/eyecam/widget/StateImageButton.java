@@ -26,6 +26,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 	private int mImgResTrue, mImgResFalse, mImgResDisabled;
 	private OnClickListener mOnClickDisabled = null;
 	private OnClickListener mOnClickListener;
+	private boolean mChangeImage;
 	private static String LOG_TAG = "ch.hsr.eyecam.StateImageButton";
 	
 	/**
@@ -37,6 +38,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 		super(contex);
 		mState= false;
 		mEnabled = true;
+		mChangeImage = true;
 		setImage();
 	}
 	
@@ -50,6 +52,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 		super(context, attrs);
 		mState = false;
 		mEnabled = true;
+		mChangeImage = true;
 		
 		TypedArray typedArrayAttr = context.obtainStyledAttributes(attrs
 				,R.styleable.StateImageButton);
@@ -129,6 +132,10 @@ public class StateImageButton extends ImageButton implements Checkable{
 		setChecked(!isChecked());
 	}
 	
+	public void setImageChange(boolean changeImage){
+		mChangeImage = changeImage;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -136,7 +143,7 @@ public class StateImageButton extends ImageButton implements Checkable{
 	 */
 	@Override
 	public boolean performClick() {
-		toggle();
+		if (mChangeImage) toggle();
 		return super.performClick();
 	}
 	

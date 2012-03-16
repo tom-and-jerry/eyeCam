@@ -1,6 +1,7 @@
 package ch.hsr.eyecam.view;
 
 import ch.hsr.eyecam.Debug;
+import ch.hsr.eyecam.EyeCamActivity;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
@@ -12,7 +13,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -28,6 +31,8 @@ import android.view.View;
  * 
  */
 public class ColorView extends View implements PreviewCallback {
+	private final static DisplayMetrics mMetrics = new DisplayMetrics();
+
 	private Bitmap mBitmap;
 	private int mPreviewHeight;
 	private int mPreviewWidth;
@@ -36,10 +41,15 @@ public class ColorView extends View implements PreviewCallback {
 	
 	private ColorRecognizer mColorRecognizer;
 	private FloatingBubble mPopup;
+	private Handler mActivityHandler;
+	private boolean mIsScaled = false;
+	private float mScaleFactor;
 
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
+			mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
+			
 			if (event.getAction() == MotionEvent.ACTION_DOWN){
 				int x = (int)event.getX();
 				int y = (int)event.getY();
@@ -58,18 +68,23 @@ public class ColorView extends View implements PreviewCallback {
 			return false;
 		}
 	};
-	
+
 	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 	
 	public ColorView(Context context) {
 		super(context);
-		initPopup();
-		mPartialEnabled = false;
+		init();
 	}
 
 	public ColorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		initPopup();
+		init();
+	}
+
+	private void init() {
+		mPopup = new FloatingBubble(getContext(), this);
+		
+		setOnTouchListener(mOnTouchListener);
 		mPartialEnabled = false;
 	}
 
@@ -78,10 +93,15 @@ public class ColorView extends View implements PreviewCallback {
 				Bitmap.Config.RGB_565);
 		Debug.msg(LOG_TAG, "Bitmap size: W: " + mPreviewWidth + " H: "
 				+ mPreviewHeight);
+		scaleBitmapToFillScreen();
 	}
 
-	private void initPopup() {
-		mPopup = new FloatingBubble(getContext(), this);
+	private void scaleBitmapToFillScreen() {
+		if (mPreviewHeight < mMetrics.heightPixels){
+			mIsScaled = true;
+			mScaleFactor = (float) mMetrics.heightPixels / mPreviewHeight;
+			Debug.msg(LOG_TAG, "Scaling enabled with factor: " + mScaleFactor);
+		}
 	}
 
 	private void showColorAt(int color, int x, int y){
@@ -100,6 +120,7 @@ public class ColorView extends View implements PreviewCallback {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		canvas.drawBitmap(mBitmap, 0, 0, null);
+		if(mIsScaled) canvas.scale(mScaleFactor, mScaleFactor);
 	}
 
 	/**
@@ -149,13 +170,11 @@ public class ColorView extends View implements PreviewCallback {
 	 * 
 	 * @param showPopup true if the popup should be enabled, false otherwise.
 	 */
-	public void enablePopup(boolean showPopup) {
-		if(showPopup) setOnTouchListener(mOnTouchListener);
-		else {
-			setOnTouchListener(null);
+	/*public void enablePopup(boolean showPopup) {
+		if(!showPopup) {
 			mPopup.dismiss();
 		}
-	}
+	}*/
 
 	/**
 	 * If the Popup is showing, it will be dismissed. Nothing happens if 
@@ -215,5 +234,9 @@ public class ColorView extends View implements PreviewCallback {
 		Debug.msg(LOG_TAG,"Effect on Previewimage");
 		ColorTransform.transformImageToBitmap(mDataBuffer, mPreviewWidth, mPreviewHeight, mBitmap);
 		invalidate();
+	}
+
+	public void setActivityHandler(Handler mHandler) {
+		mActivityHandler = mHandler;
 	}
 }
