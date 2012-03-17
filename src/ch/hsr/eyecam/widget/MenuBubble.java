@@ -1,13 +1,11 @@
 package ch.hsr.eyecam.widget;
 
-import ch.hsr.eyecam.Orientation;
-import ch.hsr.eyecam.R;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
+import ch.hsr.eyecam.Orientation;
 
 /**
  * This class provides the functionality of showing a menu bubble above the 
@@ -22,14 +20,12 @@ public class MenuBubble extends PopupWindow{
 	
 	private View mAnchorView;
 	private BubbleView mBubbleView;
-	private int[] mLocation;
 	private View mContentView;
 	private ScrollView mScrollView;
-	
-	private int mWidth;
+	private int mMaxHeight;
 	private int mHeight;
-	private static int OFFSET = 20;
-
+	private int mMaxWidth;
+	
 	/**
 	 * Simple constructor to initialize a MenuBubble with the given anchor.
 	 * 
@@ -38,7 +34,6 @@ public class MenuBubble extends PopupWindow{
 	public MenuBubble(View anchor) {
 		super(anchor.getContext());
 		mAnchorView = anchor;
-		mLocation = new int[2];
 		
 		setTouchable(true);
 		setAnimationStyle(android.R.style.Animation_Dialog);
@@ -76,13 +71,7 @@ public class MenuBubble extends PopupWindow{
 		
 		mBubbleView = new BubbleView(mScrollView);
 		mBubbleView.setOrientation(Orientation.PORTRAIT);
-		mBubbleView.setArrowStyle(R.drawable.popup_arrow_none);
-		mBubbleView.setOnFocusChangeListener(new OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (!hasFocus) dismiss();
-			}
-		});
+		mBubbleView.setArrowStyle(0);
 		
 		super.setContentView(mBubbleView);
 	}
@@ -115,7 +104,7 @@ public class MenuBubble extends PopupWindow{
 	 */
 	@Override
 	public void setHeight(int height) {
-		mHeight= height;
+		mMaxHeight = height;
 		super.setHeight(height);
 	}
 	
@@ -124,7 +113,7 @@ public class MenuBubble extends PopupWindow{
 	 */
 	@Override
 	public void setWidth(int width) {
-		mWidth = width;
+		mMaxWidth = width;
 		super.setWidth(width);
 	}
 	
@@ -140,6 +129,10 @@ public class MenuBubble extends PopupWindow{
 		boolean wasShowing = isShowing();
 		dismiss();
 		mBubbleView.setOrientation(orientation);
+		if (orientation == Orientation.PORTRAIT)
+			mHeight = mMaxHeight;
+		else
+			mHeight = mMaxWidth;
 		if (wasShowing) {
 			mBubbleView.updateView();
 			show();
@@ -150,9 +143,7 @@ public class MenuBubble extends PopupWindow{
 	 * Shows the menu bubble above the anchor.
 	 */
 	public void show(){
-		mAnchorView.getLocationOnScreen(mLocation);
-		showAtLocation(mAnchorView, Gravity.NO_GRAVITY, 
-				mLocation[0]-mWidth, 
-				mLocation[1]-mHeight+mAnchorView.getHeight()+OFFSET);
+		super.setHeight(mHeight);
+		showAtLocation(mAnchorView, Gravity.CENTER, 0, 0);
 	}
 }

@@ -18,12 +18,19 @@
     <string name="color_unknown">unknown</string>
     
     <!-- Filter's -->
-    <string name="title_filter">Filter</string>
+    <string name="title_primary_filter">Primary Filter</string>
+    <string name="title_secondary_filter">Secondary Filter</string>
+    
 	<string name="filter_none">no filter</string>
+	<string name="filter_none_des">No transformation to the picture from the camera will be applied.</string>
 	<string name="filter_simulate">colorblind simulation</string>
-	<string name="filter_false_colors">false colors</string>
+	<string name="filter_simulate_des">This filter simulates how colorblind people percieve the world.</string>
+	<string name="filter_false_colors">false colours</string>
+	<string name="filter_false_colors_des">This filter works by changing all colors. Specifically it changes Blue/Green to Yellow/Red.</string>
 	<string name="filter_intensify">intensify color difference</string>
+	<string name="filter_intensify_des">This filter tried to intensify the color differences by enhancing Green and weaken Red.</string>
 	<string name="filter_daltonize">Daltonize</string>
+	<string name="filter_daltonize_des">Daltonize works by shifting the colors not visible by colorblind people into colors that are visible.</string>
 	
 	<string name="settings_menu_title">Settings</string>
 	<string name="setting_partial_title">Partial Filter Effect</string>

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="filter_key">key_filter</string>
-	<!--  <integer name="filter_none">0</integer>
+    <string name="primary_filter_key">primfilter_key</string>
+	<string name="secondary_filter_key">secfilter_key</string>
+	<integer name="filter_none">0</integer>
 	<integer name="filter_simulate">1</integer>
 	<integer name="filter_false_colors">2</integer>
 	<integer name="filter_intensify">3</integer>
-	<integer name="filter_daltonize">4</integer>-->
+	<integer name="filter_daltonize">4</integer>
 	
 	<string name="filter_none_value">0</string>
 	<string name="filter_simulate_value">1</string>

@@ -66,10 +66,22 @@ public class ControlBar extends LinearLayout {
 				mActivityHandler.sendEmptyMessage(EyeCamActivity.PRIMARY_FILTER_ON);
 		}		
 	};
+	
+	private OnLongClickListener mOnLongClickFilter = new OnLongClickListener() {
+		
+		@Override
+		public boolean onLongClick(View v) {
+			if(mButtonFilter.isChecked()) 
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.SHOW_PRIMARY_FILTER_MENU);
+			else 
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.SHOW_SECONDARY_FILTER_MENU);
+			return true;
+		}
+	};
+	
 	private StateImageButton mButtonPlayPause;
 	private StateImageButton mButtonLight;
 	private StateImageButton mButtonFilter;
-	
 
 	private final static String LOG_TAG = "ch.hsr.eyecam.view.ControlBar";
 	
@@ -109,6 +121,7 @@ public class ControlBar extends LinearLayout {
 		mButtonPlayPause.setOnClickListener(mOnClickPlayPause);
 		mButtonLight.setOnClickListener(mOnClickLight);
 		mButtonFilter.setOnClickListener(mOnClickFilter);
+		mButtonFilter.setOnLongClickListener(mOnLongClickFilter);
 		
 		mButtonPlayPause.setImageChange(false);
 		mButtonLight.setImageChange(false);
@@ -213,5 +226,9 @@ public class ControlBar extends LinearLayout {
 	public void initState() {
 		if(mButtonFilter.isChecked())mActivityHandler.sendEmptyMessage(EyeCamActivity.SECONDARY_FILTER_ON);
 		else mActivityHandler.sendEmptyMessage(EyeCamActivity.PRIMARY_FILTER_ON);
+	}
+
+	public View getFilterButton() {
+		return mButtonFilter;
 	}
 }

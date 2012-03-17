@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:eyecam="http://schemas.android.com/apk/res/ch.hsr.eyecam"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <ch.hsr.eyecam.widget.PreferencesRadioGroup
+		android:id="@+id/Text_Size"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		eyecam:defaultValue="@integer/text_size_medium"
+		eyecam:key="@string/text_size_key"
+		eyecam:title="@string/setting_textsize_title">
+	
+			<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/text_size_small"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:textSize="@dimen/text_size_small_pt"
+			android:text="@string/setting_size_small"
+			eyecam:intValue="@integer/text_size_small"/>
+
+			<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/text_size_medium"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:textSize="@dimen/text_size_medium_pt"
+			android:text="@string/setting_size_medium"
+			eyecam:intValue="@integer/text_size_medium"/>
+
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/text_size_large"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:textSize="@dimen/text_size_large_pt"
+			android:text="@string/setting_size_large"
+			eyecam:intValue="@integer/text_size_large"/>
+
+	</ch.hsr.eyecam.widget.PreferencesRadioGroup>
+
+</LinearLayout>

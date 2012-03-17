@@ -92,6 +92,10 @@ public class BubbleView extends FrameLayout {
 		mOrientation = orientation;
 		updateView();
 	}
+	
+	public Orientation getOrientation() {
+		return mOrientation;
+	}
 
 	/**
 	 * Updates the BubbleView by forcing it to re-measure.
@@ -153,14 +157,16 @@ public class BubbleView extends FrameLayout {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * As for custom Views usual, the onDraw() method was overwritten. This is 
-	 * where the rotation is applied to the canvas in order to correctly display
+	 * This is where the rotation is applied to the canvas in order to correctly display
 	 * the bubble according to the orientation set in {@link #setOrientation(Orientation)}.
+	 * 
+	 * The dispatchDraw() method was overwritten in order to make sure all the child
+	 * views get rotated as well. 
 	 */
 	@Override
-	protected void onDraw(Canvas canvas) {
+	protected void dispatchDraw(Canvas canvas) {
 		canvas.setMatrix(mRotationMatrix);
-		super.onDraw(canvas);
+		super.dispatchDraw(canvas);
 	}
 	
 	/**

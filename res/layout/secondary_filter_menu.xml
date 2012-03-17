@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+ xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:eyecam="http://schemas.android.com/apk/res/ch.hsr.eyecam"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical">
+  
+  <ch.hsr.eyecam.widget.PreferencesRadioGroup
+		android:id="@+id/Filter"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		eyecam:defaultValue="@integer/filter_false_colors"
+		eyecam:key="@string/secondary_filter_key"
+		eyecam:title="@string/title_secondary_filter">
+			
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/filter_daltonize"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_daltonize"
+			eyecam:description="@string/filter_daltonize_des"
+			eyecam:intValue="@integer/filter_daltonize"/>
+			
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/filter_false_colors"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_false_colors"
+			eyecam:description="@string/filter_false_colors_des"
+			eyecam:intValue="@integer/filter_false_colors"/>
+			
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/filter_intensify"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_intensify"
+			eyecam:description="@string/filter_intensify_des"
+			eyecam:intValue="@integer/filter_intensify"/>
+			
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/filter_simulate"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_simulate"
+			eyecam:description="@string/filter_simulate_des"
+			eyecam:intValue="@integer/filter_simulate"/>	
+		
+		<ch.hsr.eyecam.widget.PreferencesRadioButton
+			android:id="@+id/filter_none"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_none"
+			eyecam:description="@string/filter_none_des"
+			eyecam:intValue="@integer/filter_none"/>
+	</ch.hsr.eyecam.widget.PreferencesRadioGroup>
+</LinearLayout>

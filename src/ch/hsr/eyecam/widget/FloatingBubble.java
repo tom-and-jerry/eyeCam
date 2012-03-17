@@ -1,6 +1,5 @@
 package ch.hsr.eyecam.widget;
 
-import ch.hsr.eyecam.Orientation;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -8,6 +7,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import ch.hsr.eyecam.Orientation;
 
 /**
  * This class provides the functionality of showing a floating bubble at any

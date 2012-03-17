@@ -3,7 +3,6 @@ package ch.hsr.eyecam.colormodel;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-
 import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.R;
 
