@@ -3,6 +3,7 @@ package ch.hsr.eyecam.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Handler;
@@ -42,12 +43,14 @@ public class ColorView extends View implements PreviewCallback {
 	private float mScaleFactor;
 
 	private OnTouchListener mOnTouchListener = new OnTouchListener() {
+
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
-				
+				mActivityHandler
+						.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
+
 				int x = (int) event.getX();
 				int y = (int) event.getY();
 
@@ -58,20 +61,32 @@ public class ColorView extends View implements PreviewCallback {
 
 				int scaleX;
 				int scaleY;
-				if (mIsScaled){
-					scaleX = (int) (x/mScaleFactor);
-					scaleY = (int) (y/mScaleFactor);
+				if (mIsScaled) {
+					scaleX = (int) (x / mScaleFactor);
+					scaleY = (int) (y / mScaleFactor);
 				} else {
 					scaleX = x;
 					scaleY = y;
 				}
-			
+
 				int rgb = mBitmap.getPixel(scaleX, scaleY);
 				int r = (rgb & 0xff0000) >> 16;
 				int g = (rgb & 0x00ff00) >> 8;
 				int b = (rgb & 0x0000ff);
-				Debug.msg(LOG_TAG, "RGB Values from Screen: r: " + r + " g: "
-						+ g + " b: " + b);
+				StringBuilder addString = new StringBuilder();
+				if (mShowRGB){
+					addString.append("R: " + r + " G: " + g + " B: " + b);
+					if(mShowHSV) 
+						addString.append('\n');
+				}
+				if (mShowHSV){
+					float[] hsv = new float[3];
+					Color.RGBToHSV(r, g, b, hsv);
+					addString.append("H: " + String.format("%.2f", hsv[0]) + 
+							" S: " + String.format("%.2f", hsv[1]) + 
+							" V: " + String.format("%.2f", hsv[2]));
+				}
+				mPopup.setAdditionalText(addString);
 				showColorAt(mColorRecognizer.getColorAt(scaleX, scaleY), x, y);
 				return false;
 			}
@@ -83,6 +98,7 @@ public class ColorView extends View implements PreviewCallback {
 
 		@Override
 		public boolean onLongClick(View v) {
+			mPopup.dismiss();
 			mActivityHandler
 					.sendEmptyMessage(EyeCamActivity.SHOW_SETTINGS_MENU);
 			return true;
@@ -90,8 +106,8 @@ public class ColorView extends View implements PreviewCallback {
 	};
 	private int mScreenWidth;
 	private int mScreenHeight;
-	private boolean mShowRGB;
-	private boolean mShowHSV;
+	private boolean mShowRGB = false;
+	private boolean mShowHSV = false;
 
 	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 
@@ -144,10 +160,9 @@ public class ColorView extends View implements PreviewCallback {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		if (mIsScaled){
-			canvas.drawBitmap(
-					Bitmap.createScaledBitmap(mBitmap, mScreenWidth, mScreenHeight, false),
-					0,0,null);
+		if (mIsScaled) {
+			canvas.drawBitmap(Bitmap.createScaledBitmap(mBitmap, mScreenWidth,
+					mScreenHeight, false), 0, 0, null);
 		} else
 			canvas.drawBitmap(mBitmap, 0, 0, null);
 	}
@@ -280,10 +295,10 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	public void setShowRGB(boolean showRGB) {
-		mPopup.setShowRGB(showRGB);
+		mShowRGB = showRGB;
 	}
 
 	public void setShowHSV(boolean showHSV) {
-		mPopup.setShowHSV(showHSV);
+		mShowHSV = showHSV;
 	}
 }

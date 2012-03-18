@@ -95,7 +95,6 @@ public class BubbleView extends FrameLayout {
 	 */
 	public void setOrientation(Orientation orientation) {
 		mOrientation = orientation;
-		updateView();
 	}
 
 	public Orientation getOrientation() {

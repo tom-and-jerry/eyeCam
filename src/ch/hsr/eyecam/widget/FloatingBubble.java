@@ -5,13 +5,14 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import ch.hsr.eyecam.Orientation;
 
 /**
  * This class provides the functionality of showing a floating bubble at any
- * location on the screen. This is necessary for displaying the color of the 
+ * location on the screen. This is necessary for displaying the color of the
  * area touched on the paused camera preview.
  * 
  * @author Dominik Spengler
@@ -24,16 +25,16 @@ public class FloatingBubble extends PopupWindow {
 	private BubbleView mBubbleView;
 	private Orientation mOrientation;
 	private TextView mTextView;
-	private boolean mShowRGB;
-	private boolean mShowHSV;
+	private TextView mAdditionalText;
+	private LinearLayout mContentView;
 
-	public FloatingBubble(Context context, View parent){
+	public FloatingBubble(Context context, View parent) {
 		super(context);
 		mViewParent = parent;
-		
+
 		initContentView(context);
 		setAnimationStyle(android.R.style.Animation_Dialog);
-		
+
 		setTouchable(false);
 		setClippingEnabled(false);
 		setBackgroundDrawable(null);
@@ -45,46 +46,59 @@ public class FloatingBubble extends PopupWindow {
 		mTextView = new TextView(context);
 		mTextView.setTextColor(android.graphics.Color.WHITE);
 		mTextView.setGravity(Gravity.CENTER);
-		mBubbleView = new BubbleView(mTextView);
+
+		mAdditionalText = new TextView(context);
+		mAdditionalText.setTextColor(android.graphics.Color.LTGRAY);
+		mAdditionalText.setGravity(Gravity.CENTER);
+
+		mContentView = new LinearLayout(context);
+		mContentView.setOrientation(LinearLayout.VERTICAL);
+		mContentView.addView(mTextView);
+//		mContentView.addView(mAdditionalText);
+
+		mBubbleView = new BubbleView(mContentView);
 		setContentView(mBubbleView);
 	}
 
 	/**
-	 * This method shows a bubble with an arbitrary string resource at any 
-	 * given location on the screen.
+	 * This method shows a bubble with an arbitrary string resource at any given
+	 * location on the screen.
 	 * 
-	 * @param res The String resource to be shown in the bubble.
-	 * @param x The x position on the screen.
-	 * @param y The y position on the screen.
+	 * @param res
+	 *            The String resource to be shown in the bubble.
+	 * @param x
+	 *            The x position on the screen.
+	 * @param y
+	 *            The y position on the screen.
 	 */
 	public void showStringResAt(int res, int x, int y) {
 		dismiss();
-		
-		mTextView.setText(res);
-		if(mShowRGB) 
-			mTextView.append("RGB");
-		if(mShowHSV)
-			mTextView.append("HSV");
+
+		mContentView.removeView(mAdditionalText);
+		if(mAdditionalText.getText().length() > 0)
+			mContentView.addView(mAdditionalText);
 		mBubbleView.updateView();
+		
 		int transX = 0;
 		int transY = 0;
 		int offset = 0;
-		
-		switch (mOrientation){
+
+		switch (mOrientation) {
 		case LANDSCAPE_LEFT:
-			transX = mBubbleView.getMeasuredWidth() /2;
+			transX = mBubbleView.getMeasuredWidth() / 2;
 			transY = mBubbleView.getMeasuredHeight() + offset;
 			break;
 		case LANDSCAPE_RIGHT:
-			transX = mBubbleView.getMeasuredWidth() /2;
+			transX = mBubbleView.getMeasuredWidth() / 2;
 			transY = -offset;
 			break;
 		case PORTRAIT:
 			transX = mBubbleView.getMeasuredWidth() + offset;
-			transY = mBubbleView.getMeasuredHeight() /2;
+			transY = mBubbleView.getMeasuredHeight() / 2;
 			break;
 		}
-		
+
+		mTextView.setText(res);
 		showAtLocation(mViewParent, Gravity.NO_GRAVITY, x - transX, y - transY);
 	}
 
@@ -93,7 +107,8 @@ public class FloatingBubble extends PopupWindow {
 	 * 
 	 * Please note that the bubble will be dismissed if it is already showing.
 	 * 
-	 * @param orientation the bubble should be shown in.
+	 * @param orientation
+	 *            the bubble should be shown in.
 	 * @see Orientation
 	 */
 	public void setOrientation(Orientation orientation) {
@@ -103,22 +118,20 @@ public class FloatingBubble extends PopupWindow {
 	}
 
 	/**
-	 * Sets the text size of the string shown in the bubble. The size value
-	 * will be interpreted as screen dependent points.
+	 * Sets the text size of the string shown in the bubble. The size value will
+	 * be interpreted as screen dependent points.
 	 * 
 	 * @see TypedValue#COMPLEX_UNIT_PT
-	 * @param size in pt
+	 * @param size
+	 *            in pt
 	 */
 	public void setTextSize(int size) {
 		mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PT, size);
+		mAdditionalText.setTextSize(TypedValue.COMPLEX_UNIT_PT, size - 1);
 		mBubbleView.updateView();
 	}
 
-	public void setShowRGB(boolean showRGB) {
-		mShowRGB = showRGB;
-	}
-
-	public void setShowHSV(boolean showHSV) {
-		mShowHSV = showHSV;
+	public void setAdditionalText(StringBuilder string) {
+		mAdditionalText.setText(string);
 	}
 }

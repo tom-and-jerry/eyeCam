@@ -149,7 +149,7 @@ public class PreferencesRadioGroup extends RadioGroup implements
 			setBackgroundColor(Color.DKGRAY);
 
 			if(text == null || text.equals("")) {
-				setHeight(1);
+				setHeight(2);
 				setBackgroundColor(Color.LTGRAY);
 			}
 			

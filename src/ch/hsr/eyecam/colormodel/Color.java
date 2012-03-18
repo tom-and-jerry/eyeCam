@@ -52,6 +52,10 @@ public class Color {
 	 * 			color.
 	 */
 	public static int yuvToColor(int[] yuv){
+		return rgbToColor(yuvToRgb(yuv));
+	}
+
+	public static int[] yuvToRgb(int[] yuv) {
 		int[] rgb = new int[3];
 		int y = (yuv[0]<0) ? yuv[0]+256 : yuv[0];
 		int u = (yuv[1]<0) ? yuv[1]+256 : yuv[1];
@@ -67,8 +71,7 @@ public class Color {
 		rgb[2] = (int) (y + 2.03211*u);
 		if (rgb[2] < 0) rgb[2] = 0; else if (rgb[2] > 255) rgb[2] = 255;
 		Debug.msg(LOG_TAG , "converted RGB Values: r: " + rgb[0] + " g: " + rgb[1] + " b: " + rgb[2]);
-		
-		return rgbToColor(rgb);
+		return rgb;
 	}
 	
 	/**
@@ -80,6 +83,10 @@ public class Color {
 	 * 			color.
 	 */
 	public static int rgbToColor(int[] rgb){
+		return hslToColor(rgbToHsl(rgb));
+	}
+
+	public static float[] rgbToHsl(int[] rgb) {
 		float[] hsl = new float[3];
 		int r = rgb[0];
 		int g = rgb[1];
@@ -97,7 +104,7 @@ public class Color {
 		
 		if (chroma != 0) hsl[1] = chroma/(255.0f*(1-Math.abs(2*luma-1)));
 		Debug.msg(LOG_TAG , "converted hsl Values: h: " + hsl[0] + " s: " + hsl[1] + " l: " + hsl[2]);
-		return hslToColor(hsl);
+		return hsl;
 	}
 	
 	/**
