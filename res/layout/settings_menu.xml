@@ -11,7 +11,7 @@
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
 		eyecam:defaultValue="@integer/text_size_medium"
-		eyecam:key="@string/text_size_key"
+		eyecam:key="@string/key_text_size"
 		eyecam:title="@string/setting_textsize_title">
 	
 			<ch.hsr.eyecam.widget.PreferencesRadioButton
@@ -39,5 +39,39 @@
 			eyecam:intValue="@integer/text_size_large"/>
 
 	</ch.hsr.eyecam.widget.PreferencesRadioGroup>
-
+	
+    <view class="ch.hsr.eyecam.widget.PreferencesRadioGroup$Separator"
+			android:id="@+id/color_separator"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"/>
+  	
+  	<ch.hsr.eyecam.widget.PreferencesCheckBox
+			android:id="@+id/color_rgb"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/color_rgb"
+			eyecam:description="@string/color_rgb_des"
+			eyecam:key="@string/key_color_rgb"/>
+  	
+  	<ch.hsr.eyecam.widget.PreferencesCheckBox
+			android:id="@+id/color_hsv"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/color_hsv"
+			eyecam:description="@string/color_hsv_des"
+			eyecam:key="@string/key_color_hsv"/>
+  	
+  	<view class="ch.hsr.eyecam.widget.PreferencesRadioGroup$Separator"
+			android:id="@+id/feedback_separator"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"/>
+  	
+  	<ch.hsr.eyecam.widget.PreferencesButton
+			android:id="@+id/feedback"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:onClick="openMarket"
+			android:text="@string/feedback"
+			eyecam:description="@string/feedback_des"/>
+  	
 </LinearLayout>

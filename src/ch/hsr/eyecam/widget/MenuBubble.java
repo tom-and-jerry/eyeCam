@@ -1,8 +1,10 @@
 package ch.hsr.eyecam.widget;
 
+import android.graphics.Rect;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import ch.hsr.eyecam.Orientation;
@@ -36,6 +38,7 @@ public class MenuBubble extends PopupWindow{
 		mAnchorView = anchor;
 		
 		setTouchable(true);
+		setClippingEnabled(false);
 		setAnimationStyle(android.R.style.Animation_Dialog);
 		setBackgroundDrawable(null);
 		setWidth(200);
@@ -129,10 +132,13 @@ public class MenuBubble extends PopupWindow{
 		boolean wasShowing = isShowing();
 		dismiss();
 		mBubbleView.setOrientation(orientation);
-		if (orientation == Orientation.PORTRAIT)
+		if (orientation == Orientation.PORTRAIT){
 			mHeight = mMaxHeight;
-		else
+		}
+		else{
 			mHeight = mMaxWidth;
+		}
+		super.setHeight(mHeight);
 		if (wasShowing) {
 			mBubbleView.updateView();
 			show();
@@ -143,7 +149,6 @@ public class MenuBubble extends PopupWindow{
 	 * Shows the menu bubble above the anchor.
 	 */
 	public void show(){
-		super.setHeight(mHeight);
 		showAtLocation(mAnchorView, Gravity.CENTER, 0, 0);
 	}
 }

@@ -19,54 +19,57 @@ import ch.hsr.eyecam.R;
 /**
  * This class extends from android.widget.RadioGroup and add the functionality
  * to add a TextView as a separator and to load the preferences of the your
- * preferences-file. 
+ * preferences-file.
  * 
  * @author Patrice Mueller
- *	
+ * 
  * @see RadioGroup
  */
-public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChangeListener{
-	String mTitle,mKey;
+public class PreferencesRadioGroup extends RadioGroup implements
+		OnCheckedChangeListener {
+	String mTitle, mKey;
 	TypedArray mTypedArray;
 	private SharedPreferences mSharedPreferences;
 	boolean mEnableSeperator;
 	private int mDefaultValue;
-	
+
 	private final static int NO_KEY = 0;
 	private static final String LOG_TAG = "ch.hsr.eyecam.widget.PreferencesRadioGroup";
-	
+
 	public PreferencesRadioGroup(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		if(isInEditMode()) return;
+		if (isInEditMode())
+			return;
 		Context appContex = getContext().getApplicationContext();
-		mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(appContex);
-		
+		mSharedPreferences = PreferenceManager
+				.getDefaultSharedPreferences(appContex);
+
 		mTypedArray = context.obtainStyledAttributes(attrs,
 				R.styleable.PreferencesRadioGroup);
-		mTitle = getString(R.styleable.PreferencesRadioGroup_title
-				, R.string.setting_no_title);
+		mTitle = getString(R.styleable.PreferencesRadioGroup_title,
+				R.string.setting_no_title);
 		mEnableSeperator = mTypedArray.getBoolean(
 				R.styleable.PreferencesRadioGroup_enableSeperator, true);
-		mKey = getString(R.styleable.PreferencesRadioGroup_key
-				, NO_KEY);
+		mKey = getString(R.styleable.PreferencesRadioGroup_key, NO_KEY);
 		mDefaultValue = mTypedArray.getInteger(
 				R.styleable.PreferencesRadioGroup_defaultValue, 0);
-		
-		if(mEnableSeperator)addView(new Separator(context,mTitle));
+
+		if (mEnableSeperator)
+			addView(new Separator(context, mTitle));
 	}
-	
-	private String getString(int ResId, int resDefaultValue){
-		if(hasKey(ResId, resDefaultValue)) return mTitle;
-		
+
+	private String getString(int ResId, int resDefaultValue) {
+		if (hasKey(ResId, resDefaultValue))
+			return mTitle;
+
 		int stringRes = mTypedArray.getResourceId(ResId, resDefaultValue);
 		return getResources().getString(stringRes);
 	}
 
 	private boolean hasKey(int ResId, int resDefaultValu) {
-		return resDefaultValu == NO_KEY	&& mTypedArray.getString(ResId) == null;
+		return resDefaultValu == NO_KEY && mTypedArray.getString(ResId) == null;
 	}
-	
-	
+
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -77,66 +80,88 @@ public class PreferencesRadioGroup extends RadioGroup implements OnCheckedChange
 		initCheckedValue();
 		super.onFinishInflate();
 	}
-	
+
 	private void initCheckedValue() {
 		setOnCheckedChangeListener(this);
 
 		PreferencesRadioButton button;
 		int value = mSharedPreferences.getInt(mKey, mDefaultValue);
 		Debug.msg(LOG_TAG, "trying to set value: " + value);
-		for (int i = 0; i < getChildCount(); i++){
-			if (mEnableSeperator && i == 0) continue;
-			button = (PreferencesRadioButton)getChildAt(i);
-			Debug.msg(LOG_TAG, "button: " + button.getText() + " containing value: " + button.getValue());
+		for (int i = 0; i < getChildCount(); i++) {
+			if (mEnableSeperator && i == 0)
+				continue;
+			button = (PreferencesRadioButton) getChildAt(i);
+			Debug.msg(LOG_TAG, "button: " + button.getText()
+					+ " containing value: " + button.getValue());
 			if (button.getValue() == value) {
 				button.performClick();
-				Debug.msg(LOG_TAG, "successfully set value on: " + button.getText());
+				Debug.msg(LOG_TAG,
+						"successfully set value on: " + button.getText());
 				return;
 			}
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * 
-	 *	Write the changed preferences to the file and update the user interface.
+	 * Write the changed preferences to the file and update the user interface.
 	 */
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
-		PreferencesRadioButton button = (PreferencesRadioButton)findViewById(checkedId);
-		if (button == null) return;
-		Debug.msg(LOG_TAG, "Preference changed, key: "+mKey+" to: "+button.getValue());
-		
+		PreferencesRadioButton button = (PreferencesRadioButton) findViewById(checkedId);
+		if (button == null)
+			return;
+		Debug.msg(LOG_TAG, "Preference changed, key: " + mKey + " to: "
+				+ button.getValue());
+
 		SharedPreferences.Editor editor = mSharedPreferences.edit();
 		editor.putInt(mKey, button.getValue());
-		if(!editor.commit()) Debug.msg(LOG_TAG,"Preferences "+mKey+ " couldn't been committed!");
-		
+		if (!editor.commit())
+			Debug.msg(LOG_TAG, "Preferences " + mKey
+					+ " couldn't been committed!");
+
 		ViewGroup vg = (ViewGroup) getParent();
-		if (vg != null) vg.invalidate();
+		if (vg != null)
+			vg.invalidate();
 	}
-	
-	private static class Separator extends TextView{
-		
+
+	public static class Separator extends TextView {
+
 		public Separator(Context context) {
 			super(context);
 		}
-		
-		public Separator (Context context, String Title){
-			this(context);
-			
-			setText(Title);
-			setTextSize(TypedValue.COMPLEX_UNIT_PT,8);
-			setTextColor(Color.WHITE);
 
+		public Separator(Context context, AttributeSet attrs) {
+			super(context, attrs);
+			init(getText());
+		}
+
+		public Separator(Context context, String Title) {
+			this(context);
+
+			setText(Title);
+			init(Title);
+		}
+
+		private void init(CharSequence text) {
 			setTypeface(Typeface.DEFAULT, Typeface.BOLD);
 			setBackgroundColor(Color.DKGRAY);
+
+			if(text == null || text.equals("")) {
+				setHeight(1);
+				setBackgroundColor(Color.LTGRAY);
+			}
 			
-			LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT);
+			setTextSize(TypedValue.COMPLEX_UNIT_PT, 8);
+			setTextColor(Color.WHITE);
+
+			LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,
+					LayoutParams.WRAP_CONTENT);
 			setLayoutParams(params);
 			setGravity(Gravity.CENTER);
 		}
-		
+
 	}
 
-	
 }

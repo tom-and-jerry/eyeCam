@@ -90,6 +90,8 @@ public class ColorView extends View implements PreviewCallback {
 	};
 	private int mScreenWidth;
 	private int mScreenHeight;
+	private boolean mShowRGB;
+	private boolean mShowHSV;
 
 	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 
@@ -275,5 +277,13 @@ public class ColorView extends View implements PreviewCallback {
 
 	public void setActivityHandler(Handler mHandler) {
 		mActivityHandler = mHandler;
+	}
+
+	public void setShowRGB(boolean showRGB) {
+		mPopup.setShowRGB(showRGB);
+	}
+
+	public void setShowHSV(boolean showHSV) {
+		mPopup.setShowHSV(showHSV);
 	}
 }

@@ -11,7 +11,7 @@
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
 		eyecam:defaultValue="@integer/filter_daltonize"
-		eyecam:key="@string/primary_filter_key"
+		eyecam:key="@string/key_primary_filter"
 		eyecam:title="@string/title_primary_filter">
 			
 		<ch.hsr.eyecam.widget.PreferencesRadioButton
@@ -54,4 +54,17 @@
 			eyecam:description="@string/filter_none_des"
 			eyecam:intValue="@integer/filter_none"/>
 	</ch.hsr.eyecam.widget.PreferencesRadioGroup>
+	
+  	<view class="ch.hsr.eyecam.widget.PreferencesRadioGroup$Separator"
+			android:id="@+id/filter_separator"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"/>
+  	
+  	<ch.hsr.eyecam.widget.PreferencesCheckBox
+			android:id="@+id/filter_partial"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="@string/filter_partial"
+			eyecam:description="@string/filter_partial_des"
+			eyecam:key="@string/key_primary_partial"/>
 </LinearLayout>

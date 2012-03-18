@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="primary_filter_key">primfilter_key</string>
-	<string name="secondary_filter_key">secfilter_key</string>
+    <string name="key_primary_filter">primfilter_key</string>
+    <string name="key_primary_partial">primpartial_key</string>
+    
+	<string name="key_secondary_filter">secfilter_key</string>
+	<string name="key_secondary_partial">secpartial_key</string>
+	
 	<integer name="filter_none">0</integer>
 	<integer name="filter_simulate">1</integer>
 	<integer name="filter_false_colors">2</integer>
@@ -14,10 +18,10 @@
 	<string name="filter_intensify_value">3</string>
 	<string name="filter_daltonize_value">4</string>
 	
+	<string name="key_color_rgb">rgbcolor_key</string>
+	<string name="key_color_hsv">hsvcolor_key</string>
 	
-	<string name="partial_key">key_partial</string>
-
-	<string name="text_size_key">key_textsize</string>
+	<string name="key_text_size">key_textsize</string>
 	<dimen name="text_size_small_pt">5pt</dimen>
 	<integer name="text_size_small">5</integer>
 	<string name="text_size_small">5</string>

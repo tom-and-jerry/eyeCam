@@ -24,6 +24,8 @@ public class FloatingBubble extends PopupWindow {
 	private BubbleView mBubbleView;
 	private Orientation mOrientation;
 	private TextView mTextView;
+	private boolean mShowRGB;
+	private boolean mShowHSV;
 
 	public FloatingBubble(Context context, View parent){
 		super(context);
@@ -59,6 +61,10 @@ public class FloatingBubble extends PopupWindow {
 		dismiss();
 		
 		mTextView.setText(res);
+		if(mShowRGB) 
+			mTextView.append("RGB");
+		if(mShowHSV)
+			mTextView.append("HSV");
 		mBubbleView.updateView();
 		int transX = 0;
 		int transY = 0;
@@ -91,7 +97,7 @@ public class FloatingBubble extends PopupWindow {
 	 * @see Orientation
 	 */
 	public void setOrientation(Orientation orientation) {
-		if (isShowing()) dismiss();
+		dismiss();
 		mOrientation = orientation;
 		mBubbleView.setOrientation(orientation);
 	}
@@ -106,5 +112,13 @@ public class FloatingBubble extends PopupWindow {
 	public void setTextSize(int size) {
 		mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PT, size);
 		mBubbleView.updateView();
+	}
+
+	public void setShowRGB(boolean showRGB) {
+		mShowRGB = showRGB;
+	}
+
+	public void setShowHSV(boolean showHSV) {
+		mShowHSV = showHSV;
 	}
 }

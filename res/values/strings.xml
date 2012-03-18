@@ -31,22 +31,22 @@
 	<string name="filter_intensify_des">This filter tried to intensify the color differences by enhancing Green and weaken Red.</string>
 	<string name="filter_daltonize">Daltonize</string>
 	<string name="filter_daltonize_des">Daltonize works by shifting the colors not visible by colorblind people into colors that are visible.</string>
-	
-	<string name="settings_menu_title">Settings</string>
-	<string name="setting_partial_title">Partial Filter Effect</string>
-    <string name="setting_partial_enable">use partial filters, whenever possible</string>
-	<string name="setting_partial_disable">never use partial filters</string>
-	<string name="setting_partail_summary">If it is checked, the algorithm will use partial filters, whenever it is possible</string>
 
+	<string name="filter_partial">Enable partial filter</string>
+	<string name="filter_partial_des">Use the filter only for the part of the picture that differs from colorblind perception. Does not work with Daltonize and no filter.</string>
+	
     <string name="setting_size_small">small</string>
 	<string name="setting_size_medium">medium</string>
 	<string name="setting_size_large">large</string>
 
-	<string name="setting_menusize_title">Menu size</string>
-	<string name="setting_menuSize_summary">The sizes of the showing menu</string>
-
 	<string name="setting_textsize_title">Popup Text size</string>
 	<string name="setting_textSize_summary">Change the text size of the color recognition popup</string>
+	
+	<string name="color_recogniton_option">Color recognition options</string>
+	<string name="color_rgb">Show RGB values</string>
+	<string name="color_rgb_des">Show the RGB values of the color recognition inside the popup</string>
+	<string name="color_hsv">Show HSV values</string>
+	<string name="color_hsv_des">Show the HSV values of the color recognition inside the popup</string>
 	
 	<string name="setting_no_title">no title</string>
 	<string name="setting_no_key">no key</string>
@@ -62,4 +62,6 @@
 	<string name="setting_primary_filter_summary">That the filter will be loaded by default when the App is launched</string>
 	<string name="setting_secondary_filter_title">Secondary Filter</string>
 	<string name="setting_secondary_filter_suammary">That the filter will be loaded when you click on the magic wand button</string>
+	<string name="feedback">Provide Feedback</string>
+	<string name="feedback_des">Brings you to the Market where you can rate eyeCam, request features or yell at us.</string>
 </resources>

@@ -17,4 +17,5 @@
 	    <attr name="description" format="string" />
 		<attr name="intValue" format="integer" />
 	</declare-styleable>
+	
 </resources>

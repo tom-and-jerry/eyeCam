@@ -27,7 +27,7 @@ public class PreferencesRadioButton extends RadioButton {
 				R.styleable.PreferencesRadioButton);
 		mValue = typedArray.getInt(R.styleable.PreferencesRadioButton_intValue, 0);
 		mDescription = typedArray.getString(R.styleable.PreferencesRadioButton_description);
-		setBackgroundColor(Color.WHITE);
+		setBackgroundResource(R.drawable.settings_selector);
 		setTextColor(Color.DKGRAY);
 		
 		setText(Html.fromHtml("<b>" + getText() + "</b>" +  "<br />" + 
