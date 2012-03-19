@@ -33,4 +33,25 @@
 	<dimen name="text_size_large_pt">9pt</dimen>
 	<integer name="text_size_large">9</integer>
 	<string name="text_size_large">9</string>
+	
+	<string name="value_1">1</string>
+	<string name="value_2">2</string>
+	<string name="value_3">3</string>
+	
+	<!-- TO DELETE  -->
+	<string name="setting_no_title">no title</string>
+	<string name="setting_no_key">no key</string>
+	<string name="key_partial">key_partial</string>
+	<string name="setting_key_partial">setting_key_partial</string>
+	<string name="setting_textsize_key">setting_textsize_key</string>
+	<string name="setting_menusize_key">setting_menusize_key</string>
+	<string name="setting_secondary_filter_key">setting_secondary_filter_key</string>
+	<string name="setting_primary_filter_key">setting_primary_filter_key</string>
+	<string name="magic_button_title">Magic Button</string>
+	<string name="setting_filter_key">settings_filter_key</string>
+	<string name="setting_primary_filter_title">Primary Filter</string>
+	<string name="setting_primary_filter_summary">That the filter will be loaded by default when the App is launched</string>
+	<string name="setting_secondary_filter_title">Secondary Filter</string>
+	<string name="setting_secondary_filter_suammary">That the filter will be loaded when you click on the magic wand button</string>
+	
 </resources>

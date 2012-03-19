@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">eyeCam</string>
     
-    
     <!-- Color's -->
     <string name="color_black">black</string>
     <string name="color_grey">gray</string>
@@ -22,46 +21,53 @@
     <string name="title_secondary_filter">Secondary Filter</string>
     
 	<string name="filter_none">no filter</string>
-	<string name="filter_none_des">No transformation to the picture from the camera will be applied.</string>
+	<string name="filter_none_summary">No transformation to the picture from the camera will be applied</string>
 	<string name="filter_simulate">colorblind simulation</string>
-	<string name="filter_simulate_des">This filter simulates how colorblind people percieve the world.</string>
+	<string name="filter_simulate_summary">This filter simulates how colorblind people perceive the world</string>
 	<string name="filter_false_colors">false colours</string>
-	<string name="filter_false_colors_des">This filter works by changing all colors. Specifically it changes Blue/Green to Yellow/Red.</string>
+	<string name="filter_false_colors_summary">This filter works by changing Blue/Green to Yellow/Red</string>
 	<string name="filter_intensify">intensify color difference</string>
-	<string name="filter_intensify_des">This filter tried to intensify the color differences by enhancing Green and weaken Red.</string>
+	<string name="filter_intensify_summary">This filter enhances Green and weakens Red</string>
 	<string name="filter_daltonize">Daltonize</string>
-	<string name="filter_daltonize_des">Daltonize works by shifting the colors not visible by colorblind people into colors that are visible.</string>
+	<string name="filter_daltonize_summary">Daltonize shifts colors not visible by colorblind people into visible ones</string>
 
 	<string name="filter_partial">Enable partial filter</string>
-	<string name="filter_partial_des">Use the filter only for the part of the picture that differs from colorblind perception. Does not work with Daltonize and no filter.</string>
+	<string name="filter_partial_summary">The selected filter will only be applied on part of the preview. Does not work with Daltonize, simulation and no filter</string>
 	
+	<!-- Settings -->
     <string name="setting_size_small">small</string>
 	<string name="setting_size_medium">medium</string>
 	<string name="setting_size_large">large</string>
 
 	<string name="setting_textsize_title">Popup Text size</string>
-	<string name="setting_textSize_summary">Change the text size of the color recognition popup</string>
+	<string name="setting_textsize_summary">Change the text size of the color recognition popup</string>
 	
-	<string name="color_recogniton_option">Color recognition options</string>
-	<string name="color_rgb">Show RGB values</string>
-	<string name="color_rgb_des">Show the RGB values of the color recognition inside the popup</string>
-	<string name="color_hsv">Show HSV values</string>
-	<string name="color_hsv_des">Show the HSV values of the color recognition inside the popup</string>
+	<string name="setting_additional">Additional settings</string>
+	<string name="setting_color_recogniton">Color recognition options</string>
+	<string name="setting_color_rgb">Show RGB values</string>
+	<string name="setting_color_rgb_summary">Show the RGB values of the recognised color inside the popup</string>
+	<string name="setting_color_hsv">Show HSV values</string>
+	<string name="setting_color_hsv_summary">Show the HSV values of the recognised color inside the popup</string>
 	
-	<string name="setting_no_title">no title</string>
-	<string name="setting_no_key">no key</string>
-	<string name="key_partial">key_partial</string>
-	<string name="setting_key_partial">setting_key_partial</string>
-	<string name="setting_textsize_key">setting_textsize_key</string>
-	<string name="setting_menusize_key">setting_menusize_key</string>
-	<string name="setting_secondary_filter_key">setting_secondary_filter_key</string>
-	<string name="setting_primary_filter_key">setting_primary_filter_key</string>
-	<string name="magic_button_title">Magic Button</string>
-	<string name="setting_filter_key">settings_filter_key</string>
-	<string name="setting_primary_filter_title">Primary Filter</string>
-	<string name="setting_primary_filter_summary">That the filter will be loaded by default when the App is launched</string>
-	<string name="setting_secondary_filter_title">Secondary Filter</string>
-	<string name="setting_secondary_filter_suammary">That the filter will be loaded when you click on the magic wand button</string>
-	<string name="feedback">Provide Feedback</string>
-	<string name="feedback_des">Brings you to the Market where you can rate eyeCam, request features or yell at us.</string>
+	<string name="setting_feedback">Y U No Feedback</string>
+	<string name="setting_feedback_summary">Brings you to the Market where you can rate eyeCam, request features or yell at us</string>
+	
+	<!-- Introduction Strings -->
+	<string name="intro_welcome">Welcome to eyeCam</string>
+	<string name="intro_problem">eyeCam was designed to help support colorblind people with the following problems:</string>
+	<string name="intro_colorrecognition">Colorrecognition</string>
+	<string name="intro_separation_colorareas">Separation of color areas</string>
+	<string name="intro_solution">In order to help you master these problems we offer the following features:</string>
+	<string name="intro_on_touch_colorrecognition">On touch colorrecognition</string>
+	<string name="intro_live_color_filters">Different live filters</string>
+	<string name="intro_next">next</string>
+	<string name="intro_singleclick_filter">Switch between two different filter.</string>
+	<string name="intro_singleclick_play">Start and stop camera preview.</string>
+	<string name="intro_singleclick_led">Switch LED light of your device on and off.</string>
+	<string name="intro_longclick_filter">Lets you choose different filters for the currently running preview. You will be presented with an option menu where each filter is shortly described.</string>
+	<string name="intro_singleclick_previewscreen">Touching any area of the preview screen will bring up a popup that will tell you the color. You can try it in the picture below.</string>
+	<string name="intro_longclick_previewscreen">A long click on the preview screen brings up an options menu where you can change general settings for the colorrecognition and/or give feedback.</string>
+	<string name="intro_finish">finish</string>
+	<string name="intro_singleclick">single click</string>
+	<string name="intro_longclick">long click</string>
 </resources>

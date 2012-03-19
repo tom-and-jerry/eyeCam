@@ -8,6 +8,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.Orientation;
 
 /**
@@ -27,6 +28,8 @@ public class FloatingBubble extends PopupWindow {
 	private TextView mTextView;
 	private TextView mAdditionalText;
 	private LinearLayout mContentView;
+	private int OFFSET_X = -1;
+	private int OFFSET_Y = -1;
 
 	public FloatingBubble(Context context, View parent) {
 		super(context);
@@ -54,7 +57,7 @@ public class FloatingBubble extends PopupWindow {
 		mContentView = new LinearLayout(context);
 		mContentView.setOrientation(LinearLayout.VERTICAL);
 		mContentView.addView(mTextView);
-//		mContentView.addView(mAdditionalText);
+		// mContentView.addView(mAdditionalText);
 
 		mBubbleView = new BubbleView(mContentView);
 		setContentView(mBubbleView);
@@ -73,12 +76,14 @@ public class FloatingBubble extends PopupWindow {
 	 */
 	public void showStringResAt(int res, int x, int y) {
 		dismiss();
+		if (OFFSET_X == -1)
+			getParentLocationOnScreen();
 
 		mContentView.removeView(mAdditionalText);
-		if(mAdditionalText.getText().length() > 0)
+		if (mAdditionalText.getText().length() > 0)
 			mContentView.addView(mAdditionalText);
 		mBubbleView.updateView();
-		
+
 		int transX = 0;
 		int transY = 0;
 		int offset = 0;
@@ -99,7 +104,17 @@ public class FloatingBubble extends PopupWindow {
 		}
 
 		mTextView.setText(res);
-		showAtLocation(mViewParent, Gravity.NO_GRAVITY, x - transX, y - transY);
+		showAtLocation(mViewParent, Gravity.NO_GRAVITY,
+				(x - transX) + OFFSET_X, (y - transY) + OFFSET_Y);
+	}
+
+	private void getParentLocationOnScreen() {
+		int[] location = new int[2];
+		mViewParent.getLocationOnScreen(location);
+		OFFSET_X = location[0];
+		OFFSET_Y = location[1];
+		Debug.msg("FloatingBubble", "offset_x: " + OFFSET_X);
+		Debug.msg("FloatingBubble", "offset_y: " + OFFSET_Y);		
 	}
 
 	/**

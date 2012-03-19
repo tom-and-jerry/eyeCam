@@ -19,7 +19,7 @@
 	<string name="filter_none">Kein Filter</string>
 	<string name="filter_simulate">Simulation Farbenblindheit</string>
 	<string name="filter_false_colors">Falsche Farben</string>
-	<string name="filter_intensify">Farbunterschiede hervorheben</string>
+	<string name="filter_intensify">Farben hervorheben</string>
 	<string name="filter_daltonize">Daltonize</string>
 	
 	<string name="settings_menu_title">Einstellungen</string>
@@ -28,7 +28,7 @@
 	<string name="setting_partial_disable">benutze keine teilweise Filter</string>
 	<string name="setting_partail_summary">Wenn das Häckleing gesetzt ist. Werden die Algorithmen nur auf die "kritischen" Farben angewendet</string>
 
-	<string name="setting_textsize_title">Farberkennungs Textgrösse</string>
+	<string name="setting_textsize_title">Popup Textgrösse</string>
 	<string name="setting_menusize_title">Menu Grösse</string>
 	<string name="setting_size_small">Klein</string>
 	<string name="setting_size_medium">Mittel</string>

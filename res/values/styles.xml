@@ -12,4 +12,68 @@
 	<style name="ImageButton.Center">	
 		<item name="android:scaleType">fitCenter</item>
 	</style>
+	
+	<style name="Title">
+	    <item name="android:background">@drawable/dark_grey_gradient</item>
+	    <item name="android:textColor">@color/white</item>
+	    <item name="android:textStyle">bold</item>
+	    <item name="android:gravity">center</item>
+	    <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+	</style>
+	
+	<style name="Menutitle" parent="Title">
+	    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+	</style>
+	
+	<style name="Subtitle">
+	    <item name="android:background">@drawable/light_grey_gradient</item>
+	    <item name="android:textColor">@color/white</item>
+	    <item name="android:textStyle">bold</item>
+	    <item name="android:gravity">center</item>
+	    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+	</style>
+	
+	<style name="SubtitleReverse" parent="@style/Subtitle">
+	    <item name="android:background">@drawable/light_grey_gradient_reverse</item>
+	</style>
+	
+	<style name="StepActive" parent="@style/Title">
+	    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+	</style>
+	
+	<style name="StepInactive" parent="@style/Subtitle">
+	    
+	</style>
+	
+	<style name="NextButton">
+	    <item name="android:background">@drawable/next_gradient</item>
+	    <item name="android:textColor">@color/white</item>
+	    <item name="android:textStyle">bold</item>
+	    <item name="android:gravity">center</item>
+	    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+	</style>
+	
+	<style name="Text">
+	    <item name="android:textColor">@color/dark_grey</item>
+		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+	</style>
+
+	<style name="IntroText" parent="Text">
+	    <item name="android:layout_margin">5dp</item>
+	</style>
+	
+	<style name="BulletText" parent="@style/IntroText">
+        <item name="android:button">@drawable/bullet</item>
+        <item name="android:clickable">false</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:paddingLeft">20dp</item>
+	</style>
+	
+	<style name="IntroActionAbove" parent="@style/IntroText">
+	    <item name="android:gravity">center</item>
+	</style>
+	
+	<style name="IntroActionBelow" parent="@style/IntroText">
+	    <item name="android:gravity">center</item>
+	</style>
 </resources>

@@ -1,14 +1,10 @@
-package ch.hsr.eyecam.widget;
+package ch.hsr.eyecam.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
@@ -38,11 +34,6 @@ public class PreferencesRadioGroup extends RadioGroup implements
 
 	public PreferencesRadioGroup(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		if (isInEditMode())
-			return;
-		Context appContex = getContext().getApplicationContext();
-		mSharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(appContex);
 
 		mTypedArray = context.obtainStyledAttributes(attrs,
 				R.styleable.PreferencesRadioGroup);
@@ -53,9 +44,20 @@ public class PreferencesRadioGroup extends RadioGroup implements
 		mKey = getString(R.styleable.PreferencesRadioGroup_key, NO_KEY);
 		mDefaultValue = mTypedArray.getInteger(
 				R.styleable.PreferencesRadioGroup_defaultValue, 0);
-
-		if (mEnableSeperator)
-			addView(new Separator(context, mTitle));
+		
+		
+		if (mEnableSeperator){
+			Separator sep = new Separator(context, attrs);
+			sep.setText(mTitle);
+			addView(sep);
+		}
+		
+		if (isInEditMode())
+			return;
+		
+		Context appContex = getContext().getApplicationContext();
+		mSharedPreferences = PreferenceManager
+				.getDefaultSharedPreferences(appContex);
 	}
 
 	private String getString(int ResId, int resDefaultValue) {
@@ -77,6 +79,8 @@ public class PreferencesRadioGroup extends RadioGroup implements
 	 */
 	@Override
 	protected void onFinishInflate() {
+		if (isInEditMode())
+			return;
 		initCheckedValue();
 		super.onFinishInflate();
 	}
@@ -130,38 +134,24 @@ public class PreferencesRadioGroup extends RadioGroup implements
 
 		public Separator(Context context) {
 			super(context);
+			init();
 		}
 
 		public Separator(Context context, AttributeSet attrs) {
 			super(context, attrs);
-			init(getText());
+			init();
 		}
 
 		public Separator(Context context, String Title) {
 			this(context);
 
 			setText(Title);
-			init(Title);
 		}
 
-		private void init(CharSequence text) {
-			setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-			setBackgroundColor(Color.DKGRAY);
-
-			if(text == null || text.equals("")) {
-				setHeight(2);
-				setBackgroundColor(Color.LTGRAY);
-			}
-			
-			setTextSize(TypedValue.COMPLEX_UNIT_PT, 8);
-			setTextColor(Color.WHITE);
-
+		private void init(){
 			LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
 			setLayoutParams(params);
-			setGravity(Gravity.CENTER);
 		}
-
 	}
-
 }

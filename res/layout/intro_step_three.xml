@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:eyecam="http://schemas.android.com/apk/res/ch.hsr.eyecam"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp" >
+
+    <TextView
+        android:id="@+id/recognition_title"
+        style="@style/Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_colorrecognition"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/singleclick_preview"
+        style="@style/IntroActionAbove"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_singleclick_previewscreen" />
+
+    <ImageView
+        android:id="@+id/arrow_up1"
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1"
+        android:scaleType="centerInside"
+        android:src="@drawable/arrow_up" />
+
+    <TextView
+        android:id="@+id/on_single_click"
+        style="@style/Subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/intro_singleclick"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ImageView
+        android:id="@+id/preview_image"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/introduction_preview" />
+
+    <TextView
+        android:id="@+id/on_long_click"
+        style="@style/SubtitleReverse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_longclick"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ImageView
+        android:id="@+id/arrow_down"
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1"
+        android:scaleType="centerInside"
+        android:src="@drawable/arrow_down" />
+
+    <TextView
+        android:id="@+id/longclick_preview"
+        style="@style/IntroActionBelow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_longclick_previewscreen" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/button1"
+            style="@style/StepInactive"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="0.20"
+            android:text="@string/value_1" />
+
+        <Button
+            android:id="@+id/button2"
+            style="@style/StepInactive"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.20"
+            android:text="@string/value_2" />
+
+        <Button
+            android:id="@+id/button3"
+            style="@style/StepActive"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.20"
+            android:text="@string/value_3" />
+
+        <Button
+            android:id="@+id/buttonFinish"
+            style="@style/NextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.40"
+            android:onClick="finishIntro"
+            android:text="@string/intro_finish" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp" >
+
+    <TextView
+        android:id="@+id/intro_title"
+        style="@style/Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_launcher_eyecam"
+        android:padding="5dp"
+        android:text="@string/intro_welcome" />
+
+    <TextView
+        android:id="@+id/intro_problem"
+        style="@style/IntroText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_problem" />
+
+    <RadioButton
+        android:id="@+id/colorsep_prob"
+        style="@style/BulletText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_separation_colorareas"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <RadioButton
+        android:id="@+id/colorrec_prob"
+        style="@style/BulletText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_colorrecognition"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/intro_solution"
+        style="@style/IntroText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_solution" />
+
+    <RadioButton
+        android:id="@+id/colorsep_sol"
+        style="@style/BulletText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_live_color_filters" />
+
+    <RadioButton
+        android:id="@+id/colorrec_sol"
+        style="@style/BulletText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_on_touch_colorrecognition" />
+
+    <TextView
+        android:id="@+id/filler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.50"
+        android:text="" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="0.20"
+			style="@style/StepActive"
+            android:text="@string/value_1" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.20"
+			style="@style/StepInactive"
+            android:text="@string/value_2" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.20"
+			style="@style/StepInactive"
+            android:text="@string/value_3" />
+
+        <Button
+            android:id="@+id/buttonNext"
+            style="@style/NextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.40"
+            android:onClick="next"
+            android:text="@string/intro_next" />
+
+    </LinearLayout>
+
+</LinearLayout>

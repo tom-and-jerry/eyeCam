@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
@@ -56,15 +58,20 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	private MenuBubble mAppMenu;
 	private MenuBubble mPrimaryFilterMenu;
 	private MenuBubble mSecondaryFilterMenu;
+	private SharedPreferences mSharedPreferences;
+	private volatile boolean mIsCameraReady = false;
+
+	private boolean mPrimaryPartial;
+	private boolean mSecondaryPartial;
 
 	private Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			if (menuIsShowing()){
+			if (menuIsShowing()) {
 				dismissMenus();
 				return;
 			}
-			
+	
 			switch (msg.what) {
 			case CAMERA_START_PREVIEW:
 				startCameraPreview();
@@ -103,8 +110,6 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 			}
 		}
 	};
-	private boolean mPrimaryPartial;
-	private boolean mSecondaryPartial;
 
 	private void setCameraLight(String cameraFlashMode) {
 		Parameters parameters = mCamera.getParameters();
@@ -190,8 +195,6 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 		@Override
 		protected void onPreExecute() {
-			mColorView.setVisibility(View.INVISIBLE);
-			mLoadingScreen.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -199,7 +202,8 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 			Debug.msg(LOG_TAG, "showing Loading Screen ...");
 			synchronized (this) {
 				try {
-					wait(800);
+					while (!mIsCameraReady)
+						wait(800);
 				} catch (InterruptedException e) {
 					// do nothing. useless hack in order to show loading screen
 				}
@@ -231,8 +235,6 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	public final static int SHOW_SETTINGS_MENU = 8;
 	public final static String PREFERENCE_FILE = "eyeCamPref";
 	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
-	private SharedPreferences mSharedPreferences;
-
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -270,15 +272,15 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View contentView = inflater.inflate(R.layout.settings_menu, null);
 		mAppMenu = new MenuBubble(mColorView, contentView);
-
+	
 		View primFilterView = inflater.inflate(R.layout.primary_filter_menu,
 				null);
 		mPrimaryFilterMenu = new MenuBubble(mColorView, primFilterView);
-
+	
 		View secFilterView = inflater.inflate(R.layout.secondary_filter_menu,
 				null);
 		mSecondaryFilterMenu = new MenuBubble(mColorView, secFilterView);
-
+	
 		setMenuSize(mAppMenu, contentView);
 		setMenuSize(mPrimaryFilterMenu, primFilterView);
 		setMenuSize(mSecondaryFilterMenu, secFilterView);
@@ -292,7 +294,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	private void initOrientationEventListener() {
 		mOrientationEventListener = new OrientationEventListener(this,
 				SensorManager.SENSOR_DELAY_NORMAL) {
-
+	
 			@Override
 			public void onOrientationChanged(int inputOrientation) {
 				Orientation orientation = getCurrentOrientation(inputOrientation);
@@ -304,7 +306,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 					Debug.msg(LOG_TAG, "Orientation: " + mOrientationCurrent);
 				}
 			}
-
+	
 			private Orientation getCurrentOrientation(int orientationInput) {
 				int orientation = orientationInput;
 				orientation = orientation % 360;
@@ -312,7 +314,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 				int boundary_landscapeRight = 135;
 				int boundary_reversePortrait = 225;
 				int boundary_landsacpeLeft = 315;
-
+	
 				if (orientation < boundary_portrait)
 					return Orientation.PORTRAIT;
 				if (orientation < boundary_landscapeRight)
@@ -321,7 +323,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 					return Orientation.PORTRAIT;
 				if (orientation < boundary_landsacpeLeft)
 					return Orientation.LANDSCAPE_LEFT;
-
+	
 				return Orientation.PORTRAIT;
 			}
 		};
@@ -333,22 +335,22 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		mSecondaryFilterMenu.setContentOrientation(orientation);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Called after onCreate() and onStart()
-	 */
 	@Override
-	protected void onResume() {
-		super.onResume();
-		openCamera();
-		mShowLoadingScreenTask = new ShowLoadingScreenTask();
-		mShowLoadingScreenTask.execute();
-		configEnvByCameraParams();
+	protected void onStart() {
+		super.onStart();
+		mColorView.setVisibility(View.INVISIBLE);
+		mLoadingScreen.setVisibility(View.VISIBLE);
+		
 		initSavedPreferences();
-		mControlBar.initState();
-		mWakeLock.acquire();
-		mOrientationEventListener.enable();
+
+		PackageInfo versionInfo = getPackageInfo();
+		String introKey = IntroductionActivity.INTRO_PREFIX
+				+ versionInfo.versionCode;
+		if (!mSharedPreferences.contains(introKey)) {
+			Intent intent = new Intent(getApplicationContext(),
+					IntroductionActivity.class);
+			startActivity(intent);
+		}
 	}
 
 	private void initSavedPreferences() {
@@ -368,7 +370,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 				R.string.key_primary_partial, false);
 		mSecondaryPartial = getBooleanSettingValue(shPref,
 				R.string.key_secondary_partial, false);
-
+	
 		mColorView.setPopupTextSize(getIntSettingValue(shPref,
 				R.string.key_text_size, 5));
 		mColorView.setShowRGB(getBooleanSettingValue(shPref,
@@ -387,7 +389,40 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 			int resourcesOfTheKey, boolean defaultValue) {
 		String keyString = getResources().getString(resourcesOfTheKey);
 		return shPref.getBoolean(keyString, defaultValue);
+	
+	}
 
+	private PackageInfo getPackageInfo() {
+		PackageInfo pi = null;
+		try {
+			pi = getPackageManager().getPackageInfo(getPackageName(),
+					PackageManager.GET_ACTIVITIES);
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return pi;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Called after onCreate() and onStart()
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// openCamera();
+		mShowLoadingScreenTask = new ShowLoadingScreenTask();
+		mShowLoadingScreenTask.execute();
+		// configEnvByCameraParams();
+//		initSavedPreferences();
+		mControlBar.initState();
+		mWakeLock.acquire();
+		mOrientationEventListener.enable();
+	}
+
+	private void openCamera() {
+		mCamera = Camera.open();
 	}
 
 	private void configEnvByCameraParams() {
@@ -467,10 +502,6 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		mOrientationEventListener.disable();
 	}
 
-	private void openCamera() {
-		mCamera = Camera.open();
-	}
-
 	private void releaseCamera() {
 		if (mCamera == null)
 			return;
@@ -483,6 +514,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		mCamera.setPreviewCallbackWithBuffer(null);
 		mCamera.stopPreview();
 		mCamIsPreviewing = false;
+		mIsCameraReady = false;
 
 		mControlBar.setButtonPlay(mCamIsPreviewing);
 	}
@@ -494,6 +526,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		mCamera.addCallbackBuffer(mCallBackBuffer);
 		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
 		mCamera.startPreview();
+		mIsCameraReady = true;
 		mCamIsPreviewing = true;
 
 		mControlBar.setButtonPlay(mCamIsPreviewing);
@@ -559,6 +592,8 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		openCamera();
+		configEnvByCameraParams();
 		makeSureCameraPreviewStarts();
 	}
 
@@ -566,10 +601,11 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		releaseCamera();
 	}
-	
-	public void openMarket(View v){
+
+	public void openMarket(View v) {
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setData(Uri.parse("market://details?id="+getApplication().getPackageName()));
+		intent.setData(Uri.parse("market://details?id="
+				+ getApplication().getPackageName()));
 		startActivity(intent);
 	}
 

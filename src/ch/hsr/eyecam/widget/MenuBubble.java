@@ -1,10 +1,8 @@
 package ch.hsr.eyecam.widget;
 
-import android.graphics.Rect;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import ch.hsr.eyecam.Orientation;

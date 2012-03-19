@@ -1,4 +1,4 @@
-package ch.hsr.eyecam.widget;
+package ch.hsr.eyecam.preferences;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;

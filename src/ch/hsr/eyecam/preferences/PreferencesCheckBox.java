@@ -1,16 +1,20 @@
-package ch.hsr.eyecam.widget;
+package ch.hsr.eyecam.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.preference.PreferenceManager;
-import android.text.Html;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.RadioButton;
 import ch.hsr.eyecam.R;
 
 /**
@@ -29,11 +33,6 @@ public class PreferencesCheckBox extends CheckBox implements
 
 	public PreferencesCheckBox(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		if (isInEditMode())
-			return;
-		Context appContex = getContext().getApplicationContext();
-		mSharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(appContex);
 
 		TypedArray typedArray = context.obtainStyledAttributes(attrs,
 				R.styleable.PreferencesRadioButton);
@@ -46,13 +45,27 @@ public class PreferencesCheckBox extends CheckBox implements
 
 		setTextColor(Color.DKGRAY);
 		setBackgroundResource(R.drawable.settings_selector);
+		
+		CharSequence title = getText();
+		int length = title.length();
+		SpannableString text = new SpannableString(title + "\n" + mDescription);
+		text.setSpan(new StyleSpan(Typeface.BOLD), 0, length, 0);
+		text.setSpan(new RelativeSizeSpan(0.8f), length, length + mDescription.length()+1, 0);
+		
+		setText(text);
+		
+		if (isInEditMode())
+			return;
 
-		setText(Html.fromHtml("<b>" + getText() + "</b>" + "<br />" + "<small>"
-				+ mDescription + "</small>"));
+		Context appContex = getContext().getApplicationContext();
+		mSharedPreferences = PreferenceManager
+				.getDefaultSharedPreferences(appContex);
 	}
 
 	@Override
 	protected void onFinishInflate() {
+		if (isInEditMode()) 
+			return;
 		initValue();
 		setOnCheckedChangeListener(this);
 		super.onFinishInflate();

@@ -1,77 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:eyecam="http://schemas.android.com/apk/res/ch.hsr.eyecam"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+
+    <ch.hsr.eyecam.preferences.PreferencesRadioGroup
+        android:id="@+id/Text_Size"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/Menutitle"
+        eyecam:defaultValue="@integer/text_size_medium"
+        eyecam:key="@string/key_text_size"
+        eyecam:title="@string/setting_textsize_title" >
+
+        <ch.hsr.eyecam.preferences.PreferencesRadioButton
+            android:id="@+id/text_size_small"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            style="@style/Text"
+            eyecam:intValue="@integer/text_size_small"
+            eyecam:description="@string/setting_textsize_summary"
+            android:text="@string/setting_size_small"
+            android:textSize="@dimen/text_size_small_pt" />
+
+        <ch.hsr.eyecam.preferences.PreferencesRadioButton
+            android:id="@+id/text_size_medium"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            style="@style/Text"
+            eyecam:intValue="@integer/text_size_medium"
+            eyecam:description="@string/setting_textsize_summary"
+            android:text="@string/setting_size_medium"
+            android:textSize="@dimen/text_size_medium_pt" />
+
+        <ch.hsr.eyecam.preferences.PreferencesRadioButton
+            android:id="@+id/text_size_large"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            style="@style/Text"
+            eyecam:intValue="@integer/text_size_large"
+            eyecam:description="@string/setting_textsize_summary"
+            android:text="@string/setting_size_large"
+            android:textSize="@dimen/text_size_large_pt" />
+    </ch.hsr.eyecam.preferences.PreferencesRadioGroup>
+
+    <TextView
+        android:id="@+id/feedback_separator"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/Menutitle"
+        android:text="@string/setting_additional"/>
+
+    <ch.hsr.eyecam.preferences.PreferencesCheckBox
+        android:id="@+id/color_rgb"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/Text"
+        eyecam:description="@string/setting_color_rgb_summary"
+        eyecam:key="@string/key_color_rgb"
+        android:text="@string/setting_color_rgb" />
+
+    <ch.hsr.eyecam.preferences.PreferencesCheckBox
+        android:id="@+id/color_hsv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/Text"
+        eyecam:description="@string/setting_color_hsv_summary"
+        eyecam:key="@string/key_color_hsv"
+        android:text="@string/setting_color_hsv" />
     
-    <ch.hsr.eyecam.widget.PreferencesRadioGroup
-		android:id="@+id/Text_Size"
-		android:layout_height="wrap_content"
-		android:layout_width="fill_parent"
-		eyecam:defaultValue="@integer/text_size_medium"
-		eyecam:key="@string/key_text_size"
-		eyecam:title="@string/setting_textsize_title">
-	
-			<ch.hsr.eyecam.widget.PreferencesRadioButton
-			android:id="@+id/text_size_small"
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:textSize="@dimen/text_size_small_pt"
-			android:text="@string/setting_size_small"
-			eyecam:intValue="@integer/text_size_small"/>
+	<View
+        android:id="@+id/color_separator"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+		android:background="@color/light_grey" />
 
-			<ch.hsr.eyecam.widget.PreferencesRadioButton
-			android:id="@+id/text_size_medium"
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:textSize="@dimen/text_size_medium_pt"
-			android:text="@string/setting_size_medium"
-			eyecam:intValue="@integer/text_size_medium"/>
+    <ch.hsr.eyecam.preferences.PreferencesButton
+        android:id="@+id/feedback"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/Text"
+        eyecam:description="@string/setting_feedback_summary"
+        android:onClick="openMarket"
+        android:text="@string/setting_feedback" />
 
-		<ch.hsr.eyecam.widget.PreferencesRadioButton
-			android:id="@+id/text_size_large"
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:textSize="@dimen/text_size_large_pt"
-			android:text="@string/setting_size_large"
-			eyecam:intValue="@integer/text_size_large"/>
-
-	</ch.hsr.eyecam.widget.PreferencesRadioGroup>
-	
-    <view class="ch.hsr.eyecam.widget.PreferencesRadioGroup$Separator"
-			android:id="@+id/color_separator"
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"/>
-  	
-  	<ch.hsr.eyecam.widget.PreferencesCheckBox
-			android:id="@+id/color_rgb"
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:text="@string/color_rgb"
-			eyecam:description="@string/color_rgb_des"
-			eyecam:key="@string/key_color_rgb"/>
-  	
-  	<ch.hsr.eyecam.widget.PreferencesCheckBox
-			android:id="@+id/color_hsv"
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:text="@string/color_hsv"
-			eyecam:description="@string/color_hsv_des"
-			eyecam:key="@string/key_color_hsv"/>
-  	
-  	<view class="ch.hsr.eyecam.widget.PreferencesRadioGroup$Separator"
-			android:id="@+id/feedback_separator"
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"/>
-  	
-  	<ch.hsr.eyecam.widget.PreferencesButton
-			android:id="@+id/feedback"
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:onClick="openMarket"
-			android:text="@string/feedback"
-			eyecam:description="@string/feedback_des"/>
-  	
 </LinearLayout>
