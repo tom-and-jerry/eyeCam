@@ -14,7 +14,7 @@
 	</style>
 	
 	<style name="Title">
-	    <item name="android:background">@drawable/dark_grey_gradient</item>
+	    <item name="android:background">@drawable/gradient_dark_grey</item>
 	    <item name="android:textColor">@color/white</item>
 	    <item name="android:textStyle">bold</item>
 	    <item name="android:gravity">center</item>
@@ -26,7 +26,7 @@
 	</style>
 	
 	<style name="Subtitle">
-	    <item name="android:background">@drawable/light_grey_gradient</item>
+	    <item name="android:background">@drawable/gradient_light_grey</item>
 	    <item name="android:textColor">@color/white</item>
 	    <item name="android:textStyle">bold</item>
 	    <item name="android:gravity">center</item>
@@ -34,7 +34,7 @@
 	</style>
 	
 	<style name="SubtitleReverse" parent="@style/Subtitle">
-	    <item name="android:background">@drawable/light_grey_gradient_reverse</item>
+	    <item name="android:background">@drawable/gradient_light_grey_reverse</item>
 	</style>
 	
 	<style name="StepActive" parent="@style/Title">
@@ -46,7 +46,7 @@
 	</style>
 	
 	<style name="NextButton">
-	    <item name="android:background">@drawable/next_gradient</item>
+	    <item name="android:background">@drawable/gradient_next_button</item>
 	    <item name="android:textColor">@color/white</item>
 	    <item name="android:textStyle">bold</item>
 	    <item name="android:gravity">center</item>

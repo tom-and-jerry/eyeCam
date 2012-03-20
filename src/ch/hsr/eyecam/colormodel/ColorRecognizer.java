@@ -48,14 +48,24 @@ public class ColorRecognizer {
 	 * @return 	the resource id of the String representation of the
 	 * 			color.
 	 */
-	public int getColorAt(int width, int height){
-		int[] yuv = new int[3];
-		int posUV = mHeight*mWidth + (height/2)*mWidth + BYTES_PER_PIXEL*(width/2);
-
-		yuv[0] = mBuffer[height*mWidth + width];
-		yuv[1] = mBuffer[posUV+1];
-		yuv[2] = mBuffer[posUV];
+	public int getColorAt(int x, int y){
+		int[] yuv = getYuvAt(x, y);
 		
 		return Color.yuvToColor(yuv);
+	}
+
+	private int[] getYuvAt(int x, int y) {
+		int[] yuv = new int[3];
+		int posUV = mHeight*mWidth + (y/2)*mWidth + BYTES_PER_PIXEL*(x/2);
+
+		yuv[0] = mBuffer[y*mWidth + x];
+		yuv[1] = mBuffer[posUV+1];
+		yuv[2] = mBuffer[posUV];
+		return yuv;
+	}
+
+	public int[] getRgbAt(int x, int y) {
+		int[] yuv = getYuvAt(x, y);
+		return Color.yuvToRgb(yuv);
 	}
 }
