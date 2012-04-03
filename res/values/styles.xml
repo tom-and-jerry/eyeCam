@@ -25,6 +25,13 @@
 	    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
 	</style>
 	
+	<style name="CenterBold">
+	    <item name="android:textColor">@color/dark_grey</item>
+	    <item name="android:textStyle">bold</item>
+	    <item name="android:gravity">center</item>
+	    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+	</style>
+	
 	<style name="Subtitle">
 	    <item name="android:background">@drawable/gradient_light_grey</item>
 	    <item name="android:textColor">@color/white</item>

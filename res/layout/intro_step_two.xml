@@ -61,6 +61,12 @@
             android:text="@string/intro_singleclick_led" />
     </LinearLayout>
 
+    <View
+        android:id="@+id/separator_horiz1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_grey" />
+
     <LinearLayout
         android:id="@+id/arrows_up"
         android:layout_width="match_parent"
@@ -68,38 +74,39 @@
         android:orientation="horizontal" >
 
         <ImageView
-            android:id="@+id/arrow_up1"
+            android:id="@+id/arrow_down1"
             android:layout_width="fill_parent"
             android:layout_height="10dp"
             android:layout_weight="1"
             android:scaleType="centerInside"
-            android:src="@drawable/arrow_up" />
+            android:src="@drawable/arrow_down" />
 
         <ImageView
-            android:id="@+id/arrow_up2"
+            android:id="@+id/arrow_down2"
             android:layout_width="fill_parent"
             android:layout_height="10dp"
             android:layout_weight="1"
             android:scaleType="centerInside"
-            android:src="@drawable/arrow_up" />
+            android:src="@drawable/arrow_down" />
 
         <ImageView
-            android:id="@+id/arrow_up3"
+            android:id="@+id/arrow_down3"
             android:layout_width="fill_parent"
             android:layout_height="10dp"
             android:layout_weight="1"
             android:scaleType="centerInside"
-            android:src="@drawable/arrow_up" />
+            android:src="@drawable/arrow_down" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/on_single_click"
-        style="@style/Subtitle"
+        style="@style/CenterBold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/intro_singleclick"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/dark_grey" />
 
     <ch.hsr.eyecam.view.ControlBar
         android:id="@+id/controlBar"
@@ -131,40 +138,47 @@
 
     <TextView
         android:id="@+id/on_long_click"
-        style="@style/SubtitleReverse"
+        style="@style/CenterBold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/intro_longclick"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/dark_grey" />
 
     <LinearLayout
         android:id="@+id/arrows_down"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
-        
+
         <ImageView
-            android:id="@+id/arrow_down1"
+            android:id="@+id/arrow_up1"
             android:layout_width="fill_parent"
             android:layout_height="10dp"
             android:layout_weight="1"
             android:scaleType="centerInside"
-            android:src="@drawable/arrow_down" />
+            android:src="@drawable/arrow_up" />
 
         <ImageView
-            android:id="@+id/arrow_down2"
+            android:id="@+id/arrow_up2"
             android:layout_width="fill_parent"
             android:layout_height="10dp"
             android:layout_weight="1"
             android:scaleType="centerInside" />
 
         <ImageView
-            android:id="@+id/arrow_down3"
+            android:id="@+id/arrow_up3"
             android:layout_width="fill_parent"
             android:layout_height="10dp"
             android:layout_weight="1"
             android:scaleType="centerInside" />
     </LinearLayout>
+
+    <View
+        android:id="@+id/separator_horiz2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_grey" />
 
     <TextView
         android:id="@+id/longclick_filter"
@@ -183,7 +197,8 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:gravity="bottom" >
 
         <Button
             android:id="@+id/button1"
@@ -191,13 +206,14 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_weight="0.20"
+            android:onClick="setStepOne"
             android:text="@string/value_1" />
 
         <Button
             android:id="@+id/button2"
             style="@style/StepActive"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="40dp"
             android:layout_weight="0.20"
             android:text="@string/value_2" />
 
@@ -205,15 +221,16 @@
             android:id="@+id/button3"
             style="@style/StepInactive"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="40dp"
             android:layout_weight="0.20"
+            android:onClick="setStepThree"
             android:text="@string/value_3" />
 
         <Button
             android:id="@+id/buttonNext"
             style="@style/NextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
             android:layout_weight="0.40"
             android:onClick="next"
             android:text="@string/intro_next" />

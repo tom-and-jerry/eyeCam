@@ -132,6 +132,14 @@ public class StateImageButton extends ImageButton implements Checkable{
 		setChecked(!isChecked());
 	}
 	
+	/**
+	 * Whether or not the image should change on click.
+	 * 
+	 * This is particularly useful if you want the model to perform the image
+	 * changes.
+	 * 
+	 * @param changeImage
+	 */
 	public void setImageChange(boolean changeImage){
 		mChangeImage = changeImage;
 	}
@@ -164,6 +172,9 @@ public class StateImageButton extends ImageButton implements Checkable{
 		mEnabled = enabled;
 	}
 	
+	/**
+	 * Whether or not the StateImageButton is enabled.
+	 */
 	public boolean isEnabled(){
 		return mEnabled;
 	}

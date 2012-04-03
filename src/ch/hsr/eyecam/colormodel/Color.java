@@ -55,6 +55,20 @@ public class Color {
 		return rgbToColor(yuvToRgb(yuv));
 	}
 
+	/**
+	 * Converts the color represented in YUV color space to the
+	 * RGB representation of the color. 
+	 * 
+	 * The YUV values we get from the camera are in the range [0,255].
+	 * Because color-maps of YUV color space usually show ranges [-128,127]
+	 * or equivalent for UV planes you need to take care when supplying 
+	 * data to this method. An input of 0 for UV values will be interpreted
+	 * as -128 (or -0.5) as shown in typical color-maps. 
+	 * 
+	 * @param 	yuv values as delivered by the camera
+	 * @return 	int array with the RBG values in the range [0,255]. The
+	 * 			array is in RGB order (R: index 0, G: index 1, B: index 2)
+	 */
 	public static int[] yuvToRgb(int[] yuv) {
 		int[] rgb = new int[3];
 		int y = (yuv[0]<0) ? yuv[0]+256 : yuv[0];
@@ -86,6 +100,17 @@ public class Color {
 		return hslToColor(rgbToHsl(rgb));
 	}
 
+	/**
+	 * Converts the color represented in RGB color space to the
+	 * HSL representation of the color. 
+	 * 
+	 * The hue value represents the angular dimension of the color ranging
+	 * from 0 to 360 degrees, whereas saturation and lightness are in 
+	 * the range [0,1].
+	 * 
+	 * @param 	rgb int array of RGB values each in the range [0,255]
+	 * @return 	hsl float array
+	 */
 	public static float[] rgbToHsl(int[] rgb) {
 		float[] hsl = new float[3];
 		int r = rgb[0];

@@ -146,6 +146,11 @@ public class FloatingBubble extends PopupWindow {
 		mBubbleView.updateView();
 	}
 
+	/**
+	 * Sets the additional text shown below the popup main text.
+	 * 
+	 * @param string
+	 */
 	public void setAdditionalText(StringBuilder string) {
 		mAdditionalText.setText(string);
 	}

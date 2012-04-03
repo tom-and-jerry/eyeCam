@@ -50,7 +50,7 @@ public class PreferencesCheckBox extends CheckBox implements
 		int length = title.length();
 		SpannableString text = new SpannableString(title + "\n" + mDescription);
 		text.setSpan(new StyleSpan(Typeface.BOLD), 0, length, 0);
-		text.setSpan(new RelativeSizeSpan(0.8f), length, length + mDescription.length()+1, 0);
+		text.setSpan(new RelativeSizeSpan(0.7f), length, length + mDescription.length()+1, 0);
 		
 		setText(text);
 		

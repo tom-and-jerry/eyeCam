@@ -68,7 +68,8 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:gravity="bottom" >
 
         <Button
             android:id="@+id/button1"
@@ -81,24 +82,26 @@
         <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="40dp"
             android:layout_weight="0.20"
 			style="@style/StepInactive"
+            android:onClick="setStepTwo"
             android:text="@string/value_2" />
 
         <Button
             android:id="@+id/button3"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="40dp"
             android:layout_weight="0.20"
 			style="@style/StepInactive"
+            android:onClick="setStepThree"
             android:text="@string/value_3" />
 
         <Button
             android:id="@+id/buttonNext"
             style="@style/NextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
             android:layout_weight="0.40"
             android:onClick="next"
             android:text="@string/intro_next" />

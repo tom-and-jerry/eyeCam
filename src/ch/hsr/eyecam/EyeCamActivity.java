@@ -23,7 +23,9 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -71,13 +73,14 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 				dismissMenus();
 				return;
 			}
-	
+
 			switch (msg.what) {
 			case CAMERA_START_PREVIEW:
 				startCameraPreview();
 				break;
 			case CAMERA_STOP_PREVIEW:
 				stopCameraPreview();
+				mColorView.refreshBitmap();
 				setCameraLight(Camera.Parameters.FLASH_MODE_OFF);
 				break;
 			case CAMERA_LIGHT_OFF:
@@ -235,6 +238,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	public final static int SHOW_SETTINGS_MENU = 8;
 	public final static String PREFERENCE_FILE = "eyeCamPref";
 	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
+
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -272,29 +276,29 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View contentView = inflater.inflate(R.layout.settings_menu, null);
 		mAppMenu = new MenuBubble(mColorView, contentView);
-	
+
 		View primFilterView = inflater.inflate(R.layout.primary_filter_menu,
 				null);
 		mPrimaryFilterMenu = new MenuBubble(mColorView, primFilterView);
-	
+
 		View secFilterView = inflater.inflate(R.layout.secondary_filter_menu,
 				null);
 		mSecondaryFilterMenu = new MenuBubble(mColorView, secFilterView);
-	
+
 		setMenuSize(mAppMenu, contentView);
 		setMenuSize(mPrimaryFilterMenu, primFilterView);
 		setMenuSize(mSecondaryFilterMenu, secFilterView);
 	}
 
 	private void setMenuSize(MenuBubble menu, View contentView) {
-		menu.setWidth((mMetrics.heightPixels / 10) * 9);
-		menu.setHeight((mMetrics.widthPixels / 10) * 8);
+		menu.setMaxWidth((mMetrics.heightPixels / 10) * 9);
+		menu.setMaxHeight((mMetrics.widthPixels / 10) * 8);
 	}
 
 	private void initOrientationEventListener() {
 		mOrientationEventListener = new OrientationEventListener(this,
 				SensorManager.SENSOR_DELAY_NORMAL) {
-	
+
 			@Override
 			public void onOrientationChanged(int inputOrientation) {
 				Orientation orientation = getCurrentOrientation(inputOrientation);
@@ -306,7 +310,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 					Debug.msg(LOG_TAG, "Orientation: " + mOrientationCurrent);
 				}
 			}
-	
+
 			private Orientation getCurrentOrientation(int orientationInput) {
 				int orientation = orientationInput;
 				orientation = orientation % 360;
@@ -314,7 +318,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 				int boundary_landscapeRight = 135;
 				int boundary_reversePortrait = 225;
 				int boundary_landsacpeLeft = 315;
-	
+
 				if (orientation < boundary_portrait)
 					return Orientation.PORTRAIT;
 				if (orientation < boundary_landscapeRight)
@@ -323,7 +327,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 					return Orientation.PORTRAIT;
 				if (orientation < boundary_landsacpeLeft)
 					return Orientation.LANDSCAPE_LEFT;
-	
+
 				return Orientation.PORTRAIT;
 			}
 		};
@@ -340,17 +344,22 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		super.onStart();
 		mColorView.setVisibility(View.INVISIBLE);
 		mLoadingScreen.setVisibility(View.VISIBLE);
-		
+
 		initSavedPreferences();
 
 		PackageInfo versionInfo = getPackageInfo();
 		String introKey = IntroductionActivity.INTRO_PREFIX
 				+ versionInfo.versionCode;
 		if (!mSharedPreferences.contains(introKey)) {
-			Intent intent = new Intent(getApplicationContext(),
-					IntroductionActivity.class);
-			startActivity(intent);
+			openIntro(null);
 		}
+	}
+
+	public void openIntro(View v) {
+		dismissMenus();
+		Intent intent = new Intent(getApplicationContext(),
+				IntroductionActivity.class);
+		startActivity(intent);
 	}
 
 	private void initSavedPreferences() {
@@ -370,7 +379,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 				R.string.key_primary_partial, false);
 		mSecondaryPartial = getBooleanSettingValue(shPref,
 				R.string.key_secondary_partial, false);
-	
+
 		mColorView.setPopupTextSize(getIntSettingValue(shPref,
 				R.string.key_text_size, 5));
 		mColorView.setShowRGB(getBooleanSettingValue(shPref,
@@ -389,7 +398,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 			int resourcesOfTheKey, boolean defaultValue) {
 		String keyString = getResources().getString(resourcesOfTheKey);
 		return shPref.getBoolean(keyString, defaultValue);
-	
+
 	}
 
 	private PackageInfo getPackageInfo() {
@@ -411,11 +420,8 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// openCamera();
 		mShowLoadingScreenTask = new ShowLoadingScreenTask();
 		mShowLoadingScreenTask.execute();
-		// configEnvByCameraParams();
-//		initSavedPreferences();
 		mControlBar.initState();
 		mWakeLock.acquire();
 		mOrientationEventListener.enable();
@@ -543,7 +549,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		try {
 			mCamera.setPreviewDisplay(mSurfaceView.getHolder());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			Log.e(LOG_TAG, "Unable to set preview display");
 			e.printStackTrace();
 		}
 
@@ -571,6 +577,11 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Is overwritten in order to dismiss the menu popups when pressing back.
+	 */
 	@Override
 	public void onBackPressed() {
 		if (menuIsShowing())
@@ -579,6 +590,23 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 			super.onBackPressed();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Show the application menu on menu button.
+	 */
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if (menuIsShowing()){
+			dismissMenus();
+			return false;
+		} else {
+			stopCameraPreview();
+			inflateMenu(mAppMenu);
+			return true;
+		}
+	}
+	
 	private boolean menuIsShowing() {
 		return mAppMenu.isShowing() || mPrimaryFilterMenu.isShowing()
 				|| mSecondaryFilterMenu.isShowing();
@@ -608,5 +636,4 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 				+ getApplication().getPackageName()));
 		startActivity(intent);
 	}
-
 }

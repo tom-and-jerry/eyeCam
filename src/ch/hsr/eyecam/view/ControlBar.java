@@ -227,8 +227,4 @@ public class ControlBar extends LinearLayout {
 		if(mButtonFilter.isChecked())mActivityHandler.sendEmptyMessage(EyeCamActivity.SECONDARY_FILTER_ON);
 		else mActivityHandler.sendEmptyMessage(EyeCamActivity.PRIMARY_FILTER_ON);
 	}
-
-	public View getFilterButton() {
-		return mButtonFilter;
-	}
 }

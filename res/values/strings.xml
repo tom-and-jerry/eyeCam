@@ -51,6 +51,8 @@
 	
 	<string name="setting_feedback">Y U No Feedback</string>
 	<string name="setting_feedback_summary">Brings you to the Market where you can rate eyeCam, request features or yell at us</string>
+	<string name="setting_intro">Introduction</string>
+	<string name="setting_intro_summary">Opens the introduction as seen when eyeCam was first started</string>
 	
 	<!-- Introduction Strings -->
 	<string name="intro_welcome">Welcome to eyeCam</string>
@@ -65,9 +67,14 @@
 	<string name="intro_singleclick_play">Start and stop camera preview.</string>
 	<string name="intro_singleclick_led">Switch LED light of your device on and off.</string>
 	<string name="intro_longclick_filter">Lets you choose different filters for the currently running preview. You will be presented with an option menu where each filter is shortly described.</string>
-	<string name="intro_singleclick_previewscreen">Touching any area of the preview screen will bring up a popup that will tell you the color. You can try it in the picture below.</string>
+	<string name="intro_singleclick_previewscreen">Touching any area of the preview screen will bring up a popup telling you the color. You can try it in the picture below.</string>
 	<string name="intro_longclick_previewscreen">A long click on the preview screen brings up an options menu where you can change general settings for the colorrecognition and/or give feedback.</string>
 	<string name="intro_finish">finish</string>
 	<string name="intro_singleclick">single click</string>
 	<string name="intro_longclick">long click</string>
+	<string name="intro_setting_app">Application Settings</string>
+	<string name="intro_setting_popup">Popup settings</string>
+	<string name="intro_setting_popup_summary">Options for changing popup behaviour such as popup size and colorrecognition options is provided</string>
+	<string name="intro_setting_general">General options</string>
+	<string name="intro_setting_general_summary">A link to the market for feedback and a link that brings you back to this introduction is provided</string>
 </resources>

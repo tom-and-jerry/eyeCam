@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import ch.hsr.eyecam.Orientation;
+import ch.hsr.eyecam.Debug;
 
 /**
  * This class provides the functionality of showing a menu bubble above the 
@@ -18,6 +19,7 @@ import ch.hsr.eyecam.Orientation;
  */
 public class MenuBubble extends PopupWindow{
 	
+	private static final String LOG_TAG = "MenuBubble";
 	private View mAnchorView;
 	private BubbleView mBubbleView;
 	private View mContentView;
@@ -25,6 +27,7 @@ public class MenuBubble extends PopupWindow{
 	private int mMaxHeight;
 	private int mHeight;
 	private int mMaxWidth;
+//	private int mWidth;
 	
 	/**
 	 * Simple constructor to initialize a MenuBubble with the given anchor.
@@ -95,27 +98,33 @@ public class MenuBubble extends PopupWindow{
 		
 		boolean wasShowing = isShowing();
 		dismiss();
-		setWidth(iWidth);
-		setHeight(iHeight);
+		setMaxWidth(iWidth);
+		setMaxHeight(iHeight);
 		if (wasShowing) show();
 	}
 	
 	/**
-	 * {@inheritDoc}
+	 * Sets the maximal Height
+	 * 
+	 * @param height in pixel
 	 */
-	@Override
-	public void setHeight(int height) {
+	public void setMaxHeight(int height) {
 		mMaxHeight = height;
 		super.setHeight(height);
+		
+		Debug.msg(LOG_TAG, "setting height: " + height);
 	}
 	
 	/**
-	 * {@inheritDoc}
+	 * Sets the maximal width
+	 * 
+	 * @param width in pixel
 	 */
-	@Override
-	public void setWidth(int width) {
+	public void setMaxWidth(int width) {
 		mMaxWidth = width;
 		super.setWidth(width);
+		
+		Debug.msg(LOG_TAG, "setting width: " + width);
 	}
 	
 	/**
@@ -144,9 +153,20 @@ public class MenuBubble extends PopupWindow{
 	}
 	
 	/**
-	 * Shows the menu bubble above the anchor.
+	 * Shows the menu bubble in the middle of the anchor.
 	 */
 	public void show(){
+//		if (mWidth == 0){
+//			mContentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//			mHeight = mContentView.getMeasuredWidth();
+//			mWidth = mContentView.getMeasuredHeight();
+//			
+//			setMaxHeight(mMaxHeight);
+//			setMaxWidth(mMaxWidth);
+//		}
+//		
 		showAtLocation(mAnchorView, Gravity.CENTER, 0, 0);
+		Debug.msg(LOG_TAG, "measured height: " + mContentView.getMeasuredWidth());
+		Debug.msg(LOG_TAG, "measured width: " + mContentView.getMeasuredHeight());
 	}
 }

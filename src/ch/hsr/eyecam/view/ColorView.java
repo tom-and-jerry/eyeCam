@@ -135,7 +135,19 @@ public class ColorView extends View implements PreviewCallback {
 		Debug.msg(LOG_TAG, "Bitmap size: W: " + mPreviewWidth + " H: "
 				+ mPreviewHeight);
 	}
-
+	
+	/**
+	 * Method to scale the bitmap in ColorView representing the camera
+	 * preview to full screen, even if the camera preview is smaller than
+	 * the screen.
+	 * 
+	 * Note that only the height will be used to calculate the scale 
+	 * factor. The height will be scaled accordingly in order not to
+	 * loose the aspect ratio.
+	 * 
+	 * @param screenWidth width you wish to scale the bitmap to
+	 * @param screenHeight height you wish to scale the bitmap to
+	 */
 	public void scaleBitmapToFillScreen(int screenWidth, int screenHeight) {
 		if (mBitmap.getHeight() < screenHeight) {
 			mIsScaled = true;
@@ -290,14 +302,30 @@ public class ColorView extends View implements PreviewCallback {
 		invalidate();
 	}
 
+	/**
+	 * Set the Handler used to send messages to the Activity acting as
+	 * the model.
+	 * 
+	 * @param mHandler
+	 */
 	public void setActivityHandler(Handler mHandler) {
 		mActivityHandler = mHandler;
 	}
 
+	/**
+	 * Whether or not to show the RGB values in the color recognition popup.
+	 * 
+	 * @param showRGB
+	 */
 	public void setShowRGB(boolean showRGB) {
 		mShowRGB = showRGB;
 	}
-
+	
+	/**
+	 * Whether or not to show the HSV values in the color recognition popup.
+	 * 
+	 * @param showHSV
+	 */
 	public void setShowHSV(boolean showHSV) {
 		mShowHSV = showHSV;
 	}

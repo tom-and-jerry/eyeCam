@@ -54,6 +54,15 @@ public class ColorRecognizer {
 		return Color.yuvToColor(yuv);
 	}
 
+	/**
+	 * This method will return the YUV values of the pixel at 
+	 * location (width, height) as contained in the buffer supplied 
+	 * in the constructor.
+	 * 
+	 * @param 	width location of the pixel to be recognized
+	 * @param 	height location of the pixel to be recognized
+	 * @return 	int array with the yuv values
+	 */
 	private int[] getYuvAt(int x, int y) {
 		int[] yuv = new int[3];
 		int posUV = mHeight*mWidth + (y/2)*mWidth + BYTES_PER_PIXEL*(x/2);
@@ -64,6 +73,15 @@ public class ColorRecognizer {
 		return yuv;
 	}
 
+	/**
+	 * This method will return the RGB values of the pixel at 
+	 * location (width, height). The pixel data is taken from 
+	 * the buffer supplied in the constructor.
+	 * 
+	 * @param 	width location of the pixel to be recognized
+	 * @param 	height location of the pixel to be recognized
+	 * @return 	int array with the RGB values
+	 */
 	public int[] getRgbAt(int x, int y) {
 		int[] yuv = getYuvAt(x, y);
 		return Color.yuvToRgb(yuv);

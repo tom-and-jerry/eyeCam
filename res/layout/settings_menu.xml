@@ -84,5 +84,14 @@
         eyecam:description="@string/setting_feedback_summary"
         android:onClick="openMarket"
         android:text="@string/setting_feedback" />
+    
+    <ch.hsr.eyecam.preferences.PreferencesButton
+        android:id="@+id/introduction"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/Text"
+        eyecam:description="@string/setting_intro_summary"
+        android:onClick="openIntro"
+        android:text="@string/setting_intro" />
 
 </LinearLayout>
