@@ -3,6 +3,7 @@ package ch.hsr.eyecam.widget;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -63,6 +64,7 @@ public class BubbleView extends FrameLayout {
 
 	public BubbleView(View contentView) {
 		super(contentView.getContext());
+
 		mFrame = new FrameLayout(contentView.getContext());
 		mContentView = contentView;
 
@@ -139,8 +141,8 @@ public class BubbleView extends FrameLayout {
 
 		if (mOrientation == Orientation.PORTRAIT)
 			setMeasuredDimension(h, w);
-		updateMatrix();
 		updateDirtyRect();
+		updateMatrix();
 	}
 
 	private void updateDirtyRect() {
@@ -183,11 +185,11 @@ public class BubbleView extends FrameLayout {
 	protected void dispatchDraw(Canvas canvas) {
 		canvas.setMatrix(mRotationMatrix);
 		super.dispatchDraw(canvas);
+		invalidate(mDirtyRect);
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		invalidate(mDirtyRect);
 		super.onDraw(canvas);
 	}
 
@@ -236,5 +238,13 @@ public class BubbleView extends FrameLayout {
 
 	private float invert(float value, float maxvalue) {
 		return maxvalue - value;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Drawable getBackground() {
+		return mFrame.getBackground();
 	}
 }

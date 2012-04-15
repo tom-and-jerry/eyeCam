@@ -15,7 +15,8 @@ import ch.hsr.eyecam.R;
 /**
  * This class extends from android.widget.RadioGroup and add the functionality
  * to add a TextView as a separator and to load the preferences of the your
- * preferences-file.
+ * preferences-file. It also automatically update shared preferences according
+ * to the chosen PreferencesRadioButton.
  * 
  * @author Patrice Mueller
  * 
@@ -41,9 +42,12 @@ public class PreferencesRadioGroup extends RadioGroup implements
 				R.string.setting_no_title);
 		mEnableSeperator = mTypedArray.getBoolean(
 				R.styleable.PreferencesRadioGroup_enableSeperator, true);
-		mKey = getString(R.styleable.PreferencesRadioGroup_key, NO_KEY);
 		mDefaultValue = mTypedArray.getInteger(
 				R.styleable.PreferencesRadioGroup_defaultValue, 0);
+		
+		mTypedArray = context.obtainStyledAttributes(attrs,
+				R.styleable.Preferences);
+		mKey = getString(R.styleable.Preferences_key, NO_KEY);
 		
 		
 		if (mEnableSeperator){

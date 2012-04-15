@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:eyecam="http://schemas.android.com/apk/res/ch.hsr.eyecam"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,193 +11,190 @@
         style="@style/Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:text="@string/intro_separation_colorareas" />
 
-    <TextView
-        android:id="@+id/filler1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
-
     <LinearLayout
-        android:id="@+id/single_click"
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/singleclick_filter"
-            style="@style/IntroActionAbove"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/intro_singleclick_filter" />
+        <LinearLayout
+            android:id="@+id/single_click"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/singleclick_filter"
+                style="@style/IntroActionAbove"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/intro_singleclick_filter" />
+
+            <View
+                android:id="@+id/separator1"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/light_grey" />
+
+            <TextView
+                android:id="@+id/singleclick_play"
+                style="@style/IntroActionAbove"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/intro_singleclick_play" />
+
+            <View
+                android:id="@+id/separator2"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/light_grey" />
+
+            <TextView
+                android:id="@+id/singleclick_led"
+                style="@style/IntroActionAbove"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/intro_singleclick_led" />
+        </LinearLayout>
 
         <View
-            android:id="@+id/separator1"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
+            android:id="@+id/separator_horiz1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_grey" />
+
+        <LinearLayout
+            android:id="@+id/arrows_up"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/arrow_down1"
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/arrow_down" />
+
+            <ImageView
+                android:id="@+id/arrow_down2"
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/arrow_down" />
+
+            <ImageView
+                android:id="@+id/arrow_down3"
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/arrow_down" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/on_single_click"
+            style="@style/CenterBold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/intro_singleclick"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/dark_grey" />
+
+        <ch.hsr.eyecam.view.ControlBar
+            android:id="@+id/controlBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_menu_bar_portrait"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <ch.hsr.eyecam.widget.StateImageButton
+                android:id="@+id/imageButton_Filter"
+                style="@style/ImageButton"
+                eyecam:imgResFalse="@drawable/ic_menu_wizard"
+                eyecam:imgResTrue="@drawable/ic_menu_wizard_no" />
+
+            <ch.hsr.eyecam.widget.StateImageButton
+                android:id="@+id/imageButton_Pause"
+                style="@style/ImageButton.Center"
+                eyecam:imgResFalse="@drawable/ic_menu_play"
+                eyecam:imgResTrue="@drawable/ic_menu_pause" />
+
+            <ch.hsr.eyecam.widget.StateImageButton
+                android:id="@+id/imageButton_Light"
+                style="@style/ImageButton"
+                eyecam:imgResDisabled="@drawable/ic_menu_light_disabled"
+                eyecam:imgResFalse="@drawable/ic_menu_light_off"
+                eyecam:imgResTrue="@drawable/ic_menu_light_on" />
+        </ch.hsr.eyecam.view.ControlBar>
+
+        <TextView
+            android:id="@+id/on_long_click"
+            style="@style/CenterBold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/intro_longclick"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/dark_grey" />
+
+        <LinearLayout
+            android:id="@+id/arrows_down"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/arrow_up1"
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/arrow_up" />
+
+            <ImageView
+                android:id="@+id/arrow_up2"
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside" />
+
+            <ImageView
+                android:id="@+id/arrow_up3"
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/separator_horiz2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
             android:background="@color/light_grey" />
 
         <TextView
-            android:id="@+id/singleclick_play"
-            style="@style/IntroActionAbove"
-            android:layout_width="fill_parent"
+            android:id="@+id/longclick_filter"
+            style="@style/IntroActionBelow"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/intro_singleclick_play" />
-
-        <View
-            android:id="@+id/separator2"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/light_grey" />
-
-        <TextView
-            android:id="@+id/singleclick_led"
-            style="@style/IntroActionAbove"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/intro_singleclick_led" />
+            android:text="@string/intro_longclick_filter" />
     </LinearLayout>
-
-    <View
-        android:id="@+id/separator_horiz1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey" />
-
-    <LinearLayout
-        android:id="@+id/arrows_up"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <ImageView
-            android:id="@+id/arrow_down1"
-            android:layout_width="fill_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/arrow_down" />
-
-        <ImageView
-            android:id="@+id/arrow_down2"
-            android:layout_width="fill_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/arrow_down" />
-
-        <ImageView
-            android:id="@+id/arrow_down3"
-            android:layout_width="fill_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/arrow_down" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/on_single_click"
-        style="@style/CenterBold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/intro_singleclick"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/dark_grey" />
-
-    <ch.hsr.eyecam.view.ControlBar
-        android:id="@+id/controlBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ic_menu_bar_portrait"
-        android:gravity="center"
-        android:orientation="horizontal" >
-
-        <ch.hsr.eyecam.widget.StateImageButton
-            android:id="@+id/imageButton_Filter"
-            style="@style/ImageButton"
-            eyecam:imgResFalse="@drawable/ic_menu_wizard"
-            eyecam:imgResTrue="@drawable/ic_menu_wizard_no" />
-
-        <ch.hsr.eyecam.widget.StateImageButton
-            android:id="@+id/imageButton_Pause"
-            style="@style/ImageButton.Center"
-            eyecam:imgResFalse="@drawable/ic_menu_play"
-            eyecam:imgResTrue="@drawable/ic_menu_pause" />
-
-        <ch.hsr.eyecam.widget.StateImageButton
-            android:id="@+id/imageButton_Light"
-            style="@style/ImageButton"
-            eyecam:imgResDisabled="@drawable/ic_menu_light_disabled"
-            eyecam:imgResFalse="@drawable/ic_menu_light_off"
-            eyecam:imgResTrue="@drawable/ic_menu_light_on" />
-    </ch.hsr.eyecam.view.ControlBar>
-
-    <TextView
-        android:id="@+id/on_long_click"
-        style="@style/CenterBold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/intro_longclick"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/dark_grey" />
-
-    <LinearLayout
-        android:id="@+id/arrows_down"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <ImageView
-            android:id="@+id/arrow_up1"
-            android:layout_width="fill_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/arrow_up" />
-
-        <ImageView
-            android:id="@+id/arrow_up2"
-            android:layout_width="fill_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside" />
-
-        <ImageView
-            android:id="@+id/arrow_up3"
-            android:layout_width="fill_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside" />
-    </LinearLayout>
-
-    <View
-        android:id="@+id/separator_horiz2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey" />
-
-    <TextView
-        android:id="@+id/longclick_filter"
-        style="@style/IntroActionBelow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/intro_longclick_filter" />
-
-    <TextView
-        android:id="@+id/filler2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:gravity="bottom" >
 
         <Button
@@ -236,4 +233,4 @@
             android:text="@string/intro_next" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

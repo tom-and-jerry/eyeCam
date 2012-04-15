@@ -6,16 +6,22 @@
 		<attr name="imgResDisabled" format="reference"/>
 	</declare-styleable>
 	
+	<declare-styleable name="Preferences">
+	    <attr name="description" format="string" />
+		<attr name="key" format="string"/>
+	</declare-styleable>
+	
 	<declare-styleable name="PreferencesRadioGroup">
 		<attr name="defaultValue" format="integer" />
-		<attr name="key" format="string"/>
 		<attr name="title" format="reference"/>
 		<attr name="enableSeperator" format="boolean" />
 	</declare-styleable>
 	
 	<declare-styleable name="PreferencesRadioButton">
-	    <attr name="description" format="string" />
 		<attr name="intValue" format="integer" />
 	</declare-styleable>
 	
+	<declare-styleable name="PreferencesCheckbox">
+		<attr name="boolValue" format="boolean" />
+	</declare-styleable>
 </resources>

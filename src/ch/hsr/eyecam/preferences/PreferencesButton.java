@@ -3,14 +3,14 @@ package ch.hsr.eyecam.preferences;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
+import android.widget.CompoundButton;
 
 /**
- * Just added the possibility to add a default value so that you have a 
- * map-construction when you use it with the PreferencesRadioGroup.
+ * Custom button for the preferences menu that matches the style
+ * of the other preferences widgets.
  * 
  * @author jimmypoms
  *
- * @see RadioButton
  */
 public class PreferencesButton extends PreferencesCheckBox {
 	
@@ -29,4 +29,7 @@ public class PreferencesButton extends PreferencesCheckBox {
 	protected void initValue() {
 	}
 	
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+	}
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:eyecam="http://schemas.android.com/apk/res/ch.hsr.eyecam"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,78 +12,87 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/intro_colorrecognition"
+        android:layout_alignParentTop="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/singleclick_preview"
-        style="@style/IntroActionAbove"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/intro_singleclick_previewscreen" />
-
-    <View
-        android:id="@+id/separator_horiz1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey" />
-
-    <ImageView
-        android:id="@+id/arrow_down1"
-        android:layout_width="fill_parent"
-        android:layout_height="10dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/arrow_down" />
-
-    <TextView
-        android:id="@+id/on_single_click"
-        style="@style/CenterBold"
+    <LinearLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/intro_singleclick"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_centerInParent="true"
+        android:orientation="vertical" >
 
-    <ImageView
-        android:id="@+id/preview_image"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/introduction_preview" />
+        <TextView
+            android:id="@+id/singleclick_preview"
+            style="@style/IntroActionAbove"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/intro_singleclick_previewscreen" />
 
-    <TextView
-        android:id="@+id/on_long_click"
-        style="@style/CenterBold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/intro_longclick"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <View
+            android:id="@+id/separator_horiz1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_grey" />
 
-    <ImageView
-        android:id="@+id/arrow_up"
-        android:layout_width="fill_parent"
-        android:layout_height="10dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/arrow_up" />
+        <ImageView
+            android:id="@+id/arrow_down1"
+            android:layout_width="fill_parent"
+            android:layout_height="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/arrow_down" />
 
-    <View
-        android:id="@+id/separator_horiz2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey" />
+        <TextView
+            android:id="@+id/on_single_click"
+            style="@style/CenterBold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/intro_singleclick"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
-        android:id="@+id/longclick_preview"
-        style="@style/IntroActionBelow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/intro_longclick_previewscreen" />
+        <ImageView
+            android:id="@+id/preview_image"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/introduction_preview" />
+
+        <TextView
+            android:id="@+id/on_long_click"
+            style="@style/CenterBold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/intro_longclick"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:id="@+id/arrow_up"
+            android:layout_width="fill_parent"
+            android:layout_height="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/arrow_up" />
+
+        <View
+            android:id="@+id/separator_horiz2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_grey" />
+
+        <TextView
+            android:id="@+id/longclick_preview"
+            style="@style/IntroActionBelow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/intro_longclick_previewscreen" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="bottom" >
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
 
         <Button
             android:id="@+id/button1"
@@ -121,4 +130,4 @@
             android:text="@string/intro_finish" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

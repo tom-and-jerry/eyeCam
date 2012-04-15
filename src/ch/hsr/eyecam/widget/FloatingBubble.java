@@ -57,7 +57,6 @@ public class FloatingBubble extends PopupWindow {
 		mContentView = new LinearLayout(context);
 		mContentView.setOrientation(LinearLayout.VERTICAL);
 		mContentView.addView(mTextView);
-		// mContentView.addView(mAdditionalText);
 
 		mBubbleView = new BubbleView(mContentView);
 		setContentView(mBubbleView);
@@ -75,19 +74,14 @@ public class FloatingBubble extends PopupWindow {
 	 *            The y position on the screen.
 	 */
 	public void showStringResAt(int res, int x, int y) {
-		dismiss();
 		if (OFFSET_X == -1)
 			getParentLocationOnScreen();
-
-		mContentView.removeView(mAdditionalText);
-		if (mAdditionalText.getText().length() > 0)
-			mContentView.addView(mAdditionalText);
-		mBubbleView.updateView();
 
 		int transX = 0;
 		int transY = 0;
 		int offset = 0;
 
+		mBubbleView.updateView();
 		switch (mOrientation) {
 		case LANDSCAPE_LEFT:
 			transX = mBubbleView.getMeasuredWidth() / 2;
@@ -108,13 +102,17 @@ public class FloatingBubble extends PopupWindow {
 				(x - transX) + OFFSET_X, (y - transY) + OFFSET_Y);
 	}
 
+	public void setText(CharSequence text) {
+		mTextView.setText(text);
+	}
+
 	private void getParentLocationOnScreen() {
 		int[] location = new int[2];
 		mViewParent.getLocationOnScreen(location);
 		OFFSET_X = location[0];
 		OFFSET_Y = location[1];
 		Debug.msg("FloatingBubble", "offset_x: " + OFFSET_X);
-		Debug.msg("FloatingBubble", "offset_y: " + OFFSET_Y);		
+		Debug.msg("FloatingBubble", "offset_y: " + OFFSET_Y);
 	}
 
 	/**
@@ -153,5 +151,39 @@ public class FloatingBubble extends PopupWindow {
 	 */
 	public void setAdditionalText(StringBuilder string) {
 		mAdditionalText.setText(string);
+		prepareAdditionalText();
+	}
+
+	private void prepareAdditionalText() {
+		mContentView.removeView(mAdditionalText);
+		if (mAdditionalText.getText().length() > 0)
+			mContentView.addView(mAdditionalText);
+	}
+
+	/**
+	 * Wrapper method to set the arrow style of the BubbleView.
+	 * 
+	 * @param arrowstyle as in BubbleView
+	 * @see BubbleView
+	 */
+	public void setArrowStyle(int arrowstyle) {
+		mBubbleView.setArrowStyle(arrowstyle);
+	}
+
+	/**
+	 * Sets the alpha for the elements contained in the FloatingBubble.
+	 * 
+	 * @param alpha
+	 */
+	public void setAlpha(int alpha) {
+		mTextView.setTextColor(mTextView.getTextColors().withAlpha(alpha));
+		mAdditionalText.setTextColor(mAdditionalText.getTextColors().withAlpha(
+				alpha));
+		mBubbleView.getBackground().setAlpha(alpha);
+	}
+
+	public void setMargins(int margin) {
+		mTextView.setPadding(margin, margin, margin, margin);
+		mAdditionalText.setPadding(margin, 0, margin, margin);
 	}
 }

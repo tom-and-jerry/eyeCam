@@ -59,6 +59,7 @@
         style="@style/Text"
         eyecam:description="@string/setting_color_rgb_summary"
         eyecam:key="@string/key_color_rgb"
+        eyecam:boolValue="true"
         android:text="@string/setting_color_rgb" />
 
     <ch.hsr.eyecam.preferences.PreferencesCheckBox
@@ -68,6 +69,7 @@
         style="@style/Text"
         eyecam:description="@string/setting_color_hsv_summary"
         eyecam:key="@string/key_color_hsv"
+        eyecam:boolValue="false"
         android:text="@string/setting_color_hsv" />
     
 	<View

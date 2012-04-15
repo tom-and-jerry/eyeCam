@@ -221,10 +221,9 @@ public class ControlBar extends LinearLayout {
 	}
 	
 	/**
-	 * Set the state according to the current filter in the preferences
+	 * Check wether primary filter button is checked.
 	 */
-	public void initState() {
-		if(mButtonFilter.isChecked())mActivityHandler.sendEmptyMessage(EyeCamActivity.SECONDARY_FILTER_ON);
-		else mActivityHandler.sendEmptyMessage(EyeCamActivity.PRIMARY_FILTER_ON);
+	public boolean isPrimaryFilterRunning() {
+		return !mButtonFilter.isChecked();
 	}
 }

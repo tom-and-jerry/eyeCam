@@ -50,6 +50,7 @@ public class ColorView extends View implements PreviewCallback {
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				mActivityHandler
 						.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
+				mPopup.dismiss();
 
 				int x = (int) event.getX();
 				int y = (int) event.getY();

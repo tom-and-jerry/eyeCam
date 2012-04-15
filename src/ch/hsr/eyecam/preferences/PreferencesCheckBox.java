@@ -18,30 +18,35 @@ import android.widget.RadioButton;
 import ch.hsr.eyecam.R;
 
 /**
- * Just added the possibility to add a default value so that you have a
- * map-construction when you use it with the PreferencesRadioGroup.
+ * This Checkbox automatically updates the boolean preferences keys as 
+ * stated in the XML.
+ * 
+ * Additionally there is the possibility to add a description.
  * 
  * @author jimmypoms
  * 
  * @see RadioButton
+ * @see PreferencesRadioGroup
  */
 public class PreferencesCheckBox extends CheckBox implements
 		OnCheckedChangeListener {
 	private SharedPreferences mSharedPreferences;
 	private String mDescription;
 	private String mKey;
+	private boolean mDefault;
 
 	public PreferencesCheckBox(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
 		TypedArray typedArray = context.obtainStyledAttributes(attrs,
-				R.styleable.PreferencesRadioButton);
+				R.styleable.Preferences);
 		mDescription = typedArray
-				.getString(R.styleable.PreferencesRadioButton_description);
+				.getString(R.styleable.Preferences_description);
+		mKey = typedArray.getString(R.styleable.Preferences_key);
 
 		typedArray = context.obtainStyledAttributes(attrs,
-				R.styleable.PreferencesRadioGroup);
-		mKey = typedArray.getString(R.styleable.PreferencesRadioGroup_key);
+				R.styleable.PreferencesCheckbox);
+		mDefault = typedArray.getBoolean(R.styleable.PreferencesCheckbox_boolValue, false);
 
 		setTextColor(Color.DKGRAY);
 		setBackgroundResource(R.drawable.settings_selector);
@@ -72,7 +77,10 @@ public class PreferencesCheckBox extends CheckBox implements
 	}
 
 	protected void initValue() {
-		setChecked(mSharedPreferences.getBoolean(mKey, false));
+		if (mSharedPreferences.getBoolean(mKey, mDefault)){
+			performClick();
+			onCheckedChanged(null, true);
+		}
 	}
 
 	@Override

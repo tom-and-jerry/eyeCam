@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">eyeCam</string>
     
+    <!-- Farben -->
     <string name="color_black">Schwarz</string>
     <string name="color_grey">Grau</string>
     <string name="color_white">Weiss</string>
@@ -15,27 +16,66 @@
     <string name="color_turquoise">Türkis</string>
     <string name="color_unknown">Unbekannt</string>
     
-    <string name="title_filter">Filter</string>
+    <!-- Filter -->
+    <string name="title_primary_filter">Erster Filter</string>
+    <string name="title_secondary_filter">Zweiter Filter</string>
+    
 	<string name="filter_none">Kein Filter</string>
+	<string name="filter_none_summary">Keine Veränderung des Bildes von der Kamera wird vorgenommen</string>
 	<string name="filter_simulate">Simulation Farbenblindheit</string>
+	<string name="filter_simulate_summary">Dieser Filter simuliert wie Farbenblinde die Welt wahrnehmen</string>
 	<string name="filter_false_colors">Falsche Farben</string>
+	<string name="filter_false_colors_summary">Dieser Filter ändert Blau/Grün nach Gelb/Rot</string>
 	<string name="filter_intensify">Farben hervorheben</string>
+	<string name="filter_intensify_summary">Dieser Filter verstärkt Grün und schwächt Rot ab</string>
 	<string name="filter_daltonize">Daltonize</string>
-	
-	<string name="settings_menu_title">Einstellungen</string>
-	<string name="setting_partial_title">Teilweise Filter Effekte</string>
-	<string name="setting_partial_enable">benutze teilweise Filter, wenn möglich</string>
-	<string name="setting_partial_disable">benutze keine teilweise Filter</string>
-	<string name="setting_partail_summary">Wenn das Häckleing gesetzt ist. Werden die Algorithmen nur auf die "kritischen" Farben angewendet</string>
+	<string name="filter_daltonize_summary">Daltonize wandelt für Farbenblinde nicht erkennbare Farben in erkennbare um</string>
 
-	<string name="setting_textsize_title">Popup Textgrösse</string>
-	<string name="setting_menusize_title">Menu Grösse</string>
+	<string name="filter_partial">Benutze partielle Filter</string>
+	<string name="filter_partial_summary">Der ausgewählte Filter wird nur auf einem Bereich des Bildes angewandt. Funktioniert nicht für Daltonize, Kein Filter und Simulation</string>
+
+	<string name="filter_running">läuft</string>
+	<string name="info_longpress_filter">Durch langes Drücken auf den Filter Knopf kann man den aktuellen Filter ändern</string>
+	
+	<!-- Einstellungen -->			
 	<string name="setting_size_small">Klein</string>
 	<string name="setting_size_medium">Mittel</string>
 	<string name="setting_size_large">Gross</string>
-	<string name="setting_textSize_summary">Anzeigegrösse der Farberkennungs-Popus</string>
-	<string name="setting_menuSize_summary">Anzeigegrösse der Menu</string>
 	
-	<string name="setting_no_title">Kein Titel</string>
-	<string name="setting_no_key">Kein Schlüssel</string>
+	<string name="setting_textsize_title">Popup Textgrösse</string>
+	<string name="setting_textsize_summary">Anzeigegrösse der Farberkennungs-Popups</string>
+	
+	<string name="setting_no_title">kein Titel angegeben</string>
+	<string name="setting_additional">Zusätzliche Einstellungen</string>
+	<string name="setting_color_recogniton">Farberkennungs Einstellungen</string>
+	<string name="setting_color_rgb">Zeige RGB Werte</string>
+	<string name="setting_color_rgb_summary">Zeige die RGB Werte der erkannte Farbe innerhalb des Popups</string>
+	<string name="setting_color_hsv">Zeige HSV Werte</string>
+	<string name="setting_color_hsv_summary">Zeige die HSV Werte der erkannte Farbe innerhalb des Popups</string>
+	
+	<string name="setting_feedback">Y U No Feedback</string>
+	<string name="setting_feedback_summary">Öffnet Google Play wo man eyeCam bewerten oder uns schreiben kann</string>
+	<string name="setting_intro">Einführung</string>
+	<string name="setting_intro_summary">Öffnet die Einführung welche beim ersten Start von eyeCam angezeigt wurde</string>
+	
+	<!-- Introduction Strings -->
+	<string name="intro_welcome">Willkommen zu eyeCam</string>
+	<string name="intro_problem">eyeCam wurde entwickelt um Farbenblinde bei den folgenden Problemen zu unterstützen:</string>
+	<string name="intro_colorrecognition">Farberkennung</string>
+	<string name="intro_separation_colorareas">Unterscheidung von Farbbereichen</string>
+	<string name="intro_solution">Um diese Probleme zu bekämpfen bieten wir folgende Funktionen an:</string>
+	<string name="intro_on_touch_colorrecognition">Farberkennung auf Berührung</string>
+	<string name="intro_live_color_filters">Verschiedene live Farbfilter</string>
+	<string name="intro_next">nächste</string>
+	<string name="intro_singleclick_filter">Wechsel zwischen zwei verschiedenen Filter.</string>
+	<string name="intro_singleclick_play">Starten and Stoppen der Kameravorschau.</string>
+	<string name="intro_singleclick_led">LED Licht des Gerätes ein und aus schalten.</string>
+	<string name="intro_longclick_filter">Erlaubt es verschieden Farbfilter für die aktuelle Vorschau auszuwählen. Es wird sich ein Menü öffnen wo jeder Filter kurz beschrieben wird.</string>
+	<string name="intro_menu_filter">Wird eine Filterauswahl als Kontextmenü öffnen</string>
+	<string name="intro_singleclick_previewscreen">Bei Berührung eines Bereiches der Vorschau, wird sich ein Popup mit der erkannten Farbe öffnen. Versuche es im Bild.</string>
+	<string name="intro_longclick_previewscreen">Ein langes Drücken auf die Kameravorschau öffnet ein Einstellungsmenü für die Farberkennung. Ebenfalls kann Feedback gegeben werden.</string>
+	<string name="intro_finish">Fertig</string>
+	<string name="intro_singleclick">drücken</string>
+	<string name="intro_longclick">langes drücken</string>
+	<string name="intro_menu_preview">Wird allgemeine Einstellung als Kontextmenü öffnen</string>
 </resources>

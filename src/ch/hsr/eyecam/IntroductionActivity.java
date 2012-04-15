@@ -1,8 +1,6 @@
 package ch.hsr.eyecam;
 
-import ch.hsr.eyecam.R.id;
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
@@ -10,15 +8,15 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
+import android.widget.Toast;
+import ch.hsr.eyecam.R.id;
 import ch.hsr.eyecam.colormodel.Color;
 import ch.hsr.eyecam.widget.FloatingBubble;
-import ch.hsr.eyecam.widget.MenuBubble;
 
 /**
  * Shows an introduction to eyeCam.
@@ -38,7 +36,6 @@ public class IntroductionActivity extends Activity {
 	private SharedPreferences mSharedPreferences;
 	private ImageView mPreviewImage;
 	private FloatingBubble mFloatingBubble;
-	private MenuBubble mAppMenu;
 	private DisplayMetrics mMetrics = new DisplayMetrics();
 
 	@Override
@@ -49,7 +46,7 @@ public class IntroductionActivity extends Activity {
 
 		PackageInfo versionInfo = getPackageInfo();
 		INTRO_KEY = INTRO_PREFIX + versionInfo.versionCode;
-		
+
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		setStepOne(null);
 	}
@@ -68,11 +65,30 @@ public class IntroductionActivity extends Activity {
 	public void setStepOne(View v) {
 		setContentView(R.layout.intro_step_one);
 		mContentView = R.layout.intro_step_one;
+
+		dismissPopup();
 	}
 
 	public void setStepTwo(View v) {
 		mContentView = R.layout.intro_step_two;
 		setContentView(mContentView);
+
+		dismissPopup();
+		initOnTouchListenerStepTwo();
+	}
+
+	private void initOnTouchListenerStepTwo() {
+		View filter = findViewById(R.id.imageButton_Filter);
+		filter.setOnLongClickListener(new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				Toast t = Toast.makeText(getApplicationContext(),
+						R.string.intro_menu_filter, Toast.LENGTH_LONG);
+				t.show();
+				return true;
+			}
+		});
 	}
 
 	public void setStepThree(View v) {
@@ -83,22 +99,18 @@ public class IntroductionActivity extends Activity {
 		mPreviewImage.setDrawingCacheEnabled(true);
 		mPreviewImage.buildDrawingCache(false);
 
-		LayoutInflater inflater = (LayoutInflater) getBaseContext()
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View contentView = inflater.inflate(R.layout.intro_menu, null);
-		View anchorView = findViewById(android.R.id.content).getRootView();
-		mAppMenu = new MenuBubble(anchorView, contentView);
-		mAppMenu.setContentOrientation(Orientation.LANDSCAPE_LEFT);
-		mAppMenu.setMaxWidth((mMetrics.widthPixels / 10) * 9);
-		mAppMenu.setMaxHeight((mMetrics.heightPixels / 10) * 4);
-
 		mFloatingBubble = new FloatingBubble(getApplicationContext(),
 				mPreviewImage);
 		mFloatingBubble.setOrientation(Orientation.LANDSCAPE_LEFT);
-		initOnTouchListener();
+		initOnTouchListenerStepThree();
 	}
 
-	private void initOnTouchListener() {
+	private void dismissPopup() {
+		if (mFloatingBubble != null)
+			mFloatingBubble.dismiss();
+	}
+
+	private void initOnTouchListenerStepThree() {
 		mPreviewImage.setOnTouchListener(new OnTouchListener() {
 
 			@Override
@@ -117,7 +129,9 @@ public class IntroductionActivity extends Activity {
 
 			@Override
 			public boolean onLongClick(View v) {
-				mAppMenu.show();
+				Toast t = Toast.makeText(getApplicationContext(),
+						R.string.intro_menu_preview, Toast.LENGTH_LONG);
+				t.show();
 				return true;
 			}
 		});
@@ -147,7 +161,7 @@ public class IntroductionActivity extends Activity {
 	}
 
 	public void finishIntro(View v) {
-		mFloatingBubble.dismiss();
+		dismissPopup();
 
 		Editor editor = mSharedPreferences.edit();
 		editor.putBoolean(INTRO_KEY, true);
@@ -158,21 +172,18 @@ public class IntroductionActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		if (mAppMenu != null && mAppMenu.isShowing())
-			mAppMenu.dismiss();
-		else {
-			switch (mContentView) {
-			case R.layout.intro_step_one:
-				finish();
-				break;
-			case R.layout.intro_step_two:
-				setStepOne(null);
-				break;
-			case R.layout.intro_step_three:
-				mFloatingBubble.dismiss();
-				setStepTwo(null);
-				break;
-			}
+
+		switch (mContentView) {
+		case R.layout.intro_step_one:
+			finish();
+			break;
+		case R.layout.intro_step_two:
+			setStepOne(null);
+			break;
+		case R.layout.intro_step_three:
+			mFloatingBubble.dismiss();
+			setStepTwo(null);
+			break;
 		}
 	}
 

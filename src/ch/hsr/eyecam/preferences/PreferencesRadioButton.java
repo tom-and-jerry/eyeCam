@@ -18,6 +18,7 @@ import ch.hsr.eyecam.R;
  * @author Patrice Mueller
  * 
  * @see RadioButton
+ * @see PreferencesRadioGroup
  */
 public class PreferencesRadioButton extends RadioButton {
 	private int mValue;
@@ -28,9 +29,9 @@ public class PreferencesRadioButton extends RadioButton {
 		setBackgroundResource(R.drawable.settings_selector);
 
 		TypedArray typedArray = context.obtainStyledAttributes(attrs,
-				R.styleable.PreferencesRadioButton);
+				R.styleable.Preferences);
 		mDescription = typedArray
-				.getString(R.styleable.PreferencesRadioButton_description);
+				.getString(R.styleable.Preferences_description);
 		setTextColor(Color.DKGRAY);
 
 		CharSequence title = getText();
@@ -42,7 +43,8 @@ public class PreferencesRadioButton extends RadioButton {
 					+ mDescription.length()+1, 0);
 
 		setText(text);
-
+		typedArray = context.obtainStyledAttributes(attrs,
+				R.styleable.PreferencesRadioButton);
 		mValue = typedArray.getInt(R.styleable.PreferencesRadioButton_intValue,
 				0);
 	}
