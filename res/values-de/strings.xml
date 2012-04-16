@@ -74,7 +74,7 @@
 	<string name="intro_menu_filter">Wird eine Filterauswahl als Kontextmenü öffnen</string>
 	<string name="intro_singleclick_previewscreen">Bei Berührung eines Bereiches der Vorschau, wird sich ein Popup mit der erkannten Farbe öffnen. Versuche es im Bild.</string>
 	<string name="intro_longclick_previewscreen">Ein langes Drücken auf die Kameravorschau öffnet ein Einstellungsmenü für die Farberkennung. Ebenfalls kann Feedback gegeben werden.</string>
-	<string name="intro_finish">Fertig</string>
+	<string name="intro_finish">fertig</string>
 	<string name="intro_singleclick">drücken</string>
 	<string name="intro_longclick">langes drücken</string>
 	<string name="intro_menu_preview">Wird allgemeine Einstellung als Kontextmenü öffnen</string>

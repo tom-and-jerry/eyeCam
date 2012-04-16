@@ -34,7 +34,8 @@ public class FloatingBubble extends PopupWindow {
 	public FloatingBubble(Context context, View parent) {
 		super(context);
 		mViewParent = parent;
-
+		mOrientation = Orientation.PORTRAIT;
+		
 		initContentView(context);
 		setAnimationStyle(android.R.style.Animation_Dialog);
 
@@ -74,6 +75,7 @@ public class FloatingBubble extends PopupWindow {
 	 *            The y position on the screen.
 	 */
 	public void showStringResAt(int res, int x, int y) {
+		dismiss();
 		if (OFFSET_X == -1)
 			getParentLocationOnScreen();
 

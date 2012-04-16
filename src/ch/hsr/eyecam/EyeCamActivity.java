@@ -496,6 +496,11 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 			setSecondaryFilter();
 		mWakeLock.acquire();
 		mOrientationEventListener.enable();
+		
+		// make sure the surface is recreated.
+		// this is needed in order to stop the camera when
+		// locking the screen. See onPause()
+		mSurfaceView.setVisibility(View.VISIBLE);
 	}
 
 	private void openCamera() {
@@ -577,6 +582,9 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		super.onPause();
 		mWakeLock.release();
 		mOrientationEventListener.disable();
+		
+		// make sure the preview is stopped if the screen gets locked
+		mSurfaceView.setVisibility(View.GONE);
 	}
 
 	private void releaseCamera() {
