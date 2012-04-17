@@ -24,7 +24,7 @@
 	<string name="filter_none_summary">No transformation to the picture from the camera will be applied</string>
 	<string name="filter_simulate">colorblind simulation</string>
 	<string name="filter_simulate_summary">This filter simulates how colorblind people perceive the world</string>
-	<string name="filter_false_colors">false colours</string>
+	<string name="filter_false_colors">false colors</string>
 	<string name="filter_false_colors_summary">This filter works by changing Blue/Green to Yellow/Red</string>
 	<string name="filter_intensify">intensify color difference</string>
 	<string name="filter_intensify_summary">This filter enhances Green and weakens Red</string>
