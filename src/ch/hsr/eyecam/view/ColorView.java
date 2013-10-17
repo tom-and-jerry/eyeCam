@@ -19,11 +19,9 @@ import ch.hsr.eyecam.widget.BubbleView;
 import ch.hsr.eyecam.widget.FloatingBubble;
 
 /**
- * A class extending android.view.View and providing a frame for the bitmap that
- * is used to write the transformed preview frames into.
+ * A class extending android.view.View and providing a frame for the bitmap that is used to write the transformed preview frames into.
  * 
- * ColorView also provide methods for interaction with the ColorTransform,
- * ColorRecognizer and FloatingBubble classes.
+ * ColorView also provide methods for interaction with the ColorTransform, ColorRecognizer and FloatingBubble classes.
  * 
  * @author Dominik Spengler
  * 
@@ -48,8 +46,7 @@ public class ColorView extends View implements PreviewCallback {
 		public boolean onTouch(View v, MotionEvent event) {
 
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				mActivityHandler
-						.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
 				mPopup.dismiss();
 
 				int x = (int) event.getX();
@@ -75,17 +72,18 @@ public class ColorView extends View implements PreviewCallback {
 				int g = rgb[1];
 				int b = rgb[2];
 				StringBuilder addString = new StringBuilder();
-				if (mShowRGB){
+				if (mShowRGB) {
 					addString.append("R: " + r + " G: " + g + " B: " + b);
-					if(mShowHSV) 
+					if (mShowHSV)
 						addString.append('\n');
 				}
-				if (mShowHSV){
+				if (mShowHSV) {
 					float[] hsv = new float[3];
 					Color.RGBToHSV(r, g, b, hsv);
-					addString.append("H: " + String.format("%.2f", hsv[0]) + 
-							" S: " + String.format("%.2f", hsv[1]) + 
-							" V: " + String.format("%.2f", hsv[2]));
+					String hStr = String.format("%.2f", hsv[0]);
+					String sStr = String.format("%.2f", hsv[1]);
+					String vStr = String.format("%.2f", hsv[2]);
+					addString.append("H: " + hStr + " S: " + sStr + " V: " + vStr);
 				}
 				mPopup.setAdditionalText(addString);
 				showColorAt(mColorRecognizer.getColorAt(scaleX, scaleY), x, y);
@@ -100,8 +98,7 @@ public class ColorView extends View implements PreviewCallback {
 		@Override
 		public boolean onLongClick(View v) {
 			mPopup.dismiss();
-			mActivityHandler
-					.sendEmptyMessage(EyeCamActivity.SHOW_SETTINGS_MENU);
+			mActivityHandler.sendEmptyMessage(EyeCamActivity.SHOW_SETTINGS_MENU);
 			return true;
 		}
 	};
@@ -131,23 +128,19 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	private void initBitmap() {
-		mBitmap = Bitmap.createBitmap(mPreviewWidth, mPreviewHeight,
-				Bitmap.Config.RGB_565);
-		Debug.msg(LOG_TAG, "Bitmap size: W: " + mPreviewWidth + " H: "
-				+ mPreviewHeight);
+		mBitmap = Bitmap.createBitmap(mPreviewWidth, mPreviewHeight, Bitmap.Config.RGB_565);
+		Debug.msg(LOG_TAG, "Bitmap size: W: " + mPreviewWidth + " H: " + mPreviewHeight);
 	}
-	
+
 	/**
-	 * Method to scale the bitmap in ColorView representing the camera
-	 * preview to full screen, even if the camera preview is smaller than
-	 * the screen.
+	 * Method to scale the bitmap in ColorView representing the camera preview to full screen, even if the camera preview is smaller than the screen.
 	 * 
-	 * Note that only the height will be used to calculate the scale 
-	 * factor. The height will be scaled accordingly in order not to
-	 * loose the aspect ratio.
+	 * Note that only the height will be used to calculate the scale factor. The height will be scaled accordingly in order not to loose the aspect ratio.
 	 * 
-	 * @param screenWidth width you wish to scale the bitmap to
-	 * @param screenHeight height you wish to scale the bitmap to
+	 * @param screenWidth
+	 *            width you wish to scale the bitmap to
+	 * @param screenHeight
+	 *            height you wish to scale the bitmap to
 	 */
 	public void scaleBitmapToFillScreen(int screenWidth, int screenHeight) {
 		if (mBitmap.getHeight() < screenHeight) {
@@ -174,8 +167,7 @@ public class ColorView extends View implements PreviewCallback {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		if (mIsScaled) {
-			canvas.drawBitmap(Bitmap.createScaledBitmap(mBitmap, mScreenWidth,
-					mScreenHeight, false), 0, 0, null);
+			canvas.drawBitmap(Bitmap.createScaledBitmap(mBitmap, mScreenWidth, mScreenHeight, false), 0, 0, null);
 		} else
 			canvas.drawBitmap(mBitmap, 0, 0, null);
 	}
@@ -189,8 +181,7 @@ public class ColorView extends View implements PreviewCallback {
 	 */
 	@Override
 	public void onPreviewFrame(byte[] data, Camera cam) {
-		ColorTransform.transformImageToBitmap(data, mPreviewWidth,
-				mPreviewHeight, mBitmap);
+		ColorTransform.transformImageToBitmap(data, mPreviewWidth, mPreviewHeight, mBitmap);
 		cam.addCallbackBuffer(data);
 		invalidate();
 	}
@@ -208,15 +199,13 @@ public class ColorView extends View implements PreviewCallback {
 		mDataBuffer = callBackBuffer;
 		mPreviewHeight = height;
 		mPreviewWidth = width;
-		mColorRecognizer = new ColorRecognizer(mDataBuffer, mPreviewWidth,
-				mPreviewHeight);
+		mColorRecognizer = new ColorRecognizer(mDataBuffer, mPreviewWidth, mPreviewHeight);
 		initBitmap();
 	}
 
 	/**
-	 * This method is used to set the orientation of the Popup. Since our
-	 * application manages screen orientation changes itself, this method needs
-	 * to be called manually on each orientation change.
+	 * This method is used to set the orientation of the Popup. Since our application manages screen orientation changes itself, this method needs to be called manually on each
+	 * orientation change.
 	 * 
 	 * @see BubbleView#setOrientation(Orientation)
 	 * @param orientation
@@ -233,13 +222,11 @@ public class ColorView extends View implements PreviewCallback {
 	 *            true if the popup should be enabled, false otherwise.
 	 */
 	/*
-	 * public void enablePopup(boolean showPopup) { if(!showPopup) {
-	 * mPopup.dismiss(); } }
+	 * public void enablePopup(boolean showPopup) { if(!showPopup) { mPopup.dismiss(); } }
 	 */
 
 	/**
-	 * If the Popup is showing, it will be dismissed. Nothing happens if the
-	 * Popup is not showing.
+	 * If the Popup is showing, it will be dismissed. Nothing happens if the Popup is not showing.
 	 */
 	public void dismissPopup() {
 		mPopup.dismiss();
@@ -258,11 +245,9 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	/**
-	 * Enables or disables partial effects. After calling this method you can
-	 * set the effects using {@link #setEffect(int)}.
+	 * Enables or disables partial effects. After calling this method you can set the effects using {@link #setEffect(int)}.
 	 * 
-	 * Please note that calling this method will not update the current effect.
-	 * You will need to call {@link #setEffect(int)} manually.
+	 * Please note that calling this method will not update the current effect. You will need to call {@link #setEffect(int)} manually.
 	 * 
 	 * @see ColorTransform#setPartialEffect(int)
 	 * 
@@ -293,19 +278,16 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	/**
-	 * Manually refresh the Bitmap for example when setting a new effect when
-	 * the camera is not previewing.
+	 * Manually refresh the Bitmap for example when setting a new effect when the camera is not previewing.
 	 */
 	public void refreshBitmap() {
 		Debug.msg(LOG_TAG, "Effect on Previewimage");
-		ColorTransform.transformImageToBitmap(mDataBuffer, mPreviewWidth,
-				mPreviewHeight, mBitmap);
+		ColorTransform.transformImageToBitmap(mDataBuffer, mPreviewWidth, mPreviewHeight, mBitmap);
 		invalidate();
 	}
 
 	/**
-	 * Set the Handler used to send messages to the Activity acting as
-	 * the model.
+	 * Set the Handler used to send messages to the Activity acting as the model.
 	 * 
 	 * @param mHandler
 	 */
@@ -321,7 +303,7 @@ public class ColorView extends View implements PreviewCallback {
 	public void setShowRGB(boolean showRGB) {
 		mShowRGB = showRGB;
 	}
-	
+
 	/**
 	 * Whether or not to show the HSV values in the color recognition popup.
 	 * 

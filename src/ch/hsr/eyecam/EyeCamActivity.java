@@ -1,6 +1,7 @@
 package ch.hsr.eyecam;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import android.app.Activity;
@@ -13,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.hardware.SensorManager;
 import android.net.Uri;
@@ -21,7 +21,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -39,15 +38,13 @@ import ch.hsr.eyecam.widget.MenuBubble;
 import ch.hsr.eyecam.widget.ToastBubble;
 
 /**
- * This class represents the core of the eyeCam application. It is responsible
- * for the initialization of the Camera and the View and managing all aspects of
- * the life cycle of the application itself.
+ * This class represents the core of the eyeCam application. It is responsible for the initialization of the Camera and the View and managing all aspects of the life cycle of the
+ * application itself.
  * 
  * @author Dominik Spengler, Patrice Mueller
  * @see Activity
  */
 public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
-	private PowerManager.WakeLock mWakeLock;
 	private OrientationEventListener mOrientationEventListener;
 	private int mPrimaryFilter;
 	private int mSecondaryFilter;
@@ -71,57 +68,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 	private ToastBubble mPrimaryFilterToast;
 	private ToastBubble mSecondaryFilterToast;
-	private Handler mHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			if (menuIsShowing()) {
-				dismissMenus();
-				return;
-			}
-
-			switch (msg.what) {
-			case CAMERA_START_PREVIEW:
-				startCameraPreview();
-				break;
-			case CAMERA_STOP_PREVIEW:
-				stopCameraPreview();
-				mColorView.refreshBitmap();
-				setCameraLight(Camera.Parameters.FLASH_MODE_OFF);
-				break;
-			case CAMERA_LIGHT_OFF:
-				setCameraLight(Camera.Parameters.FLASH_MODE_OFF);
-				break;
-			case CAMERA_LIGHT_ON:
-				setCameraLight(Camera.Parameters.FLASH_MODE_TORCH);
-				break;
-			case PRIMARY_FILTER_ON:
-				Debug.msg(LOG_TAG, "PrimaryFilter is running...."
-						+ mPrimaryFilter);
-				setPrimaryFilter();
-				showToast(mPrimaryFilterToast);
-				break;
-			case SECONDARY_FILTER_ON:
-				Debug.msg(LOG_TAG, "Secondary Filter is running...."
-						+ mSecondaryFilter);
-				setSecondaryFilter();
-				showToast(mSecondaryFilterToast);
-				break;
-			case SHOW_PRIMARY_FILTER_MENU:
-				stopCameraPreview();
-				mColorView.refreshBitmap();
-				inflateMenu(mPrimaryFilterMenu);
-				break;
-			case SHOW_SECONDARY_FILTER_MENU:
-				stopCameraPreview();
-				mColorView.refreshBitmap();
-				inflateMenu(mSecondaryFilterMenu);
-				break;
-			case SHOW_SETTINGS_MENU:
-				inflateMenu(mAppMenu);
-				break;
-			}
-		}
-	};
+	private final Handler mHandler = new EyeCamHandler(this);
 
 	private void setCameraLight(String cameraFlashMode) {
 		Parameters parameters = mCamera.getParameters();
@@ -147,8 +94,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	private void showToast(ToastBubble toast) {
 		if (mSharedPreferences.getBoolean("first_toast", true)) {
 			Resources res = getResources();
-			toast.setAdditionalText(res
-					.getString(R.string.info_longpress_filter));
+			toast.setAdditionalText(res.getString(R.string.info_longpress_filter));
 			SharedPreferences.Editor editor = mSharedPreferences.edit();
 			editor.putBoolean("first_toast", false);
 			toast.show(ToastBubble.TIME_LONG);
@@ -177,47 +123,39 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 			mColorView.refreshBitmap();
 	}
 
-	private OnSharedPreferenceChangeListener mSharedPrefChangeListener = new OnSharedPreferenceChangeListener() {
+	private final OnSharedPreferenceChangeListener mSharedPrefChangeListener = new OnSharedPreferenceChangeListener() {
 		@Override
-		public void onSharedPreferenceChanged(SharedPreferences shPref,
-				String key) {
+		public void onSharedPreferenceChanged(SharedPreferences shPref, String key) {
 			int value = 0;
-			if (key.equals(getResources()
-					.getString(R.string.key_primary_filter))) {
+			if (key.equals(getResources().getString(R.string.key_primary_filter))) {
 				value = shPref.getInt(key, 0);
 				mPrimaryFilter = value;
 				mPrimaryFilterToast.setText(getFilterText(value));
 				setEffects(value, mPrimaryPartial);
 				dismissMenus();
 				startCameraPreview();
-			} else if (key.equals(getResources().getString(
-					R.string.key_secondary_filter))) {
+			} else if (key.equals(getResources().getString(R.string.key_secondary_filter))) {
 				value = shPref.getInt(key, 0);
 				mSecondaryFilter = value;
 				mSecondaryFilterToast.setText(getFilterText(value));
 				setEffects(value, mSecondaryPartial);
 				dismissMenus();
 				startCameraPreview();
-			} else if (key.equals(getResources().getString(
-					R.string.key_primary_partial))) {
+			} else if (key.equals(getResources().getString(R.string.key_primary_partial))) {
 				mPrimaryPartial = shPref.getBoolean(key, false);
 				setEffects(mPrimaryFilter, mPrimaryPartial);
-			} else if (key.equals(getResources().getString(
-					R.string.key_secondary_partial))) {
+			} else if (key.equals(getResources().getString(R.string.key_secondary_partial))) {
 				mSecondaryPartial = shPref.getBoolean(key, false);
 				setEffects(mSecondaryFilter, mSecondaryPartial);
-			} else if (key.equals(getResources().getString(
-					R.string.key_text_size))) {
+			} else if (key.equals(getResources().getString(R.string.key_text_size))) {
 				int size = shPref.getInt(key, 5);
 				mColorView.setPopupTextSize(size);
 				mPrimaryFilterToast.setTextSize(size);
 				mSecondaryFilterToast.setTextSize(size);
 				dismissMenus();
-			} else if (key.equals(getResources().getString(
-					R.string.key_color_rgb))) {
+			} else if (key.equals(getResources().getString(R.string.key_color_rgb))) {
 				mColorView.setShowRGB(shPref.getBoolean(key, false));
-			} else if (key.equals(getResources().getString(
-					R.string.key_color_hsv))) {
+			} else if (key.equals(getResources().getString(R.string.key_color_hsv))) {
 				mColorView.setShowHSV(shPref.getBoolean(key, false));
 			}
 		}
@@ -226,8 +164,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	private CharSequence getFilterText(int value) {
 		int resId = getFilterStringId(value);
 		Resources res = getResources();
-		return res.getString(resId) + ' '
-				+ res.getString(R.string.filter_running);
+		return res.getString(resId) + ' ' + res.getString(R.string.filter_running);
 	}
 
 	private int getFilterStringId(int value) {
@@ -302,7 +239,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mLoadingScreen = (View) findViewById(R.id.hsr_loading_screen);
+		mLoadingScreen = findViewById(R.id.hsr_loading_screen);
 		mColorView = (ColorView) findViewById(R.id.cameraSurface);
 		mColorView.setActivityHandler(mHandler);
 		mControlBar = (ControlBar) findViewById(R.id.controlBar);
@@ -310,10 +247,8 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		mControlBar.enableOnClickListeners();
 		mControlBar.rotate(Orientation.UNKNOW);
 
-		mPrimaryFilterToast = new ToastBubble(getApplicationContext(),
-				mColorView);
-		mSecondaryFilterToast = new ToastBubble(getApplicationContext(),
-				mColorView);
+		mPrimaryFilterToast = new ToastBubble(getApplicationContext(), mColorView);
+		mSecondaryFilterToast = new ToastBubble(getApplicationContext(), mColorView);
 
 		mSurfaceView = (SurfaceView) findViewById(id.cameraSurface_dummy);
 		mSurfaceView.getHolder().addCallback(this);
@@ -321,10 +256,6 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		createMenus();
 		setToastSizes();
-
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
-				"eyeCam");
 
 		initOrientationEventListener();
 		mOrientationEventListener.enable();
@@ -337,17 +268,14 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	private void createMenus() {
-		LayoutInflater inflater = (LayoutInflater) getBaseContext()
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View contentView = inflater.inflate(R.layout.settings_menu, null);
 		mAppMenu = new MenuBubble(mColorView, contentView);
 
-		View primFilterView = inflater.inflate(R.layout.primary_filter_menu,
-				null);
+		View primFilterView = inflater.inflate(R.layout.primary_filter_menu, null);
 		mPrimaryFilterMenu = new MenuBubble(mColorView, primFilterView);
 
-		View secFilterView = inflater.inflate(R.layout.secondary_filter_menu,
-				null);
+		View secFilterView = inflater.inflate(R.layout.secondary_filter_menu, null);
 		mSecondaryFilterMenu = new MenuBubble(mColorView, secFilterView);
 
 		setMenuSize(mAppMenu, contentView);
@@ -361,8 +289,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	private void initOrientationEventListener() {
-		mOrientationEventListener = new OrientationEventListener(this,
-				SensorManager.SENSOR_DELAY_NORMAL) {
+		mOrientationEventListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
 
 			@Override
 			public void onOrientationChanged(int inputOrientation) {
@@ -417,18 +344,15 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		initSavedPreferences();
 
 		PackageInfo versionInfo = getPackageInfo();
-		String introKey = IntroductionActivity.INTRO_PREFIX
-				+ versionInfo.versionCode;
+		String introKey = IntroductionActivity.INTRO_PREFIX + versionInfo.versionCode;
 		if (!mSharedPreferences.contains(introKey)) {
 			openIntro(null);
 		}
 	}
 
 	private void initSavedPreferences() {
-		mSharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(getApplicationContext());
-		mSharedPreferences
-				.registerOnSharedPreferenceChangeListener(mSharedPrefChangeListener);
+		mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		mSharedPreferences.registerOnSharedPreferenceChangeListener(mSharedPrefChangeListener);
 		setValues(mSharedPreferences);
 
 		mSecondaryFilterToast.setText(getFilterText(mSecondaryFilter));
@@ -436,34 +360,26 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	private void setValues(SharedPreferences shPref) {
-		mPrimaryFilter = getIntSettingValue(shPref,
-				R.string.key_primary_filter, R.string.filter_daltonize);
-		mSecondaryFilter = getIntSettingValue(shPref,
-				R.string.key_secondary_filter, R.string.filter_false_colors);
-		mPrimaryPartial = getBooleanSettingValue(shPref,
-				R.string.key_primary_partial, false);
-		mSecondaryPartial = getBooleanSettingValue(shPref,
-				R.string.key_secondary_partial, false);
+		mPrimaryFilter = getIntSettingValue(shPref, R.string.key_primary_filter, R.string.filter_daltonize);
+		mSecondaryFilter = getIntSettingValue(shPref, R.string.key_secondary_filter, R.string.filter_false_colors);
+		mPrimaryPartial = getBooleanSettingValue(shPref, R.string.key_primary_partial, false);
+		mSecondaryPartial = getBooleanSettingValue(shPref, R.string.key_secondary_partial, false);
 
 		int size = getIntSettingValue(shPref, R.string.key_text_size, 5);
 		mColorView.setPopupTextSize(size);
 		mPrimaryFilterToast.setTextSize(size);
 		mSecondaryFilterToast.setTextSize(size);
-		
-		mColorView.setShowRGB(getBooleanSettingValue(shPref,
-				R.string.key_color_rgb, false));
-		mColorView.setShowHSV(getBooleanSettingValue(shPref,
-				R.string.key_color_hsv, false));
+
+		mColorView.setShowRGB(getBooleanSettingValue(shPref, R.string.key_color_rgb, false));
+		mColorView.setShowHSV(getBooleanSettingValue(shPref, R.string.key_color_hsv, false));
 	}
 
-	private int getIntSettingValue(SharedPreferences shPref, int keyId,
-			int defaultValue) {
+	private int getIntSettingValue(SharedPreferences shPref, int keyId, int defaultValue) {
 		String keyString = getResources().getString(keyId);
 		return shPref.getInt(keyString, defaultValue);
 	}
 
-	private boolean getBooleanSettingValue(SharedPreferences shPref,
-			int resourcesOfTheKey, boolean defaultValue) {
+	private boolean getBooleanSettingValue(SharedPreferences shPref, int resourcesOfTheKey, boolean defaultValue) {
 		String keyString = getResources().getString(resourcesOfTheKey);
 		return shPref.getBoolean(keyString, defaultValue);
 
@@ -472,8 +388,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	private PackageInfo getPackageInfo() {
 		PackageInfo pi = null;
 		try {
-			pi = getPackageManager().getPackageInfo(getPackageName(),
-					PackageManager.GET_ACTIVITIES);
+			pi = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_ACTIVITIES);
 		} catch (PackageManager.NameNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -490,13 +405,8 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		super.onResume();
 		mShowLoadingScreenTask = new ShowLoadingScreenTask();
 		mShowLoadingScreenTask.execute();
-		if (mControlBar.isPrimaryFilterRunning())
-			setPrimaryFilter();
-		else
-			setSecondaryFilter();
-		mWakeLock.acquire();
 		mOrientationEventListener.enable();
-		
+
 		// make sure the surface is recreated.
 		// this is needed in order to stop the camera when
 		// locking the screen. See onPause()
@@ -516,19 +426,15 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 			Debug.msg(LOG_TAG, "Supported - H:" + s.height + "W:" + s.width);
 		}
 		parameters.setPreviewSize(optSize.width, optSize.height);
-		Debug.msg(LOG_TAG, "Chosen - H:" + optSize.height + "W:"
-				+ optSize.width);
-		Debug.msg(LOG_TAG, "Screen - H:" + mMetrics.heightPixels + "W:"
-				+ mMetrics.widthPixels);
+		Debug.msg(LOG_TAG, "Chosen - H:" + optSize.height + "W:" + optSize.width);
+		Debug.msg(LOG_TAG, "Screen - H:" + mMetrics.heightPixels + "W:" + mMetrics.widthPixels);
 
 		disableFlashIfUnsupported(parameters);
 
 		mCallBackBuffer = new byte[optSize.width * optSize.height * 2];
-		mColorView
-				.setDataBuffer(mCallBackBuffer, optSize.width, optSize.height);
+		mColorView.setDataBuffer(mCallBackBuffer, optSize.width, optSize.height);
 		mCamera.setParameters(parameters);
-		mColorView.scaleBitmapToFillScreen(mMetrics.widthPixels,
-				mMetrics.heightPixels);
+		mColorView.scaleBitmapToFillScreen(mMetrics.widthPixels, mMetrics.heightPixels);
 	}
 
 	private Size getOptimalSize(List<Size> sizeList) {
@@ -567,8 +473,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	private void disableFlashIfUnsupported(Camera.Parameters parameters) {
 		if (parameters.getSupportedFlashModes() == null) {
 			mControlBar.enableLightButton(false);
-		} else if (parameters.getSupportedFlashModes().contains(
-				Camera.Parameters.FLASH_MODE_TORCH))
+		} else if (parameters.getSupportedFlashModes().contains(Camera.Parameters.FLASH_MODE_TORCH))
 			mControlBar.enableLightButton(true);
 	}
 
@@ -580,9 +485,8 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mWakeLock.release();
 		mOrientationEventListener.disable();
-		
+
 		// make sure the preview is stopped if the screen gets locked
 		mSurfaceView.setVisibility(View.GONE);
 	}
@@ -609,7 +513,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 			return;
 
 		mCamera.addCallbackBuffer(mCallBackBuffer);
-		mCamera.setPreviewCallbackWithBuffer((PreviewCallback) mColorView);
+		mCamera.setPreviewCallbackWithBuffer(mColorView);
 		mCamera.startPreview();
 		mIsCameraReady = true;
 		mCamIsPreviewing = true;
@@ -619,10 +523,8 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	/**
-	 * Starting from ICS (and probably generally on Motorola devices camera
-	 * preview will not be started if there is no SurfaceHolder attached due to
-	 * security. In order to overcome this we have to attach a dummy
-	 * SurfaceHolder and make sure it does not get displayed.
+	 * Starting from ICS (and probably generally on Motorola devices camera preview will not be started if there is no SurfaceHolder attached due to security. In order to overcome
+	 * this we have to attach a dummy SurfaceHolder and make sure it does not get displayed.
 	 */
 	private void makeSureCameraPreviewStarts() {
 		try {
@@ -687,16 +589,14 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	private boolean menuIsShowing() {
-		return mAppMenu.isShowing() || mPrimaryFilterMenu.isShowing()
-				|| mSecondaryFilterMenu.isShowing();
+		return mAppMenu.isShowing() || mPrimaryFilterMenu.isShowing() || mSecondaryFilterMenu.isShowing();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		startCameraPreview();
 	}
 
@@ -708,6 +608,11 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		openCamera();
 		configEnvByCameraParams();
 		makeSureCameraPreviewStarts();
+
+		 if (mControlBar.isPrimaryFilterRunning())
+		 setPrimaryFilter();
+		 else
+		 setSecondaryFilter();
 	}
 
 	/**
@@ -719,8 +624,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	/**
-	 * Open the Android Market for the application. This is a callback function
-	 * for the onClick XML attribute.
+	 * Open the Android Market for the application. This is a callback function for the onClick XML attribute.
 	 * 
 	 * @param v
 	 *            the View that has been pressed
@@ -729,22 +633,77 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		dismissMenus();
 
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setData(Uri.parse("market://details?id="
-				+ getApplication().getPackageName()));
+		intent.setData(Uri.parse("market://details?id=" + getApplication().getPackageName()));
 		startActivity(intent);
 	}
 
 	/**
-	 * Open the introduction for the application. This is a callback function
-	 * for the onClick XML attribute.
+	 * Open the introduction for the application. This is a callback function for the onClick XML attribute.
 	 * 
 	 * @param v
 	 *            the View that has been pressed
 	 */
 	public void openIntro(View v) {
 		dismissMenus();
-		Intent intent = new Intent(getApplicationContext(),
-				IntroductionActivity.class);
+		Intent intent = new Intent(getApplicationContext(), IntroductionActivity.class);
 		startActivity(intent);
+	}
+
+	private static class EyeCamHandler extends Handler {
+
+		private final WeakReference<EyeCamActivity> activityRef;
+
+		private EyeCamHandler(EyeCamActivity activity) {
+			activityRef = new WeakReference<EyeCamActivity>(activity);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			EyeCamActivity activity = activityRef.get();
+			if (activity.menuIsShowing()) {
+				activity.dismissMenus();
+				return;
+			}
+
+			switch (msg.what) {
+			case CAMERA_START_PREVIEW:
+				activity.startCameraPreview();
+				break;
+			case CAMERA_STOP_PREVIEW:
+				activity.stopCameraPreview();
+				activity.mColorView.refreshBitmap();
+				activity.setCameraLight(Camera.Parameters.FLASH_MODE_OFF);
+				break;
+			case CAMERA_LIGHT_OFF:
+				activity.setCameraLight(Camera.Parameters.FLASH_MODE_OFF);
+				break;
+			case CAMERA_LIGHT_ON:
+				activity.setCameraLight(Camera.Parameters.FLASH_MODE_TORCH);
+				break;
+			case PRIMARY_FILTER_ON:
+				Debug.msg(LOG_TAG, "PrimaryFilter is running...." + activity.mPrimaryFilter);
+				activity.setPrimaryFilter();
+				activity.showToast(activity.mPrimaryFilterToast);
+				break;
+			case SECONDARY_FILTER_ON:
+				Debug.msg(LOG_TAG, "Secondary Filter is running...." + activity.mSecondaryFilter);
+				activity.setSecondaryFilter();
+				activity.showToast(activity.mSecondaryFilterToast);
+				break;
+			case SHOW_PRIMARY_FILTER_MENU:
+				activity.stopCameraPreview();
+				activity.mColorView.refreshBitmap();
+				activity.inflateMenu(activity.mPrimaryFilterMenu);
+				break;
+			case SHOW_SECONDARY_FILTER_MENU:
+				activity.stopCameraPreview();
+				activity.mColorView.refreshBitmap();
+				activity.inflateMenu(activity.mSecondaryFilterMenu);
+				break;
+			case SHOW_SETTINGS_MENU:
+				activity.inflateMenu(activity.mAppMenu);
+				break;
+			}
+		}
 	}
 }
