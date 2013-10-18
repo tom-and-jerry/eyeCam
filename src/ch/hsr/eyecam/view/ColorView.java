@@ -3,7 +3,6 @@ package ch.hsr.eyecam.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Handler;
@@ -34,78 +33,16 @@ public class ColorView extends View implements PreviewCallback {
 	private boolean mPartialEnabled;
 	private byte[] mDataBuffer;
 
-	private ColorRecognizer mColorRecognizer;
 	private FloatingBubble mPopup;
 	private Handler mActivityHandler;
 	private boolean mIsScaled = false;
 	private float mScaleFactor;
 
-	private OnTouchListener mOnTouchListener = new OnTouchListener() {
+	private final OnTouchListener mOnTouchListener = new EyeCamViewTouchListener();
+	private final OnLongClickListener mOnLongClickListener = new EyeCamViewLongClickListener();
 
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-
-			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
-				mPopup.dismiss();
-
-				int x = (int) event.getX();
-				int y = (int) event.getY();
-
-				if (x < 0)
-					x = 0;
-				if (y < 0)
-					y = 0;
-
-				int scaleX;
-				int scaleY;
-				if (mIsScaled) {
-					scaleX = (int) (x / mScaleFactor);
-					scaleY = (int) (y / mScaleFactor);
-				} else {
-					scaleX = x;
-					scaleY = y;
-				}
-
-				int[] rgb = mColorRecognizer.getRgbAt(scaleX, scaleY);
-				int r = rgb[0];
-				int g = rgb[1];
-				int b = rgb[2];
-				StringBuilder addString = new StringBuilder();
-				if (mShowRGB) {
-					addString.append("R: " + r + " G: " + g + " B: " + b);
-					if (mShowHSV)
-						addString.append('\n');
-				}
-				if (mShowHSV) {
-					float[] hsv = new float[3];
-					Color.RGBToHSV(r, g, b, hsv);
-					String hStr = String.format("%.2f", hsv[0]);
-					String sStr = String.format("%.2f", hsv[1]);
-					String vStr = String.format("%.2f", hsv[2]);
-					addString.append("H: " + hStr + " S: " + sStr + " V: " + vStr);
-				}
-				mPopup.setAdditionalText(addString);
-				showColorAt(mColorRecognizer.getColorAt(scaleX, scaleY), x, y);
-				return false;
-			}
-			return false;
-		}
-	};
-
-	private OnLongClickListener mOnLongClickListener = new OnLongClickListener() {
-
-		@Override
-		public boolean onLongClick(View v) {
-			mPopup.dismiss();
-			mActivityHandler.sendEmptyMessage(EyeCamActivity.SHOW_SETTINGS_MENU);
-			return true;
-		}
-	};
 	private int mScreenWidth;
 	private int mScreenHeight;
-	private boolean mShowRGB = false;
-	private boolean mShowHSV = false;
 
 	private static String LOG_TAG = "ch.hsr.eyecam.view.ColorView";
 
@@ -152,12 +89,6 @@ public class ColorView extends View implements PreviewCallback {
 		}
 	}
 
-	private void showColorAt(int color, int x, int y) {
-		mPopup.dismiss();
-		mPopup.showStringResAt(color, x, y);
-		Debug.msg(LOG_TAG, "Popup Location on Screen: x: " + x + " y: " + y);
-	}
-
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -199,7 +130,7 @@ public class ColorView extends View implements PreviewCallback {
 		mDataBuffer = callBackBuffer;
 		mPreviewHeight = height;
 		mPreviewWidth = width;
-		mColorRecognizer = new ColorRecognizer(mDataBuffer, mPreviewWidth, mPreviewHeight);
+		mPopup.setColorRecognizer(new ColorRecognizer(mDataBuffer, mPreviewWidth, mPreviewHeight));
 		initBitmap();
 	}
 
@@ -301,7 +232,7 @@ public class ColorView extends View implements PreviewCallback {
 	 * @param showRGB
 	 */
 	public void setShowRGB(boolean showRGB) {
-		mShowRGB = showRGB;
+		mPopup.setShowRGB(showRGB);
 	}
 
 	/**
@@ -310,6 +241,41 @@ public class ColorView extends View implements PreviewCallback {
 	 * @param showHSV
 	 */
 	public void setShowHSV(boolean showHSV) {
-		mShowHSV = showHSV;
+		mPopup.setShowHSV(showHSV);
 	}
+
+	class EyeCamViewLongClickListener implements OnLongClickListener {
+
+		@Override
+		public boolean onLongClick(View v) {
+			mPopup.dismiss();
+			mActivityHandler.sendEmptyMessage(EyeCamActivity.SHOW_SETTINGS_MENU);
+			return true;
+		}
+	}
+
+	class EyeCamViewTouchListener implements OnTouchListener {
+
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				mActivityHandler.sendEmptyMessage(EyeCamActivity.CAMERA_STOP_PREVIEW);
+				mPopup.dismiss();
+
+				int x = Math.max(0, (int) event.getX());
+				int y = Math.max(0, (int) event.getY());
+				int scaleX = scale(x);
+				int scaleY = scale(y);
+				mPopup.showColorBubbleAt(x, y, scaleX, scaleY);
+				Debug.msg(LOG_TAG, "Popup Location on Screen: x: " + x + " y: " + y);
+				return false;
+			}
+			return false;
+		}
+
+		private int scale(int x) {
+			return mIsScaled ? (int) (x / mScaleFactor) : x;
+		}
+	};
 }

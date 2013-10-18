@@ -1,6 +1,9 @@
 package ch.hsr.eyecam.widget;
 
+import java.util.Locale;
+
 import android.content.Context;
+import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -10,11 +13,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.Orientation;
+import ch.hsr.eyecam.colormodel.ColorRecognizer;
 
 /**
- * This class provides the functionality of showing a floating bubble at any
- * location on the screen. This is necessary for displaying the color of the
- * area touched on the paused camera preview.
+ * This class provides the functionality of showing a floating bubble at any location on the screen. This is necessary for displaying the color of the area touched on the paused
+ * camera preview.
  * 
  * @author Dominik Spengler
  * 
@@ -22,7 +25,7 @@ import ch.hsr.eyecam.Orientation;
  * @see PopupWindow
  */
 public class FloatingBubble extends PopupWindow {
-	private View mViewParent;
+	private final View mViewParent;
 	private BubbleView mBubbleView;
 	private Orientation mOrientation;
 	private TextView mTextView;
@@ -30,12 +33,16 @@ public class FloatingBubble extends PopupWindow {
 	private LinearLayout mContentView;
 	private int OFFSET_X = -1;
 	private int OFFSET_Y = -1;
+	private boolean showHSV;
+	private boolean showRGB;
+	private ColorRecognizer colorRecognizer;
 
 	public FloatingBubble(Context context, View parent) {
 		super(context);
+
 		mViewParent = parent;
 		mOrientation = Orientation.PORTRAIT;
-		
+
 		initContentView(context);
 		setAnimationStyle(android.R.style.Animation_Dialog);
 
@@ -64,18 +71,16 @@ public class FloatingBubble extends PopupWindow {
 	}
 
 	/**
-	 * This method shows a bubble with an arbitrary string resource at any given
-	 * location on the screen.
+	 * This method shows a bubble at any given location on the screen displaying the color at that place.
 	 * 
-	 * @param res
-	 *            The String resource to be shown in the bubble.
 	 * @param x
 	 *            The x position on the screen.
 	 * @param y
 	 *            The y position on the screen.
+	 * @param scaleX
+	 * @param scaleY
 	 */
 	public void showStringResAt(int res, int x, int y) {
-		dismiss();
 		if (OFFSET_X == -1)
 			getParentLocationOnScreen();
 
@@ -94,14 +99,42 @@ public class FloatingBubble extends PopupWindow {
 			transY = -offset;
 			break;
 		case PORTRAIT:
+		case UNKNOW:
 			transX = mBubbleView.getMeasuredWidth() + offset;
 			transY = mBubbleView.getMeasuredHeight() / 2;
 			break;
 		}
 
 		mTextView.setText(res);
-		showAtLocation(mViewParent, Gravity.NO_GRAVITY,
-				(x - transX) + OFFSET_X, (y - transY) + OFFSET_Y);
+		showAtLocation(mViewParent, Gravity.NO_GRAVITY, (x - transX) + OFFSET_X, (y - transY) + OFFSET_Y);
+	}
+
+	public void showColorBubbleAt(int x, int y, int scaleX, int scaleY) {
+		dismiss();
+
+		int[] rgb = colorRecognizer.getRgbAt(scaleX, scaleY);
+		int r = rgb[0];
+		int g = rgb[1];
+		int b = rgb[2];
+
+		StringBuilder addString = new StringBuilder();
+		if (showRGB) {
+			addString.append("R: " + r + " G: " + g + " B: " + b);
+			if (showHSV)
+				addString.append('\n');
+		}
+		if (showHSV) {
+			float[] hsv = new float[3];
+			Color.RGBToHSV(r, g, b, hsv);
+			Locale locale = getContentView().getContext().getResources().getConfiguration().locale;
+			String hStr = String.format(locale, "%.2f", hsv[0]);
+			String sStr = String.format(locale, "%.2f", hsv[1]);
+			String vStr = String.format(locale, "%.2f", hsv[2]);
+			addString.append("H: " + hStr + " S: " + sStr + " V: " + vStr);
+		}
+		setAdditionalText(addString);
+		int res = colorRecognizer.getColorAt(scaleX, scaleY);
+		showStringResAt(res, x, y);
 	}
 
 	public void setText(CharSequence text) {
@@ -133,8 +166,7 @@ public class FloatingBubble extends PopupWindow {
 	}
 
 	/**
-	 * Sets the text size of the string shown in the bubble. The size value will
-	 * be interpreted as screen dependent points.
+	 * Sets the text size of the string shown in the bubble. The size value will be interpreted as screen dependent points.
 	 * 
 	 * @see TypedValue#COMPLEX_UNIT_PT
 	 * @param size
@@ -165,7 +197,8 @@ public class FloatingBubble extends PopupWindow {
 	/**
 	 * Wrapper method to set the arrow style of the BubbleView.
 	 * 
-	 * @param arrowstyle as in BubbleView
+	 * @param arrowstyle
+	 *            as in BubbleView
 	 * @see BubbleView
 	 */
 	public void setArrowStyle(int arrowstyle) {
@@ -179,13 +212,24 @@ public class FloatingBubble extends PopupWindow {
 	 */
 	public void setAlpha(int alpha) {
 		mTextView.setTextColor(mTextView.getTextColors().withAlpha(alpha));
-		mAdditionalText.setTextColor(mAdditionalText.getTextColors().withAlpha(
-				alpha));
+		mAdditionalText.setTextColor(mAdditionalText.getTextColors().withAlpha(alpha));
 		mBubbleView.getBackground().setAlpha(alpha);
 	}
 
 	public void setMargins(int margin) {
 		mTextView.setPadding(margin, margin, margin, margin);
 		mAdditionalText.setPadding(margin, 0, margin, margin);
+	}
+
+	public void setShowRGB(boolean showRGB) {
+		this.showRGB = showRGB;
+	}
+
+	public void setShowHSV(boolean showHSV) {
+		this.showHSV = showHSV;
+	}
+
+	public void setColorRecognizer(ColorRecognizer colorRecognizer) {
+		this.colorRecognizer = colorRecognizer;
 	}
 }
