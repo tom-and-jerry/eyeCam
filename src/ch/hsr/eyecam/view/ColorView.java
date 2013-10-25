@@ -15,7 +15,7 @@ import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
 import ch.hsr.eyecam.colormodel.ColorTransform;
 import ch.hsr.eyecam.widget.BubbleView;
-import ch.hsr.eyecam.widget.FloatingBubble;
+import ch.hsr.eyecam.widget.FloatingColorBubble;
 
 /**
  * A class extending android.view.View and providing a frame for the bitmap that is used to write the transformed preview frames into.
@@ -33,7 +33,7 @@ public class ColorView extends View implements PreviewCallback {
 	private boolean mPartialEnabled;
 	private byte[] mDataBuffer;
 
-	private FloatingBubble mPopup;
+	private FloatingColorBubble mPopup;
 	private Handler mActivityHandler;
 	private boolean mIsScaled = false;
 	private float mScaleFactor;
@@ -57,7 +57,7 @@ public class ColorView extends View implements PreviewCallback {
 	}
 
 	private void init() {
-		mPopup = new FloatingBubble(getContext(), this);
+		mPopup = new FloatingColorBubble(getContext(), this);
 
 		setOnTouchListener(mOnTouchListener);
 		setOnLongClickListener(mOnLongClickListener);
@@ -98,7 +98,11 @@ public class ColorView extends View implements PreviewCallback {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		if (mIsScaled) {
-			canvas.drawBitmap(Bitmap.createScaledBitmap(mBitmap, mScreenWidth, mScreenHeight, false), 0, 0, null);
+			Bitmap scaledBitmap = Bitmap.createScaledBitmap(mBitmap, mScreenWidth, mScreenHeight, false);
+			canvas.drawBitmap(scaledBitmap, 0, 0, null);
+			// if (theImage != null) {
+			// canvas.drawBitmap(theImage, 0, 0, null);
+			// }
 		} else
 			canvas.drawBitmap(mBitmap, 0, 0, null);
 	}
@@ -166,7 +170,7 @@ public class ColorView extends View implements PreviewCallback {
 	/**
 	 * Sets the size of the text displayed in the Popup.
 	 * 
-	 * @see FloatingBubble#setTextSize(int)
+	 * @see FloatingColorBubble#setTextSize(int)
 	 * @param size
 	 *            in pt
 	 */
@@ -268,6 +272,7 @@ public class ColorView extends View implements PreviewCallback {
 				int scaleX = scale(x);
 				int scaleY = scale(y);
 				mPopup.showColorBubbleAt(x, y, scaleX, scaleY);
+				mPopup.showColorBubbleAtNew(x, y, scaleX, scaleY);
 				Debug.msg(LOG_TAG, "Popup Location on Screen: x: " + x + " y: " + y);
 				return false;
 			}
@@ -277,5 +282,5 @@ public class ColorView extends View implements PreviewCallback {
 		private int scale(int x) {
 			return mIsScaled ? (int) (x / mScaleFactor) : x;
 		}
-	};
+	}
 }

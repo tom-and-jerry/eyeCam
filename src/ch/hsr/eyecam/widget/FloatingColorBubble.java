@@ -14,6 +14,9 @@ import android.widget.TextView;
 import ch.hsr.eyecam.Debug;
 import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.colormodel.ColorRecognizer;
+import ch.hsr.eyecam.colormodel.namethatcolor.AllColors;
+import ch.hsr.eyecam.colormodel.namethatcolor.ColorNamer;
+import ch.hsr.eyecam.colormodel.namethatcolor.NamedColor;
 
 /**
  * This class provides the functionality of showing a floating bubble at any location on the screen. This is necessary for displaying the color of the area touched on the paused
@@ -24,7 +27,7 @@ import ch.hsr.eyecam.colormodel.ColorRecognizer;
  * @see BubbleView
  * @see PopupWindow
  */
-public class FloatingBubble extends PopupWindow {
+public class FloatingColorBubble extends PopupWindow {
 	private final View mViewParent;
 	private BubbleView mBubbleView;
 	private Orientation mOrientation;
@@ -36,8 +39,9 @@ public class FloatingBubble extends PopupWindow {
 	private boolean showHSV;
 	private boolean showRGB;
 	private ColorRecognizer colorRecognizer;
+	private final ColorNamer colorNamer;
 
-	public FloatingBubble(Context context, View parent) {
+	public FloatingColorBubble(Context context, View parent) {
 		super(context);
 
 		mViewParent = parent;
@@ -51,6 +55,9 @@ public class FloatingBubble extends PopupWindow {
 		setBackgroundDrawable(null);
 		setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
 		setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+
+		Locale locale = context.getResources().getConfiguration().locale;
+		colorNamer = new ColorNamer(new AllColors(), locale);
 	}
 
 	private void initContentView(Context context) {
@@ -110,16 +117,46 @@ public class FloatingBubble extends PopupWindow {
 	}
 
 	public void showColorBubbleAt(int x, int y, int scaleX, int scaleY) {
+		// dismiss();
+		//
+		// int[] rgb = colorRecognizer.getRgbAt(scaleX, scaleY);
+		// int r = rgb[0];
+		// int g = rgb[1];
+		// int b = rgb[2];
+		//
+		// StringBuilder addString = new StringBuilder();
+		// if (showRGB) {
+		// addString.append("R: " + r + " G: " + g + " B: " + b);
+		// if (showHSV)
+		// addString.append('\n');
+		// }
+		// if (showHSV) {
+		// float[] hsv = new float[3];
+		// Color.RGBToHSV(r, g, b, hsv);
+		// Locale locale = getContentView().getContext().getResources().getConfiguration().locale;
+		// String hStr = String.format(locale, "%.2f", hsv[0]);
+		// String sStr = String.format(locale, "%.2f", hsv[1]);
+		// String vStr = String.format(locale, "%.2f", hsv[2]);
+		// addString.append("H: " + hStr + " S: " + sStr + " V: " + vStr);
+		// }
+		// setAdditionalText(addString);
+		// int res = colorRecognizer.getColorAt(scaleX, scaleY);
+		// showStringResAt(res, x, y);
+	}
+
+	public void showColorBubbleAtNew(int x, int y, int scaleX, int scaleY) {
 		dismiss();
 
-		int[] rgb = colorRecognizer.getRgbAt(scaleX, scaleY);
+		int[] rgb = colorRecognizer.getRgbAtNew(scaleX, scaleY);
 		int r = rgb[0];
 		int g = rgb[1];
 		int b = rgb[2];
+		String hexRgb = String.format("#%2x%2x%2x", r, g, b).replaceAll(" ", "0");
 
 		StringBuilder addString = new StringBuilder();
 		if (showRGB) {
-			addString.append("R: " + r + " G: " + g + " B: " + b);
+			addString.append("R: " + r + " G: " + g + " B: " + b + "\n");
+			addString.append(hexRgb);
 			if (showHSV)
 				addString.append('\n');
 		}
@@ -133,8 +170,10 @@ public class FloatingBubble extends PopupWindow {
 			addString.append("H: " + hStr + " S: " + sStr + " V: " + vStr);
 		}
 		setAdditionalText(addString);
-		int res = colorRecognizer.getColorAt(scaleX, scaleY);
-		showStringResAt(res, x, y);
+		NamedColor namedColor = colorNamer.findClosestColor(hexRgb);
+		int resId = namedColor.getColorNameResId();
+		Debug.msg("colorName: " + getContentView().getContext().getString(resId));
+		showStringResAt(resId, x, y);
 	}
 
 	public void setText(CharSequence text) {

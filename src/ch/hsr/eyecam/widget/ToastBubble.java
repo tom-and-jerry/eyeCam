@@ -22,7 +22,7 @@ public class ToastBubble {
 	private static final int OFFSET = 120;
 	private Handler mHandler;
 	private View mViewParent;
-	private FloatingBubble mFloatingBubble;
+	private FloatingColorBubble mFloatingBubble;
 	private int mGravity;
 	private int mOffsetX;
 	private int mOffsetY;
@@ -35,7 +35,7 @@ public class ToastBubble {
 
 	public ToastBubble(Context context, View parent) {
 		mHandler = new Handler();
-		mFloatingBubble = new FloatingBubble(context, parent);
+		mFloatingBubble = new FloatingColorBubble(context, parent);
 		mFloatingBubble.setAnimationStyle(android.R.style.Animation_Toast);
 		mFloatingBubble.setClippingEnabled(true);
 		

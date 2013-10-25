@@ -1,19 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">eyeCam</string>
-    
+
     <!-- Farben -->
-    <string name="color_black">Schwarz</string>
+     <string name="color_black">Schwarz</string>
     <string name="color_grey">Grau</string>
-    <string name="color_white">Weiss</string>
+    <string name="color_dark_grey">Dunkelgrau</string>
+    <string name="color_white">Weiß</string>
     <string name="color_red">Rot</string>
     <string name="color_brown">Braun</string>
-    <string name="color_purple">Violet</string>
+    <string name="color_light_brown">Hellbraun</string>
+    <string name="color_cioccolato">Cioccolato</string>
+    <string name="color_purple">Purple</string>
+    <string name="color_violet">Violet</string>
     <string name="color_orange">Orange</string>
     <string name="color_yellow">Gelb</string>
     <string name="color_green">Grün</string>
+    <string name="color_dark_green">Dunkelgrün</string>
+    <string name="color_forest_green">Waldgrün</string>
     <string name="color_blue">Blau</string>
     <string name="color_turquoise">Türkis</string>
+    <string name="color_gray_blue">Graublau</string>
+    <string name="color_light_blue">Hellblau</string>
+    <string name="color_dark_blue">Dunkelblau</string>
+    <string name="color_bordeaux">Bordeaux</string>
+    <string name="color_maroon">Kastanienbraun</string>
+    <string name="color_azure">Azur</string>
+    <string name="color_lime">Hellgrün</string>
+    <string name="color_cream">Creme</string>
+    <string name="color_regal_blue">Königsblau</string>
+    <string name="color_teal">Seegrün</string>
+    <string name="color_cyan">Cyan</string>
+    <string name="color_deep_blue">Tiefblue</string>
+    <string name="color_ocean_green">Ozeanblau</string>
+    <string name="color_indigo">Indigo</string>
+    <string name="color_bright_green">Leuchtgrün</string>
+    <string name="color_walnut">Walnuss</string>
+    <string name="color_olive">Oliv</string>
+    <string name="color_merlot">Merlot</string>
+    <string name="color_plum">Pflaume</string>
+    <string name="color_rust">Rost</string>
+    <string name="color_light_yellow">Light Yellow</string>
+    <string name="color_crimson">Blutrot</string>
+    <string name="color_rose">Rosa</string>
+    <string name="color_amber">Bernstein</string>
+    <string name="color_pink">Pink</string>
     <string name="color_unknown">Unbekannt</string>
     
     <!-- Filter -->

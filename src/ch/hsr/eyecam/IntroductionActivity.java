@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import ch.hsr.eyecam.R.id;
 import ch.hsr.eyecam.colormodel.Color;
-import ch.hsr.eyecam.widget.FloatingBubble;
+import ch.hsr.eyecam.widget.FloatingColorBubble;
 
 /**
  * Shows an introduction to eyeCam.
@@ -35,7 +35,7 @@ public class IntroductionActivity extends Activity {
 	private int mContentView;
 	private SharedPreferences mSharedPreferences;
 	private ImageView mPreviewImage;
-	private FloatingBubble mFloatingBubble;
+	private FloatingColorBubble mFloatingBubble;
 	private DisplayMetrics mMetrics = new DisplayMetrics();
 
 	@Override
@@ -99,7 +99,7 @@ public class IntroductionActivity extends Activity {
 		mPreviewImage.setDrawingCacheEnabled(true);
 		mPreviewImage.buildDrawingCache(false);
 
-		mFloatingBubble = new FloatingBubble(getApplicationContext(),
+		mFloatingBubble = new FloatingColorBubble(getApplicationContext(),
 				mPreviewImage);
 		mFloatingBubble.setOrientation(Orientation.LANDSCAPE_LEFT);
 		initOnTouchListenerStepThree();
