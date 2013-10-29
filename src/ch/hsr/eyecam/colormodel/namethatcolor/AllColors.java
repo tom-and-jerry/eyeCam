@@ -30,48 +30,41 @@ public class AllColors implements Colors {
 		}
 		allColors = new LinkedList<NamedColor>();
 
+		// many of these color values have been adapted to work with cell-phones cameras (which are often optimized for much contrast -> colors gets rather darker)
 		addColor("#000000", R.string.color_black, locale);
-		addColor("#808080", R.string.color_grey, locale);
-		addColor("#4D4D4D", R.string.color_dark_grey, locale);
-		addColor("#FFFFFF", R.string.color_white, locale);
-		addColor("#FF0000", R.string.color_red, locale);
-		addColor("#855C33", R.string.color_brown, locale);
-		addColor("#AB8F73", R.string.color_light_brown, locale);
-		addColor("#9900FF", R.string.color_violet, locale);
-		addColor("#FF9900", R.string.color_orange, locale);
-		addColor("#FFFF00", R.string.color_yellow, locale);
-		addColor("#0000FF", R.string.color_blue, locale);
-		addColor("#3F4C69", R.string.color_gray_blue, locale);
+		addColor("#ADADAD", R.string.color_grey, locale);
+		addColor("#F0F0F0", R.string.color_white, locale);
+		addColor("#C2151C", R.string.color_red, locale);
+		addColor("#B74343", R.string.color_red, locale);
+		addColor("#774F1A", R.string.color_brown, locale);
+		addColor("#BA6D2D", R.string.color_orange, locale);
+		addColor("#E3B606", R.string.color_yellow, locale);
+		addColor("#AF8756", R.string.color_yellow, locale);
+		addColor("#0D1EAA", R.string.color_blue, locale);
+		addColor("#44415E", R.string.color_gray_blue, locale);
 		addColor("#7FBCFF", R.string.color_light_blue, locale);
-		addColor("#00FF00", R.string.color_green, locale);
-		addColor("#105210", R.string.color_dark_green, locale);
+		addColor("#11AB00", R.string.color_green, locale);
+		addColor("#104E00", R.string.color_dark_green, locale);
 		addColor("#228b22", R.string.color_forest_green, locale);
 		addColor("#30D5C8", R.string.color_turquoise, locale);
-		addColor("#0000C8", R.string.color_dark_blue, locale);
-		addColor("#5C0120", R.string.color_bordeaux, locale);
 		addColor("#800000", R.string.color_maroon, locale);
-		addColor("#4682b4", R.string.color_azure, locale);
-		addColor("#BFFF00", R.string.color_lime, locale);
-		addColor("#FFFDD0", R.string.color_cream, locale);
+		addColor("#E2D9BA", R.string.color_cream, locale);
 		addColor("#013F6A", R.string.color_regal_blue, locale);
-		addColor("#008080", R.string.color_teal, locale);
 		addColor("#00FFFF", R.string.color_cyan, locale);
 		addColor("#220878", R.string.color_deep_blue, locale);
-		addColor("#41AA78", R.string.color_ocean_green, locale);
-		addColor("#4B0082", R.string.color_indigo, locale);
+		addColor("#9317C1", R.string.color_indigo, locale);
+		addColor("#9F7490", R.string.color_indigo, locale);
 		addColor("#55280C", R.string.color_cioccolato, locale);
 		addColor("#800080", R.string.color_purple, locale);
-		addColor("#66FF00", R.string.color_bright_green, locale);
-		addColor("#773F1A", R.string.color_walnut, locale);
+		addColor("#83D93F", R.string.color_bright_green, locale);
 		addColor("#808000", R.string.color_olive, locale);
-		addColor("#831923", R.string.color_merlot, locale);
-		addColor("#843179", R.string.color_plum, locale);
+		addColor("#671718", R.string.color_merlot, locale);
 		addColor("#B7410E", R.string.color_rust, locale);
-		addColor("#CAC6A3", R.string.color_light_yellow, locale);
+		addColor("#DBBB7F", R.string.color_light_yellow, locale);
 		addColor("#DC143C", R.string.color_crimson, locale);
-		addColor("#FF007F", R.string.color_rose, locale);
-		addColor("#FFBF00", R.string.color_amber, locale);
-		addColor("#FFC0CB", R.string.color_pink, locale);
+		addColor("#CA195F", R.string.color_rose, locale);
+		addColor("#D49C33", R.string.color_amber, locale);
+		addColor("#D138BB", R.string.color_pink, locale);
 	}
 
 	private void addColor(String hexColor, int colorName, Locale locale) {

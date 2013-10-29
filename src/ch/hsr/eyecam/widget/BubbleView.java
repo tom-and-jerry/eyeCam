@@ -11,46 +11,40 @@ import ch.hsr.eyecam.Orientation;
 import ch.hsr.eyecam.R;
 
 /**
- * The BubbleView class represents a simple bubble with the possibility to
- * display an arbitrary View inside. Since we have to start our application in
- * Landscape mode in order to correctly display the camera preview, the biggest
- * challenge was to make this class orientation aware without relying on screen
- * orientation system of Android itself.
+ * The BubbleView class represents a simple bubble with the possibility to display an arbitrary View inside. Since we have to start our application in Landscape mode in order to
+ * correctly display the camera preview, the biggest challenge was to make this class orientation aware without relying on screen orientation system of Android itself.
  * 
- * The orientation awareness is achieved by rotating the whole canvas according
- * to the orientation of the device.
+ * The orientation awareness is achieved by rotating the whole canvas according to the orientation of the device.
  * 
- * Please note, that this class will probably only work correctly if you force
- * your Activity to be started in Landscape mode.
+ * Please note, that this class will probably only work correctly if you force your Activity to be started in Landscape mode.
  * 
  * @author Dominik Spengler
  * 
  */
 public class BubbleView extends FrameLayout {
 
-	private Matrix mRotationMatrix;
-	private View mContentView;
-	private FrameLayout mFrame;
+	private final Matrix mRotationMatrix;
+	private final View mContentView;
+	private final FrameLayout mFrame;
 	private Orientation mOrientation;
-	private Rect mDirtyRect;
+	private final Rect mDirtyRect;
+	private int newHeight;
+	private int newWidth;
 
 	/**
-	 * Constant for defining a central placed arrow of the bubble. The arrow
-	 * will be displayed in the center on the bottom of the bubble.
+	 * Constant for defining a central placed arrow of the bubble. The arrow will be displayed in the center on the bottom of the bubble.
 	 * 
 	 * @see #setArrowStyle(int)
 	 */
 	public static final int ARROW_CENTER = R.drawable.popup_arrow_center;
 	/**
-	 * Constant for defining a left placed arrow of the bubble. The arrow will
-	 * be displayed in the left on the bottom of the bubble.
+	 * Constant for defining a left placed arrow of the bubble. The arrow will be displayed in the left on the bottom of the bubble.
 	 * 
 	 * @see #setArrowStyle(int)
 	 */
 	public static final int ARROW_LEFT = R.drawable.popup_arrow_left;
 	/**
-	 * Constant for defining a right placed arrow of the bubble. The arrow will
-	 * be displayed in the right on the bottom of the bubble.
+	 * Constant for defining a right placed arrow of the bubble. The arrow will be displayed in the right on the bottom of the bubble.
 	 * 
 	 * @see #setArrowStyle(int)
 	 */
@@ -81,13 +75,9 @@ public class BubbleView extends FrameLayout {
 	}
 
 	/**
-	 * This method sets the orientation of the View independently of the screen
-	 * orientation of Android (hence independently of the orientation reported
-	 * by the devices sensor)
+	 * This method sets the orientation of the View independently of the screen orientation of Android (hence independently of the orientation reported by the devices sensor)
 	 * 
-	 * The View will not be redrawn if you change the orientation while the
-	 * bubble is showing. To be exact, the rotation matrix will only be rebuild
-	 * if onMeasure() gets called.
+	 * The View will not be redrawn if you change the orientation while the bubble is showing. To be exact, the rotation matrix will only be rebuild if onMeasure() gets called.
 	 * 
 	 * @param orientation
 	 *            you wish the bubble to be shown in.
@@ -113,8 +103,7 @@ public class BubbleView extends FrameLayout {
 	}
 
 	/**
-	 * Sets the arrow style as defined in the ARROW_X constants. The view will
-	 * not be redrawn if the bubble is already showing.
+	 * Sets the arrow style as defined in the ARROW_X constants. The view will not be redrawn if the bubble is already showing.
 	 * 
 	 * @param arrowstyle
 	 *            as defined in the ARROW_X constants.
@@ -130,24 +119,23 @@ public class BubbleView extends FrameLayout {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * onMeasure() had to be overwritten in order to provide the correct View
-	 * measurement when in Portrait mode.
+	 * onMeasure() had to be overwritten in order to provide the correct View measurement when in Portrait mode.
 	 */
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		int h = getMeasuredHeight();
-		int w = getMeasuredWidth();
+		newHeight = Math.max(newHeight, getMeasuredHeight());
+		newWidth = Math.max(newWidth, getMeasuredWidth());
 
 		if (mOrientation == Orientation.PORTRAIT)
-			setMeasuredDimension(h, w);
+			setMeasuredDimension(newHeight, newWidth);
 		updateDirtyRect();
 		updateMatrix();
 	}
 
 	private void updateDirtyRect() {
-		int width = (int) getWidth();
-		int height = (int) getHeight();
+		int width = getWidth();
+		int height = getHeight();
 
 		mDirtyRect.bottom = height;
 		mDirtyRect.right = width;
@@ -174,12 +162,9 @@ public class BubbleView extends FrameLayout {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * This is where the rotation is applied to the canvas in order to correctly
-	 * display the bubble according to the orientation set in
-	 * {@link #setOrientation(Orientation)}.
+	 * This is where the rotation is applied to the canvas in order to correctly display the bubble according to the orientation set in {@link #setOrientation(Orientation)}.
 	 * 
-	 * The dispatchDraw() method was overwritten in order to make sure all the
-	 * child views get rotated as well.
+	 * The dispatchDraw() method was overwritten in order to make sure all the child views get rotated as well.
 	 */
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
@@ -196,8 +181,7 @@ public class BubbleView extends FrameLayout {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Used to correctly map the touch input according to the orientation the
-	 * view is in.
+	 * Used to correctly map the touch input according to the orientation the view is in.
 	 * 
 	 * @see #setOrientation(Orientation)
 	 */
@@ -239,12 +223,17 @@ public class BubbleView extends FrameLayout {
 	private float invert(float value, float maxvalue) {
 		return maxvalue - value;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public Drawable getBackground() {
 		return mFrame.getBackground();
+	}
+
+	public void reset() {
+		newHeight = 0;
+		newWidth = 0;
 	}
 }

@@ -151,12 +151,10 @@ public class FloatingColorBubble extends PopupWindow {
 		int r = rgb[0];
 		int g = rgb[1];
 		int b = rgb[2];
-		String hexRgb = String.format("#%2x%2x%2x", r, g, b).replaceAll(" ", "0");
 
 		StringBuilder addString = new StringBuilder();
 		if (showRGB) {
-			addString.append("R: " + r + " G: " + g + " B: " + b + "\n");
-			addString.append(hexRgb);
+			addString.append("R: " + r + " G: " + g + " B: " + b);
 			if (showHSV)
 				addString.append('\n');
 		}
@@ -170,6 +168,7 @@ public class FloatingColorBubble extends PopupWindow {
 			addString.append("H: " + hStr + " S: " + sStr + " V: " + vStr);
 		}
 		setAdditionalText(addString);
+		String hexRgb = String.format("#%2x%2x%2x", r, g, b).replaceAll(" ", "0");
 		NamedColor namedColor = colorNamer.findClosestColor(hexRgb);
 		int resId = namedColor.getColorNameResId();
 		Debug.msg("colorName: " + getContentView().getContext().getString(resId));
@@ -270,5 +269,11 @@ public class FloatingColorBubble extends PopupWindow {
 
 	public void setColorRecognizer(ColorRecognizer colorRecognizer) {
 		this.colorRecognizer = colorRecognizer;
+	}
+
+	@Override
+	public void dismiss() {
+		mBubbleView.reset();
+		super.dismiss();
 	}
 }
