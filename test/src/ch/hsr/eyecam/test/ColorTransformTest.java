@@ -14,7 +14,6 @@ public class ColorTransformTest extends TestCase {
 	 * value used as a threshold for color similarity.
 	 */
 	private final static int COLOR_DELTA = 10;
-	private static final int BYTES_PER_PIXEL = 2; 
 	
 	private final byte[] yuvRed = {  0,  0,  0,  0,
 					   				 0,  0,  0,  0,
@@ -124,42 +123,6 @@ public class ColorTransformTest extends TestCase {
 				" actual color: " + rAct + "," + gAct + "," +bAct, deltaE<COLOR_DELTA);
 	}
 	
-	public void testColorRecognition(){
-		int width = samplePictureWidth/2;
-		int height = samplePictureHeight/2;
-		int[] color;
-		
-		// color = getYuv(yuvBlack, width, height);
-		// assertEquals(Color.BLACK, Color.yuvToColor(color));
-		//
-		// color = getYuv(yuvWhite, width, height);
-		// assertEquals(Color.WHITE, Color.yuvToColor(color));
-		//
-		// color = getYuv(yuvBlue, width, height);
-		// assertEquals(Color.BLUE, Color.yuvToColor(color));
-		//
-		// color = getYuv(yuvGreen, width, height);
-		// assertEquals(Color.GREEN, Color.yuvToColor(color));
-		//
-		// color = getYuv(yuvRed, width, height);
-		// assertEquals(Color.RED, Color.yuvToColor(color));
-		//
-		// color = getYuv(yuvYellow, width, height);
-		// assertEquals(Color.YELLOW, Color.yuvToColor(color));
-	}
-	
-	private int[] getYuv(byte[] buffer, int width, int height) {
-		int[] yuv = new int[3];
-		int posUV = samplePictureHeight*samplePictureWidth 
-			+ (height/2)*samplePictureWidth + BYTES_PER_PIXEL*(width/2);
-
-		yuv[0] = buffer[height*samplePictureWidth + width];
-		yuv[1] = buffer[posUV+1];
-		yuv[2] = buffer[posUV];
-		
-		return yuv;
-	}
-
 	/**
 	 * the color transformation from YUV to RGB is not as accurate
 	 * as wished, so we needed to introduce a CorrectedColor class.
