@@ -100,9 +100,6 @@ public class ColorView extends View implements PreviewCallback {
 		if (mIsScaled) {
 			Bitmap scaledBitmap = Bitmap.createScaledBitmap(mBitmap, mScreenWidth, mScreenHeight, false);
 			canvas.drawBitmap(scaledBitmap, 0, 0, null);
-			// if (theImage != null) {
-			// canvas.drawBitmap(theImage, 0, 0, null);
-			// }
 		} else
 			canvas.drawBitmap(mBitmap, 0, 0, null);
 	}
@@ -149,16 +146,6 @@ public class ColorView extends View implements PreviewCallback {
 	public void setOrientation(Orientation orientation) {
 		mPopup.setOrientation(orientation);
 	}
-
-	/**
-	 * Enable or disable the "on touch" Popup used to recognize colors.
-	 * 
-	 * @param showPopup
-	 *            true if the popup should be enabled, false otherwise.
-	 */
-	/*
-	 * public void enablePopup(boolean showPopup) { if(!showPopup) { mPopup.dismiss(); } }
-	 */
 
 	/**
 	 * If the Popup is showing, it will be dismissed. Nothing happens if the Popup is not showing.

@@ -154,6 +154,9 @@ public class BubbleView extends FrameLayout {
 			mRotationMatrix.setRotate(-90, 0.0f, 0.0f);
 			mRotationMatrix.postTranslate(0.0f, height);
 			break;
+		case LANDSCAPE_LEFT:
+		case UNKNOW:
+			break;
 		}
 
 		invalidate();
@@ -213,6 +216,9 @@ public class BubbleView extends FrameLayout {
 		case LANDSCAPE_RIGHT:
 			resultingX = invert(event.getX(), getWidth());
 			resultingY = invert(event.getY(), getHeight());
+			break;
+		case LANDSCAPE_LEFT:
+		case UNKNOW:
 			break;
 		}
 

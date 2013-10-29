@@ -147,7 +147,7 @@ public class FloatingColorBubble extends PopupWindow {
 	public void showColorBubbleAtNew(int x, int y, int scaleX, int scaleY) {
 		dismiss();
 
-		int[] rgb = colorRecognizer.getRgbAtNew(scaleX, scaleY);
+		int[] rgb = colorRecognizer.getRgbAt(scaleX, scaleY);
 		int r = rgb[0];
 		int g = rgb[1];
 		int b = rgb[2];

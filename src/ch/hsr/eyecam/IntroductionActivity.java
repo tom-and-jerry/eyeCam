@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -15,16 +16,16 @@ import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.Toast;
 import ch.hsr.eyecam.R.id;
-import ch.hsr.eyecam.colormodel.Color;
+import ch.hsr.eyecam.colormodel.namethatcolor.AllColors;
+import ch.hsr.eyecam.colormodel.namethatcolor.ColorNamer;
+import ch.hsr.eyecam.colormodel.namethatcolor.NamedColor;
 import ch.hsr.eyecam.widget.FloatingColorBubble;
 
 /**
  * Shows an introduction to eyeCam.
  * 
- * Whether or not the introduction has already run is saved in the shared
- * preferences of the application under the key consisting of the INTRO_PREFIX
- * defined in this class and the version string of the application. This means
- * that it will be shown every single update.
+ * Whether or not the introduction has already run is saved in the shared preferences of the application under the key consisting of the INTRO_PREFIX defined in this class and the
+ * version string of the application. This means that it will be shown every single update.
  * 
  * @author jimmypoms
  * 
@@ -36,26 +37,26 @@ public class IntroductionActivity extends Activity {
 	private SharedPreferences mSharedPreferences;
 	private ImageView mPreviewImage;
 	private FloatingColorBubble mFloatingBubble;
-	private DisplayMetrics mMetrics = new DisplayMetrics();
+	private final DisplayMetrics mMetrics = new DisplayMetrics();
+	private ColorNamer colorNamer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mSharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(getApplicationContext());
+		mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		PackageInfo versionInfo = getPackageInfo();
 		INTRO_KEY = INTRO_PREFIX + versionInfo.versionCode;
 
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+		colorNamer = new ColorNamer(new AllColors(), getResources().getConfiguration().locale);
 		setStepOne(null);
 	}
 
 	private PackageInfo getPackageInfo() {
 		PackageInfo pi = null;
 		try {
-			pi = getPackageManager().getPackageInfo(getPackageName(),
-					PackageManager.GET_ACTIVITIES);
+			pi = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_ACTIVITIES);
 		} catch (PackageManager.NameNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -83,8 +84,7 @@ public class IntroductionActivity extends Activity {
 
 			@Override
 			public boolean onLongClick(View v) {
-				Toast t = Toast.makeText(getApplicationContext(),
-						R.string.intro_menu_filter, Toast.LENGTH_LONG);
+				Toast t = Toast.makeText(getApplicationContext(), R.string.intro_menu_filter, Toast.LENGTH_LONG);
 				t.show();
 				return true;
 			}
@@ -99,8 +99,7 @@ public class IntroductionActivity extends Activity {
 		mPreviewImage.setDrawingCacheEnabled(true);
 		mPreviewImage.buildDrawingCache(false);
 
-		mFloatingBubble = new FloatingColorBubble(getApplicationContext(),
-				mPreviewImage);
+		mFloatingBubble = new FloatingColorBubble(getApplicationContext(), mPreviewImage);
 		mFloatingBubble.setOrientation(Orientation.LANDSCAPE_LEFT);
 		initOnTouchListenerStepThree();
 	}
@@ -118,6 +117,7 @@ public class IntroductionActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					int x = (int) event.getX();
 					int y = (int) event.getY();
+					dismissPopup();
 					showColorAt(x, y);
 					return false;
 				}
@@ -129,8 +129,7 @@ public class IntroductionActivity extends Activity {
 
 			@Override
 			public boolean onLongClick(View v) {
-				Toast t = Toast.makeText(getApplicationContext(),
-						R.string.intro_menu_preview, Toast.LENGTH_LONG);
+				Toast t = Toast.makeText(getApplicationContext(), R.string.intro_menu_preview, Toast.LENGTH_LONG);
 				t.show();
 				return true;
 			}
@@ -139,14 +138,14 @@ public class IntroductionActivity extends Activity {
 
 	private void showColorAt(int x, int y) {
 		int rgb = mPreviewImage.getDrawingCache().getPixel(x, y);
-		int r = (rgb & 0xff0000) >> 16;
-		int g = (rgb & 0x00ff00) >> 8;
-		int b = (rgb & 0x0000ff);
+		int r = Color.red(rgb);
+		int g = Color.green(rgb);
+		int b = Color.blue(rgb);
 
-		int[] rgbArray = { r, g, b, };
-
-		int colorId = Color.rgbToColor(rgbArray);
-		mFloatingBubble.showStringResAt(colorId, x, y);
+		String hexRgb = String.format("#%2x%2x%2x", r, g, b).replaceAll(" ", "0");
+		NamedColor namedColor = colorNamer.findClosestColor(hexRgb);
+		int resId = namedColor.getColorNameResId();
+		mFloatingBubble.showStringResAt(resId, x, y);
 	}
 
 	public void next(View v) {
