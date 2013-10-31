@@ -4,7 +4,7 @@ import android.util.Log;
 public class Debug {
 
 	/** Whether or not to include logging statements in the application. */
-	public final static boolean LOGGING = false;
+	public final static boolean LOGGING = true;
 	
 	public static void msg(String msg) {
 		msg("ch.hsr.eyecam.unknowntag", msg);

@@ -24,6 +24,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.OrientationEventListener;
@@ -70,15 +71,26 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	private ToastBubble mSecondaryFilterToast;
 	private final Handler mHandler = new EyeCamHandler(this);
 
+	private final static DisplayMetrics mMetrics = new DisplayMetrics();
+
+	public final static int CAMERA_START_PREVIEW = 0;
+	public final static int CAMERA_STOP_PREVIEW = 1;
+	public final static int CAMERA_LIGHT_OFF = 2;
+	public final static int CAMERA_LIGHT_ON = 3;
+	public final static int PRIMARY_FILTER_ON = 4;
+	public final static int SECONDARY_FILTER_ON = 5;
+	public final static int SHOW_PRIMARY_FILTER_MENU = 6;
+	public final static int SHOW_SECONDARY_FILTER_MENU = 7;
+	public final static int SHOW_SETTINGS_MENU = 8;
+	public final static String PREFERENCE_FILE = "eyeCamPref";
+	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
+
 	private void setCameraLight(String cameraFlashMode) {
 		Parameters parameters = mCamera.getParameters();
 		parameters.setFlashMode(cameraFlashMode);
 		mCamera.setParameters(parameters);
 
-		if (cameraFlashMode.equals(Camera.Parameters.FLASH_MODE_TORCH))
-			mControlBar.setButtonLight(true);
-		else
-			mControlBar.setButtonLight(false);
+		mControlBar.setButtonLight(cameraFlashMode.equals(Camera.Parameters.FLASH_MODE_TORCH));
 	}
 
 	private void setSecondaryFilter() {
@@ -195,10 +207,16 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 			Debug.msg(LOG_TAG, "showing Loading Screen ...");
 			synchronized (this) {
 				try {
-					while (!mIsCameraReady)
+					while (!mIsCameraReady) {
+						if (isCancelled()) {
+							printLivecycleStatus("ShowLoadingScreenTask canceled");
+							break;
+						}
 						wait(800);
+						printLivecycleStatus("ShowLoadingScreenTask waited");
+					}
 				} catch (InterruptedException e) {
-					// do nothing. useless hack in order to show loading screen
+					printLivecycleStatus("ShowLoadingScreenTask interrupted");
 				}
 			}
 			return null;
@@ -206,34 +224,16 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 		@Override
 		protected void onPostExecute(Void result) {
+			printLivecycleStatus("ShowLoadingScreenTask.onPostExecute");
 			Debug.msg(LOG_TAG, "finish opening camera...");
 			if (isCancelled())
 				return;
 			mColorView.setVisibility(View.VISIBLE);
 			mLoadingScreen.setVisibility(View.INVISIBLE);
+			mShowLoadingScreenTask = null;
 		}
-
 	}
 
-	private final static DisplayMetrics mMetrics = new DisplayMetrics();
-
-	public final static int CAMERA_START_PREVIEW = 0;
-	public final static int CAMERA_STOP_PREVIEW = 1;
-	public final static int CAMERA_LIGHT_OFF = 2;
-	public final static int CAMERA_LIGHT_ON = 3;
-	public final static int PRIMARY_FILTER_ON = 4;
-	public final static int SECONDARY_FILTER_ON = 5;
-	public final static int SHOW_PRIMARY_FILTER_MENU = 6;
-	public final static int SHOW_SECONDARY_FILTER_MENU = 7;
-	public final static int SHOW_SETTINGS_MENU = 8;
-	public final static String PREFERENCE_FILE = "eyeCamPref";
-	private final static String LOG_TAG = "ch.hsr.eyecam.EyeCamActivity";
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Called when the activity is first created.
-	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -258,7 +258,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		setToastSizes();
 
 		initOrientationEventListener();
-		mOrientationEventListener.enable();
+		// mOrientationEventListener.enable();
 	}
 
 	private void setToastSizes() {
@@ -337,6 +337,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 	@Override
 	protected void onStart() {
+		printLivecycleStatus("onStart");
 		super.onStart();
 		mColorView.setVisibility(View.INVISIBLE);
 		mLoadingScreen.setVisibility(View.VISIBLE);
@@ -402,6 +403,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	protected void onResume() {
+		printLivecycleStatus("onResume (starting ShowLoadingScreenTask)");
 		super.onResume();
 		mShowLoadingScreenTask = new ShowLoadingScreenTask();
 		mShowLoadingScreenTask.execute();
@@ -411,6 +413,12 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		// this is needed in order to stop the camera when
 		// locking the screen. See onPause()
 		mSurfaceView.setVisibility(View.VISIBLE);
+		mOrientationEventListener.enable();
+	}
+
+	private void printLivecycleStatus(String name) {
+		Display getOrient = getWindowManager().getDefaultDisplay();
+		Debug.msg(LOG_TAG, "Livecycle: " + name + " orientation: " + (getOrient.getRotation() * 90) + "degrees");
 	}
 
 	private void openCamera() {
@@ -484,11 +492,17 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	protected void onPause() {
-		super.onPause();
+		printLivecycleStatus("onPause");
+		if (mShowLoadingScreenTask != null) {
+			printLivecycleStatus("canceling mShowLoadingScreenTask");
+			mShowLoadingScreenTask.cancel(false);
+			mShowLoadingScreenTask = null;
+		}
 		mOrientationEventListener.disable();
 
 		// make sure the preview is stopped if the screen gets locked
 		mSurfaceView.setVisibility(View.GONE);
+		super.onPause();
 	}
 
 	private void releaseCamera() {
@@ -543,8 +557,9 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	protected void onDestroy() {
-		mOrientationEventListener.disable();
-		mColorView.dismissPopup();
+		printLivecycleStatus("onDestroy");
+		// mOrientationEventListener.disable();
+		// mColorView.dismissPopup();
 		super.onDestroy();
 	}
 
@@ -565,6 +580,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	public void onBackPressed() {
+		printLivecycleStatus("onBackPressed");
 		if (menuIsShowing())
 			dismissMenus();
 		else
@@ -578,6 +594,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		printLivecycleStatus("onPrepareOptionsMenu");
 		if (menuIsShowing()) {
 			dismissMenus();
 			return false;
@@ -597,6 +614,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+		printLivecycleStatus("surfaceChanged");
 		startCameraPreview();
 	}
 
@@ -605,14 +623,15 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		printLivecycleStatus("surfaceCreated");
 		openCamera();
 		configEnvByCameraParams();
 		makeSureCameraPreviewStarts();
 
-		 if (mControlBar.isPrimaryFilterRunning())
-		 setPrimaryFilter();
-		 else
-		 setSecondaryFilter();
+		if (mControlBar.isPrimaryFilterRunning())
+			setPrimaryFilter();
+		else
+			setSecondaryFilter();
 	}
 
 	/**
@@ -620,6 +639,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
+		printLivecycleStatus("surfaceDestroyed");
 		releaseCamera();
 	}
 
@@ -647,6 +667,12 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		dismissMenus();
 		Intent intent = new Intent(getApplicationContext(), IntroductionActivity.class);
 		startActivity(intent);
+	}
+
+	@Override
+	protected void onStop() {
+		printLivecycleStatus("surfaceCreated");
+		super.onStop();
 	}
 
 	private static class EyeCamHandler extends Handler {
