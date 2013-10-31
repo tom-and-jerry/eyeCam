@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
@@ -70,6 +71,11 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	private ToastBubble mPrimaryFilterToast;
 	private ToastBubble mSecondaryFilterToast;
 	private final Handler mHandler = new EyeCamHandler(this);
+	/**
+	 * EyeCamActivity is (defined in AndroidMainfest.xml) only shown in landscape mode. Still when e.g. screen is switched off, the landscape-activity destroyed and a portrait-one
+	 * created. When switching the screen on again, the portrait-activity gets destroyed and again a landscape-activity gets created.
+	 */
+	private boolean isInWrongOrientation;
 
 	private final static DisplayMetrics mMetrics = new DisplayMetrics();
 
@@ -237,6 +243,11 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		printLivecycleStatus("onCreate");
+		initWrongOrientationFlag();
+		if (isInWrongOrientation) {
+			return;
+		}
 		setContentView(R.layout.main);
 
 		mLoadingScreen = findViewById(R.id.hsr_loading_screen);
@@ -339,6 +350,10 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	protected void onStart() {
 		printLivecycleStatus("onStart");
 		super.onStart();
+		initWrongOrientationFlag();
+		if (isInWrongOrientation) {
+			return;
+		}
 		mColorView.setVisibility(View.INVISIBLE);
 		mLoadingScreen.setVisibility(View.VISIBLE);
 
@@ -405,6 +420,10 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	protected void onResume() {
 		printLivecycleStatus("onResume (starting ShowLoadingScreenTask)");
 		super.onResume();
+		initWrongOrientationFlag();
+		if (isInWrongOrientation) {
+			return;
+		}
 		mShowLoadingScreenTask = new ShowLoadingScreenTask();
 		mShowLoadingScreenTask.execute();
 		mOrientationEventListener.enable();
@@ -414,6 +433,10 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		// locking the screen. See onPause()
 		mSurfaceView.setVisibility(View.VISIBLE);
 		mOrientationEventListener.enable();
+	}
+
+	private void initWrongOrientationFlag() {
+		isInWrongOrientation = getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE;
 	}
 
 	private void printLivecycleStatus(String name) {
@@ -493,6 +516,10 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	protected void onPause() {
 		printLivecycleStatus("onPause");
+		if (isInWrongOrientation) {
+			super.onPause();
+			return;
+		}
 		if (mShowLoadingScreenTask != null) {
 			printLivecycleStatus("canceling mShowLoadingScreenTask");
 			mShowLoadingScreenTask.cancel(false);
@@ -558,8 +585,6 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	protected void onDestroy() {
 		printLivecycleStatus("onDestroy");
-		// mOrientationEventListener.disable();
-		// mColorView.dismissPopup();
 		super.onDestroy();
 	}
 
@@ -615,6 +640,9 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		printLivecycleStatus("surfaceChanged");
+		if (isInWrongOrientation) {
+			return;
+		}
 		startCameraPreview();
 	}
 
@@ -624,6 +652,9 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		printLivecycleStatus("surfaceCreated");
+		if (isInWrongOrientation) {
+			return;
+		}
 		openCamera();
 		configEnvByCameraParams();
 		makeSureCameraPreviewStarts();
@@ -640,6 +671,9 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		printLivecycleStatus("surfaceDestroyed");
+		if (isInWrongOrientation) {
+			return;
+		}
 		releaseCamera();
 	}
 
@@ -671,7 +705,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 	@Override
 	protected void onStop() {
-		printLivecycleStatus("surfaceCreated");
+		printLivecycleStatus("onStop");
 		super.onStop();
 	}
 
