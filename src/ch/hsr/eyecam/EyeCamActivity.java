@@ -58,7 +58,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	private Orientation mOrientationCurrent = Orientation.UNKNOW;
 	private ShowLoadingScreenTask mShowLoadingScreenTask;
 	private View mLoadingScreen;
-	private SurfaceView mSurfaceView;
+	private SurfaceView mDummySurfaceView;
 	private MenuBubble mAppMenu;
 	private MenuBubble mPrimaryFilterMenu;
 	private MenuBubble mSecondaryFilterMenu;
@@ -242,8 +242,8 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		printLivecycleStatus("onCreate");
+		super.onCreate(savedInstanceState);
 		initWrongOrientationFlag();
 		if (isInWrongOrientation) {
 			return;
@@ -261,15 +261,14 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		mPrimaryFilterToast = new ToastBubble(getApplicationContext(), mColorView);
 		mSecondaryFilterToast = new ToastBubble(getApplicationContext(), mColorView);
 
-		mSurfaceView = (SurfaceView) findViewById(id.cameraSurface_dummy);
-		mSurfaceView.getHolder().addCallback(this);
+		mDummySurfaceView = (SurfaceView) findViewById(id.cameraSurface_dummy);
+		mDummySurfaceView.getHolder().addCallback(this);
 
 		getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 		createMenus();
 		setToastSizes();
 
 		initOrientationEventListener();
-		// mOrientationEventListener.enable();
 	}
 
 	private void setToastSizes() {
@@ -354,8 +353,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		if (isInWrongOrientation) {
 			return;
 		}
-		mColorView.setVisibility(View.INVISIBLE);
-		mLoadingScreen.setVisibility(View.VISIBLE);
+		showLoadingScreen();
 
 		initSavedPreferences();
 
@@ -364,6 +362,11 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		if (!mSharedPreferences.contains(introKey)) {
 			openIntro(null);
 		}
+	}
+
+	private void showLoadingScreen() {
+		mColorView.setVisibility(View.INVISIBLE);
+		mLoadingScreen.setVisibility(View.VISIBLE);
 	}
 
 	private void initSavedPreferences() {
@@ -431,7 +434,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		// make sure the surface is recreated.
 		// this is needed in order to stop the camera when
 		// locking the screen. See onPause()
-		mSurfaceView.setVisibility(View.VISIBLE);
+		mDummySurfaceView.setVisibility(View.VISIBLE);
 		mOrientationEventListener.enable();
 	}
 
@@ -528,7 +531,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		mOrientationEventListener.disable();
 
 		// make sure the preview is stopped if the screen gets locked
-		mSurfaceView.setVisibility(View.GONE);
+		mDummySurfaceView.setVisibility(View.GONE);
 		super.onPause();
 	}
 
@@ -569,7 +572,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	private void makeSureCameraPreviewStarts() {
 		try {
-			mCamera.setPreviewDisplay(mSurfaceView.getHolder());
+			mCamera.setPreviewDisplay(mDummySurfaceView.getHolder());
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "Unable to set preview display");
 			e.printStackTrace();
@@ -674,6 +677,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		if (isInWrongOrientation) {
 			return;
 		}
+		setCameraLight(Camera.Parameters.FLASH_MODE_OFF);
 		releaseCamera();
 	}
 
