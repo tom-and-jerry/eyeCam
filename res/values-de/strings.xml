@@ -17,10 +17,8 @@
     <string name="color_forest_green">Waldgrün</string>
     <string name="color_blue">Blau</string>
     <string name="color_turquoise">Türkis</string>
-    <string name="color_gray_blue">Graublau</string>
     <string name="color_light_blue">Hellblau</string>
     <string name="color_maroon">Kastanienbraun</string>
-    <string name="color_cream">Creme</string>
     <string name="color_regal_blue">Königsblau</string>
     <string name="color_cyan">Cyan</string>
     <string name="color_deep_blue">Tiefblau</string>
@@ -28,11 +26,9 @@
     <string name="color_bright_green">Leuchtgrün</string>
     <string name="color_olive">Oliv</string>
     <string name="color_merlot">Merlot</string>
-    <string name="color_rust">Rost</string>
-    <string name="color_light_yellow">Light Yellow</string>
+    <string name="color_light_yellow">Hellgelb</string>
     <string name="color_crimson">Blutrot</string>
     <string name="color_rose">Rosa</string>
-    <string name="color_amber">Bernstein</string>
     <string name="color_pink">Pink</string>
     <string name="color_unknown">Unbekannt</string>
     

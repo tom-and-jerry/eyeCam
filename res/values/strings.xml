@@ -17,10 +17,8 @@
     <string name="color_forest_green">Forest Green</string>
     <string name="color_blue">Blue</string>
     <string name="color_turquoise">Turquoise</string>
-    <string name="color_gray_blue">Gray Blue</string>
     <string name="color_light_blue">Light Blue</string>
     <string name="color_maroon">Maroon</string>
-    <string name="color_cream">Cream</string>
     <string name="color_regal_blue">Regal Blue</string>
     <string name="color_cyan">Cyan</string>
     <string name="color_deep_blue">Deep Blue</string>
@@ -28,11 +26,9 @@
     <string name="color_bright_green">Bright Green</string>
     <string name="color_olive">Olive</string>
     <string name="color_merlot">Merlot</string>
-    <string name="color_rust">Rust</string>
-    <string name="color_light_yellow">Hellgelb</string>
+    <string name="color_light_yellow">Light Yellow</string>
     <string name="color_crimson">Crimson</string>
     <string name="color_rose">Rose</string>
-    <string name="color_amber">Amber</string>
     <string name="color_pink">Pink</string>
     <string name="color_unknown">Unknown</string>
     

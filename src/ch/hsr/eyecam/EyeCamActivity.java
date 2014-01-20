@@ -215,14 +215,14 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 				try {
 					while (!mIsCameraReady) {
 						if (isCancelled()) {
-							printLivecycleStatus("ShowLoadingScreenTask canceled");
+							logLivecycleStatus("ShowLoadingScreenTask canceled");
 							break;
 						}
 						wait(800);
-						printLivecycleStatus("ShowLoadingScreenTask waited");
+						logLivecycleStatus("ShowLoadingScreenTask waited");
 					}
 				} catch (InterruptedException e) {
-					printLivecycleStatus("ShowLoadingScreenTask interrupted");
+					logLivecycleStatus("ShowLoadingScreenTask interrupted");
 				}
 			}
 			return null;
@@ -230,7 +230,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			printLivecycleStatus("ShowLoadingScreenTask.onPostExecute");
+			logLivecycleStatus("ShowLoadingScreenTask.onPostExecute");
 			Debug.msg(LOG_TAG, "finish opening camera...");
 			if (isCancelled())
 				return;
@@ -242,7 +242,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		printLivecycleStatus("onCreate");
+		logLivecycleStatus("onCreate");
 		super.onCreate(savedInstanceState);
 		initWrongOrientationFlag();
 		if (isInWrongOrientation) {
@@ -347,7 +347,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 	@Override
 	protected void onStart() {
-		printLivecycleStatus("onStart");
+		logLivecycleStatus("onStart");
 		super.onStart();
 		initWrongOrientationFlag();
 		if (isInWrongOrientation) {
@@ -421,7 +421,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	protected void onResume() {
-		printLivecycleStatus("onResume (starting ShowLoadingScreenTask)");
+		logLivecycleStatus("onResume (starting ShowLoadingScreenTask)");
 		super.onResume();
 		initWrongOrientationFlag();
 		if (isInWrongOrientation) {
@@ -442,9 +442,8 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 		isInWrongOrientation = getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE;
 	}
 
-	private void printLivecycleStatus(String name) {
-		Display getOrient = getWindowManager().getDefaultDisplay();
-		Debug.msg(LOG_TAG, "Livecycle: " + name + " orientation: " + (getOrient.getRotation() * 90) + "degrees");
+	private void logLivecycleStatus(String name) {
+		Debug.msg(LOG_TAG, "Livecycle: " + name + " orientation: " + (getWindowManager().getDefaultDisplay().getRotation() * 90) + "degrees");
 	}
 
 	private void openCamera() {
@@ -518,13 +517,13 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	protected void onPause() {
-		printLivecycleStatus("onPause");
+		logLivecycleStatus("onPause");
 		if (isInWrongOrientation) {
 			super.onPause();
 			return;
 		}
 		if (mShowLoadingScreenTask != null) {
-			printLivecycleStatus("canceling mShowLoadingScreenTask");
+			logLivecycleStatus("canceling mShowLoadingScreenTask");
 			mShowLoadingScreenTask.cancel(false);
 			mShowLoadingScreenTask = null;
 		}
@@ -587,7 +586,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	protected void onDestroy() {
-		printLivecycleStatus("onDestroy");
+		logLivecycleStatus("onDestroy");
 		super.onDestroy();
 	}
 
@@ -608,7 +607,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	public void onBackPressed() {
-		printLivecycleStatus("onBackPressed");
+		logLivecycleStatus("onBackPressed");
 		if (menuIsShowing())
 			dismissMenus();
 		else
@@ -622,7 +621,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		printLivecycleStatus("onPrepareOptionsMenu");
+		logLivecycleStatus("onPrepareOptionsMenu");
 		if (menuIsShowing()) {
 			dismissMenus();
 			return false;
@@ -642,7 +641,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		printLivecycleStatus("surfaceChanged");
+		logLivecycleStatus("surfaceChanged");
 		if (isInWrongOrientation) {
 			return;
 		}
@@ -654,7 +653,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		printLivecycleStatus("surfaceCreated");
+		logLivecycleStatus("surfaceCreated");
 		if (isInWrongOrientation) {
 			return;
 		}
@@ -673,7 +672,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 	 */
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		printLivecycleStatus("surfaceDestroyed");
+		logLivecycleStatus("surfaceDestroyed");
 		if (isInWrongOrientation) {
 			return;
 		}
@@ -709,7 +708,7 @@ public class EyeCamActivity extends Activity implements SurfaceHolder.Callback {
 
 	@Override
 	protected void onStop() {
-		printLivecycleStatus("onStop");
+		logLivecycleStatus("onStop");
 		super.onStop();
 	}
 
